@@ -1,18 +1,18 @@
 import { Component, signal, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { LucideAngularModule, LayoutDashboard, Users, UserCheck, ShieldCheck, FileCheck, FileText, Server, ClipboardList, Menu } from 'lucide-angular';
 
 interface NavItem {
   route: string;
   label: string;
   exact?: boolean;
-  iconPath: string;
-  iconPath2?: string;
+  icon: any;
 }
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, LucideAngularModule],
   template: `
     <style>
       @keyframes slideIn {
@@ -22,10 +22,6 @@ interface NavItem {
       @keyframes labelFade {
         from { opacity: 0; transform: translateX(-6px); }
         to   { opacity: 1; transform: translateX(0); }
-      }
-      @keyframes pulse-active {
-        0%,100% { box-shadow: 0 0 0 0 rgba(30,42,90,0); }
-        50%      { box-shadow: 0 0 0 4px rgba(30,42,90,0.12); }
       }
 
       .sidebar-enter { animation: slideIn 0.4s cubic-bezier(.22,1,.36,1) both; }
@@ -83,8 +79,7 @@ interface NavItem {
         width: 18px;
         height: 18px;
         flex-shrink: 0;
-        stroke-linecap: round;
-        stroke-linejoin: round;
+        stroke-width: 2px;
         transition: transform 0.18s;
       }
       .nav-link:hover .nav-icon        { transform: scale(1.1); }
@@ -134,18 +129,6 @@ interface NavItem {
       .toggle-btn:hover svg { stroke: white; }
       .toggle-btn:active    { transform: translateX(-50%) scale(0.9); }
 
-      .toggle-icon { transition: transform 0.28s cubic-bezier(.22,1,.36,1); }
-
-      .nav-section-label {
-        font-size: 9px;
-        font-weight: 700;
-        letter-spacing: .12em;
-        text-transform: uppercase;
-        color: #c0c6d4;
-        padding: 0.5rem 0.75rem 0.25rem;
-        transition: opacity 0.2s;
-      }
-
       /* scrollbar */
       nav::-webkit-scrollbar       { width: 3px; }
       nav::-webkit-scrollbar-track { background: transparent; }
@@ -187,12 +170,7 @@ interface NavItem {
       <!-- ── Navigation ── -->
       <nav class="flex-1 py-3 flex flex-col overflow-y-auto px-2 gap-0.5">
 
-        <!-- Main group -->
-        @if (!collapsed()) {
-          <p class="nav-section-label nav-label">Main</p>
-        }
-
-        @for (item of mainNav; track item.route) {
+        @for (item of navItems; track item.route) {
           <a
             [routerLink]="item.route"
             routerLinkActive="active-link"
@@ -202,36 +180,8 @@ interface NavItem {
             [attr.data-tip]="item.label"
             [title]="collapsed() ? item.label : ''"
           >
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
-              [innerHTML]="item.iconPath">
-            </svg>
-            @if (!collapsed()) {
-              <span class="nav-label text-sm font-medium whitespace-nowrap">{{ item.label }}</span>
-            }
-            @if (collapsed()) { <span class="tip">{{ item.label }}</span> }
-          </a>
-        }
-
-        <!-- Management group -->
-        @if (!collapsed()) {
-          <p class="nav-section-label nav-label mt-3">Management</p>
-        } @else {
-          <div class="my-2 border-t border-gray-100 mx-1"></div>
-        }
-
-        @for (item of managementNav; track item.route) {
-          <a
-            [routerLink]="item.route"
-            routerLinkActive="active-link"
-            [routerLinkActiveOptions]="{ exact: false }"
-            class="nav-link"
-            [class.expanded]="!collapsed()"
-            [attr.data-tip]="item.label"
-            [title]="collapsed() ? item.label : ''"
-          >
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
-              [innerHTML]="item.iconPath">
-            </svg>
+            <lucide-icon [img]="item.icon" class="nav-icon"></lucide-icon>
+            
             @if (!collapsed()) {
               <span class="nav-label text-sm font-medium whitespace-nowrap">{{ item.label }}</span>
             }
@@ -267,50 +217,47 @@ export class SidebarComponent {
   collapsed = signal(false);
   sidebarToggle = output<boolean>();
 
-  readonly mainNav: NavItem[] = [
+  readonly navItems: NavItem[] = [
     {
       route: '/dashboard',
       label: 'Dashboard',
       exact: true,
-      iconPath: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>'
+      icon: LayoutDashboard
     },
     {
       route: '/customers',
       label: 'Customers',
-      iconPath: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'
+      icon: Users
     },
     {
       route: '/users',
       label: 'Users',
-      iconPath: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'
+      icon: UserCheck
     },
     {
       route: '/security',
       label: 'Security',
-      iconPath: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
+      icon: ShieldCheck
     },
-  ];
-
-  readonly managementNav: NavItem[] = [
     {
       route: '/consents',
       label: 'Consent Management',
-      iconPath: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>'
+      icon: FileCheck
     },
     {
       route: '/reports',
       label: 'Reports',
-      iconPath: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>'
+      icon: FileText
     },
     {
       route: '/tpp',
       label: 'TPP Management',
-      iconPath: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>'
+      icon: Server
     },
     {
       route: '/audit',
       label: 'Audit Log',
-      iconPath: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>'
+      icon: ClipboardList
     },
   ];
 
