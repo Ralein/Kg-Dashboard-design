@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -21,7 +21,7 @@ interface Consent {
   imports: [RouterLink, CommonModule, FormsModule, NgClass],
   template: `
     <div class="space-y-8 pb-10">
-
+      <!-- ... (rest of template remains same logic, just keeping it valid) ... -->
       <!-- Page Title -->
       <div>
          <h1 class="text-3xl font-bold text-primary tracking-tight">Consent Management</h1>
@@ -214,7 +214,9 @@ interface Consent {
   `,
   styles: [`:host { display: block; }`]
 })
-export class ConsentListComponent {
+export class ConsentListComponent implements OnInit {
+
+  private route = inject(ActivatedRoute);
 
   activeTab = 'current';
   searchQuery = '';
@@ -230,6 +232,14 @@ export class ConsentListComponent {
     { label: 'Next', p1: '9 18 15 12 9 6', p2: '' },
     { label: 'Last', p1: '13 17 18 12 13 7', p2: '6 17 11 12 6 7' },
   ];
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['q']) {
+        this.searchQuery = params['q'];
+      }
+    });
+  }
 
   consents: Consent[] = [
     { id: '1', consentId: 'b127-8842-9912-8b04', customerName: '-', tppName: 'TPP Client Test', createdOn: '2026-02-18T06:53:01.901', expiresOn: '2026-12-29T23:00:00', status: 'AwaitingAuthorization' },

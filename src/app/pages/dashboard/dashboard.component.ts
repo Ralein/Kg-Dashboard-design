@@ -189,71 +189,142 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void { }
 
+  private createGradient(ctx: CanvasRenderingContext2D, colorStart: string, colorEnd: string) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, colorStart);
+    gradient.addColorStop(1, colorEnd);
+    return gradient;
+  }
+
+  // New helper for "Equalizer" bars
+  private createVerticalGradient(ctx: CanvasRenderingContext2D, stops: string[]) {
+    const gradient = ctx.createLinearGradient(0, 400, 0, 0); // Bottom to Top
+    stops.forEach((color, index) => {
+      gradient.addColorStop(index / (stops.length - 1), color);
+    });
+    return gradient;
+  }
+
   private initCharts(): void {
     if (!this.consentDonutRef) return;
 
-    // 1. Consent Donut
-    new Chart(this.consentDonutRef.nativeElement, {
-      type: 'doughnut',
-      data: {
-        labels: ['Authorized', 'Revoked', 'Suspended', 'Awaiting'],
-        datasets: [{
-          data: [45, 20, 10, 25],
-          backgroundColor: ['#4318FF', '#EE5D50', '#A3AED0', '#FFB547'], // Accent, Danger, Secondary, Warning
-          borderWidth: 0,
-          hoverOffset: 15,
-        }]
-      },
-      options: {
-        ...this.commonOptions,
-        cutout: '75%',
-        plugins: { ...this.commonOptions.plugins, legend: { display: false } }, // Hide legend for cleaner look
-        scales: { x: { display: false }, y: { display: false } }
-      }
-    });
-
-    // 2. TPP Bar
-    new Chart(this.tppBarRef.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: ['Client Test', 'TPP Alpha', 'TPP Beta', 'TPP Gamma'],
-        datasets: [
-          {
-            label: 'Conversations',
-            data: [320, 210, 180, 120],
-            backgroundColor: '#4318FF',
-            borderRadius: 12,
-            barThickness: 28
-          }
-        ]
-      },
-      options: {
-        ...this.commonOptions,
-        maintainAspectRatio: false,
-      }
-    });
-
-    // 3. Quote Bar (Grouped)
-    new Chart(this.quoteBarRef.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [
-          { label: 'Generated', data: [120, 190, 300, 500, 200, 300], backgroundColor: '#4318FF', borderRadius: 8, barPercentage: 0.6 },
-          { label: 'Accepted', data: [100, 150, 250, 420, 180, 250], backgroundColor: '#6AD2FF', borderRadius: 8, barPercentage: 0.6 }
-        ]
-      },
-      options: {
-        ...this.commonOptions,
-        maintainAspectRatio: false,
-        scales: {
-          ...this.commonOptions.scales,
-          y: { ...this.commonOptions.scales.y, display: false } // Hide Y axis for this one
+    // 1. Consent Analysis (The "Reactor" Ring)
+    // Concept: Gauge style with dark track
+    const consentCtx = this.consentDonutRef.nativeElement.getContext('2d');
+    if (consentCtx) {
+      new Chart(this.consentDonutRef.nativeElement, {
+        type: 'doughnut',
+        data: {
+          labels: ['Total', 'Remaining'],
+          datasets: [{
+            data: [1277, 300], // Dummy "Remaining" for full circle effect
+            backgroundColor: [
+              this.createGradient(consentCtx, '#00F0FF', '#0047FF'), // Cyan -> Blue (Active)
+              'rgba(255, 255, 255, 0.05)' // Dark transparent track
+            ],
+            borderWidth: 0,
+            hoverOffset: 0,
+          }]
+        },
+        options: {
+          ...this.commonOptions,
+          cutout: '90%', // Very thin "Reactor" look
+          rotation: -90, // Start at top
+          circumference: 360,
+          plugins: { ...this.commonOptions.plugins, legend: { display: false }, tooltip: { enabled: false } }, // No tooltip for reactor look
+          scales: { x: { display: false }, y: { display: false } }
         }
-      }
-    });
+      });
+    }
 
-    // 4. LOB Pie (Polar Area for variety)
+    // 2. TPP Request Volume (The "Pulse" Line)
+    // Concept: High speed data stream with "Echo"
+    const tppCtx = this.tppBarRef.nativeElement.getContext('2d');
+    if (tppCtx) {
+      const mainGradient = tppCtx.createLinearGradient(0, 0, 0, 400);
+      mainGradient.addColorStop(0, 'rgba(0, 240, 255, 0.5)');
+      mainGradient.addColorStop(1, 'rgba(0, 240, 255, 0)');
+
+      new Chart(this.tppBarRef.nativeElement, {
+        type: 'line',
+        data: {
+          labels: ['Client Test', 'TPP Alpha', 'TPP Beta', 'TPP Gamma', 'TPP Delta', 'TPP Epsilon'],
+          datasets: [
+            {
+              // Main Pulse
+              label: 'Current',
+              data: [320, 550, 400, 700, 450, 600],
+              borderColor: '#00F0FF', // Cyan Neon
+              backgroundColor: mainGradient,
+              borderWidth: 3,
+              pointRadius: 0,
+              pointHoverRadius: 8,
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: '#00F0FF',
+              fill: true,
+              tension: 0.5, // Super smooth
+              order: 1
+            },
+            {
+              // Echo / Trail (Ghost line)
+              label: 'Echo',
+              data: [180, 400, 300, 550, 350, 480],
+              borderColor: 'rgba(0, 240, 255, 0.2)',
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: false,
+              tension: 0.5,
+              order: 2
+            }
+          ]
+        },
+        options: {
+          ...this.commonOptions,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: { ...this.commonOptions.scales.x, grid: { display: false } },
+            y: { ...this.commonOptions.scales.y, display: false } // Minimalist
+          }
+        }
+      });
+    }
+
+    // 3. Quote Traffic (The "Equalizer")
+    // Concept: Digital Audio Visualizer
+    const quoteCtx = this.quoteBarRef.nativeElement.getContext('2d');
+    if (quoteCtx) {
+      // Multi-stop gradient like an LED meter
+      const eqGradient = this.createVerticalGradient(quoteCtx, ['#4318FF', '#FF0080', '#FFB547']); // Blue -> Pink -> Orange
+
+      new Chart(this.quoteBarRef.nativeElement, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+          datasets: [
+            {
+              label: 'Traffic',
+              data: [40, 65, 85, 45, 90, 55, 70, 30, 60, 95],
+              backgroundColor: eqGradient,
+              borderRadius: 2,
+              barPercentage: 0.4,
+              categoryPercentage: 0.8
+            }
+          ]
+        },
+        options: {
+          ...this.commonOptions,
+          maintainAspectRatio: false,
+          scales: {
+            x: { ...this.commonOptions.scales.x, grid: { display: false } },
+            y: { ...this.commonOptions.scales.y, display: false }
+          },
+          plugins: { ...this.commonOptions.plugins, legend: { display: false } }
+        }
+      });
+    }
+
+    // 4. LOB Pie (Unchanged)
     new Chart(this.lobPieRef.nativeElement, {
       type: 'polarArea',
       data: {
@@ -266,7 +337,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       },
       options: {
         ...this.commonOptions,
-        scales: { r: { grid: { display: false }, ticks: { display: false } } }, // Remove polar grid
+        scales: { r: { grid: { display: false }, ticks: { display: false } } },
         plugins: { ...this.commonOptions.plugins, legend: { position: 'right' } }
       }
     });

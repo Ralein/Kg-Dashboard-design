@@ -7,31 +7,35 @@ import { HeaderComponent } from './components/header/header.component';
   selector: 'app-root',
   imports: [RouterOutlet, SidebarComponent, HeaderComponent],
   template: `
-    <div class="min-h-screen bg-bg">
-      <!-- Header (Fixed Top) -->
-      <app-header />
+    <div class="min-h-screen bg-bg-app font-sans">
+      
+      <!-- Sidebar (Fixed Left) -->
+      <app-sidebar (sidebarToggle)="onSidebarToggle($event)" />
 
-      <!-- Sidebar (Fixed Left, Below Header) -->
-      <app-sidebar 
-        class="fixed left-0 top-16 bottom-0 z-40"
-        (sidebarToggle)="onSidebarToggle($event)" 
-      />
+      <!-- Header (Fixed Top, right of sidebar) -->
+      <app-header [sidebarCollapsed]="sidebarCollapsed()" />
 
       <!-- Main Content -->
       <div
-        class="flex flex-col min-h-screen transition-all duration-300 pt-16"
-        [class.pl-60]="!sidebarCollapsed()"
-        [class.pl-16]="sidebarCollapsed()"
+        class="flex flex-col min-h-screen transition-all duration-300 pt-24"
+        [class.pl-64]="!sidebarCollapsed()"
+        [class.pl-20]="sidebarCollapsed()"
       >
-        <main class="flex-1 p-6 overflow-x-hidden">
+        <main class="flex-1 px-8 pb-8 animate-fade-in-up">
           <router-outlet />
         </main>
       </div>
+
     </div>
   `,
   styles: [`
-    :host {
-      display: block;
+    :host { display: block; }
+    .animate-fade-in-up {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   `]
 })
