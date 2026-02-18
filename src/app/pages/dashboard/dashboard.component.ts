@@ -2,7 +2,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, OnInit, signal } from 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StatsCardComponent } from '../../components/stats-card/stats-card.component';
-import { Chart, registerables } from 'chart.js';
+import { Chart, registerables, ChartConfiguration } from 'chart.js';
 
 Chart.register(...registerables);
 
@@ -11,214 +11,136 @@ Chart.register(...registerables);
   standalone: true,
   imports: [StatsCardComponent, CommonModule, FormsModule],
   template: `
-    <style>
-      @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(16px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes chartReveal {
-        from { opacity: 0; transform: translateY(20px) scale(0.98); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
-      }
-
-      .fade-up     { animation: fadeUp     0.45s cubic-bezier(.22,1,.36,1) both; }
-      .chart-in    { animation: chartReveal 0.5s  cubic-bezier(.22,1,.36,1) both; }
-
-      /* chart card */
-      .chart-card {
-        border-radius: 20px;
-        background: #fff;
-        transition: box-shadow 0.22s, transform 0.22s;
-        box-shadow: 0 1px 3px rgba(0,0,0,.05), 0 4px 16px rgba(30,42,90,.05);
-        position: relative;
-        overflow: hidden;
-      }
-      .chart-card:hover {
-        box-shadow: 0 6px 28px rgba(30,42,90,.12);
-        transform: translateY(-2px);
-      }
-
-      .chart-title {
-        font-size: 13px;
-        font-weight: 700;
-        color: #1e2a5a;
-        line-height: 1.3;
-      }
-
-      /* selectors */
-      .filter-select {
-        transition: border-color 0.2s, box-shadow 0.2s;
-      }
-      .filter-select:focus {
-        outline: none;
-        border-color: #1e2a5a;
-        box-shadow: 0 0 0 3px rgba(30,42,90,.1);
-      }
-
-      /* view link */
-      .view-link {
-        transition: color 0.15s, letter-spacing 0.15s;
-        text-decoration: none;
-        font-size: 11px;
-        color: #4318FF;
-        font-weight: 600;
-      }
-      .view-link:hover { letter-spacing: 0.03em; text-decoration: underline; }
-
-      /* section label */
-      .section-label {
-        font-size: 9px;
-        font-weight: 700;
-        letter-spacing: .14em;
-        text-transform: uppercase;
-        color: #b0b9cc;
-      }
-    </style>
-
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-8 pb-8">
 
       <!-- Header -->
-      <div class="fade-up flex items-center justify-between" style="animation-delay:0ms">
-        <h1 class="text-2xl font-bold text-primary">Dashboard</h1>
+      <div class="flex items-center justify-between">
+        <div>
+           <h1 class="text-3xl font-bold text-primary tracking-tight">Dashboard Overview</h1>
+           <p class="text-secondary text-sm mt-1 font-medium">Welcome back, here's what's happening today.</p>
+        </div>
+        
         @if (isLoading()) {
-          <div class="skeleton h-4 w-32 rounded"></div>
+          <div class="h-10 w-32 bg-white/20 rounded-xl animate-pulse"></div>
         } @else {
-          <span class="section-label">Overview · Feb 2026</span>
+          <div class="glass-input px-4 py-2 flex items-center gap-2 text-primary font-bold text-sm">
+             <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+             Live Updates
+          </div>
         }
       </div>
 
       <!-- Stats Cards -->
-      <div class="fade-up grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5" style="animation-delay:60ms">
-        <app-stats-card title="ACTIVE CONSENTS"    count="527"   iconType="chart"       iconBgColor="bg-[#E0F7FA]" iconColor="text-[#00BCD4]" animDelay="0ms"   [loading]="isLoading()"></app-stats-card>
-        <app-stats-card title="REVOKED CONSENTS"   count="98"    iconType="alert"       iconBgColor="bg-[#FFF3E0]" iconColor="text-[#FF9800]" animDelay="60ms"  [loading]="isLoading()"></app-stats-card>
-        <app-stats-card title="EXPIRED CONSENTS"   count="30469" iconType="time"        iconBgColor="bg-[#F3E5F5]" iconColor="text-[#9C27B0]" animDelay="120ms" [loading]="isLoading()"></app-stats-card>
-        <app-stats-card title="SUSPENDED CONSENTS" count="0"     iconType="pause"       iconBgColor="bg-[#E8EAF6]" iconColor="text-[#3F51B5]" animDelay="180ms" [loading]="isLoading()"></app-stats-card>
-        <app-stats-card title="QUOTES GENERATED"   count="2642"  iconType="description" iconBgColor="bg-[#E1F5FE]" iconColor="text-[#03A9F4]" animDelay="240ms" [loading]="isLoading()"></app-stats-card>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
+        <app-stats-card title="Active Consents"    count="527"   iconType="chart"       iconBgColor="bg-cyan-100" iconColor="text-cyan-600" animDelay="0ms"   [loading]="isLoading()"></app-stats-card>
+        <app-stats-card title="Revoked Consents"   count="98"    iconType="alert"       iconBgColor="bg-orange-100" iconColor="text-orange-500" animDelay="100ms"  [loading]="isLoading()"></app-stats-card>
+        <app-stats-card title="Expired Consents"   count="30,469" iconType="time"        iconBgColor="bg-purple-100" iconColor="text-purple-600" animDelay="200ms" [loading]="isLoading()"></app-stats-card>
+        <app-stats-card title="Suspended Consents" count="0"     iconType="pause"       iconBgColor="bg-blue-100" iconColor="text-blue-600" animDelay="300ms" [loading]="isLoading()"></app-stats-card>
+        <app-stats-card title="Quotes Generated"   count="2,642"  iconType="description" iconBgColor="bg-info" iconColor="text-info" animDelay="400ms" [loading]="isLoading()"></app-stats-card>
       </div>
 
-      <!-- Filters -->
-      <div class="fade-up flex justify-end gap-3" style="animation-delay:100ms">
+      <!-- Filters Row -->
+      <div class="flex justify-end gap-4 animate-spring" style="animation-delay: 200ms">
         @if (isLoading()) {
-          <div class="skeleton h-10 w-24 rounded-lg"></div>
-          <div class="skeleton h-10 w-32 rounded-lg"></div>
+          <div class="h-10 w-24 bg-white/30 rounded-xl animate-pulse"></div>
+          <div class="h-10 w-32 bg-white/30 rounded-xl animate-pulse"></div>
         } @else {
-          <div class="flex flex-col gap-1">
-            <label class="section-label">Select Year</label>
-            <select class="filter-select rounded-lg border border-border bg-white px-3 py-2 text-sm text-primary cursor-pointer">
+          <div class="relative group">
+            <select class="glass-input appearance-none pl-4 pr-10 py-2.5 text-sm font-bold text-primary cursor-pointer hover:bg-white/60">
               <option>2026</option>
               <option>2025</option>
             </select>
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-secondary">
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+            </div>
           </div>
-          <div class="flex flex-col gap-1">
-            <label class="section-label">Select Month</label>
-            <select class="filter-select rounded-lg border border-border bg-white px-3 py-2 text-sm text-primary cursor-pointer">
+          <div class="relative group">
+            <select class="glass-input appearance-none pl-4 pr-10 py-2.5 text-sm font-bold text-primary cursor-pointer hover:bg-white/60">
               <option>February</option>
               <option>January</option>
             </select>
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-secondary">
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+            </div>
           </div>
         }
       </div>
 
-      <!-- Skeleton Charts Layout -->
+      <!-- Main Charts Layout -->
       @if (isLoading()) {
-        <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <div class="chart-card p-5 h-[310px] flex flex-col">
-             <div class="flex justify-between mb-4">
-               <div class="skeleton h-4 w-48 rounded"></div>
-             </div>
-             <div class="flex-1 flex items-center justify-center">
-               <div class="skeleton skeleton-circle h-48 w-48"></div>
-             </div>
+        <!-- SKELETON LAYOUT -->
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div class="glass-card h-[340px] p-6 flex flex-col items-center justify-center">
+             <div class="w-32 h-32 rounded-full border-4 border-white/20 animate-spin border-t-accent"></div>
           </div>
-          <div class="chart-card p-5 h-[310px] flex flex-col">
-             <div class="flex justify-between mb-4">
-               <div class="skeleton h-4 w-48 rounded"></div>
-             </div>
-             <div class="flex-1 flex items-end justify-center gap-4 px-8 pb-4">
-               <div class="skeleton h-32 w-12 rounded-t"></div>
-               <div class="skeleton h-48 w-12 rounded-t"></div>
-               <div class="skeleton h-24 w-12 rounded-t"></div>
-             </div>
-          </div>
-        </div>
-        <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
-          <div class="chart-card p-5 h-[310px] flex flex-col">
-            <div class="mb-4"><div class="skeleton h-4 w-40 rounded"></div></div>
-            <div class="flex-1 skeleton rounded-lg"></div>
-          </div>
-          <div class="chart-card p-5 h-[310px] flex flex-col">
-            <div class="mb-4"><div class="skeleton h-4 w-40 rounded"></div></div>
-            <div class="flex-1 flex items-center justify-center">
-               <div class="skeleton skeleton-circle h-40 w-40"></div>
-            </div>
-          </div>
-          <div class="chart-card p-5 h-[310px] flex flex-col">
-            <div class="mb-4"><div class="skeleton h-4 w-40 rounded"></div></div>
-            <div class="flex-1 flex items-center justify-center">
-               <div class="skeleton skeleton-circle h-40 w-40"></div>
-            </div>
+          <div class="glass-card h-[340px] p-6 flex items-end justify-center gap-4">
+             <div class="w-12 h-32 bg-white/20 rounded-t-lg animate-pulse"></div>
+             <div class="w-12 h-48 bg-white/20 rounded-t-lg animate-pulse delay-75"></div>
+             <div class="w-12 h-24 bg-white/20 rounded-t-lg animate-pulse delay-150"></div>
           </div>
         </div>
       } @else {
-        <!-- Real Charts -->
-        <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <!-- Consent Analysis -->
-          <div class="chart-card chart-in p-5" style="height:310px; animation-delay:140ms">
-            <div class="mb-3 flex items-center justify-between">
-              <p class="chart-title">Consent Analysis — Overview</p>
+        <!-- REAL CHARTS -->
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            
+            <!-- 1. Consent Analysis (Donut) -->
+            <div class="glass-card p-6 animate-spring flex flex-col" style="animation-delay: 300ms">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-bold text-primary">Consent Analysis</h3>
+                    <button class="p-1.5 rounded-lg hover:bg-bg-app text-secondary hover:text-accent transition-colors">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                    </button>
+                </div>
+                <div class="relative flex-1 flex items-center justify-center">
+                    <canvas #consentDonut></canvas>
+                    <!-- Inner Text Overlay -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span class="text-3xl font-bold text-primary">1,277</span>
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest">Total</span>
+                    </div>
+                </div>
             </div>
-            <div style="height:240px" class="flex justify-center">
-              <canvas #consentDonut></canvas>
-            </div>
-          </div>
 
-          <!-- TPP Bar -->
-          <div class="chart-card chart-in p-5" style="height:310px; animation-delay:190ms">
-            <div class="mb-3 flex items-center justify-between">
-              <p class="chart-title">TPP — Wise Consent Requests</p>
+            <!-- 2. TPP Consents (Bar) -->
+            <div class="glass-card p-6 animate-spring flex flex-col lg:col-span-2" style="animation-delay: 400ms">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-bold text-primary">TPP Request Volume</h3>
+                     <span class="text-xs font-bold text-success bg-success/10 px-2 py-1 rounded-md">+12.5% vs last month</span>
+                </div>
+                <div class="flex-1">
+                    <canvas #tppBar></canvas>
+                </div>
             </div>
-            <div style="height:240px" class="flex justify-center">
-              <canvas #tppBar></canvas>
-            </div>
-          </div>
-        </div>
 
-        <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
-          <!-- Quote Bar -->
-          <div class="chart-card chart-in p-5 lg:col-span-1" style="height:310px; animation-delay:240ms">
-            <div class="mb-3">
-              <p class="chart-title">Quote Generation vs Acceptance</p>
-              <span class="section-label">Monthly</span>
+            <!-- 3. Quote Generation (Line/Bar) -->
+            <div class="glass-card p-6 animate-spring flex flex-col lg:col-span-2" style="animation-delay: 500ms">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-primary">Quote Traffic</h3>
+                        <p class="text-xs text-secondary mt-0.5">Generation vs Acceptance rate</p>
+                    </div>
+                     <div class="flex gap-2">
+                        <span class="w-3 h-3 rounded-full bg-accent"></span>
+                        <span class="w-3 h-3 rounded-full bg-accent-light"></span>
+                     </div>
+                </div>
+                <div class="flex-1 w-full h-[250px]">
+                    <canvas #quoteBar></canvas>
+                </div>
             </div>
-            <div style="height:230px" class="flex justify-center">
-              <canvas #quoteBar></canvas>
-            </div>
-          </div>
 
-          <!-- LOB Pie -->
-          <div class="chart-card chart-in p-5 lg:col-span-1" style="height:310px; animation-delay:290ms">
-            <div class="mb-3 flex items-center justify-between">
-              <p class="chart-title">Consents Distribution by LOB</p>
-              <a class="view-link cursor-pointer">View →</a>
+            <!-- 4. LOB Distribution (Polar) -->
+             <div class="glass-card p-6 animate-spring flex flex-col" style="animation-delay: 600ms">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-primary">Line of Business</h3>
+                </div>
+                <div class="flex-1 flex items-center justify-center">
+                    <canvas #lobPie></canvas>
+                </div>
             </div>
-            <div style="height:240px" class="flex justify-center">
-              <canvas #lobPie></canvas>
-            </div>
-          </div>
-
-          <!-- API Pie -->
-          <div class="chart-card chart-in p-5 lg:col-span-1" style="height:310px; animation-delay:340ms">
-            <div class="mb-3 flex items-center justify-between">
-              <p class="chart-title">API Success Rate</p>
-              <a class="view-link cursor-pointer">View →</a>
-            </div>
-            <div style="height:240px" class="flex justify-center">
-              <canvas #apiPie></canvas>
-            </div>
-          </div>
+            
         </div>
       }
-
     </div>
   `
 })
@@ -227,207 +149,125 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('tppBar') tppBarRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('quoteBar') quoteBarRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lobPie') lobPieRef!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('apiPie') apiPieRef!: ElementRef<HTMLCanvasElement>;
 
   isLoading = signal(true);
 
-  // shared tooltip style
-  private readonly tooltip = {
-    backgroundColor: '#1e2a5a',
-    titleColor: '#fff',
-    bodyColor: 'rgba(255,255,255,0.85)',
-    borderColor: 'rgba(255,255,255,0.1)',
-    borderWidth: 1,
-    padding: 10,
-    cornerRadius: 8,
-    displayColors: true,
-    usePointStyle: true,
-  };
-
-  private readonly legendLabels = {
-    padding: 12,
-    usePointStyle: true,
-    pointStyle: 'rectRounded' as const,
-    boxWidth: 8,
-    font: { size: 10, family: 'system-ui' },
-    color: '#4a5568',
+  // Shared Chart Options
+  private readonly commonOptions: any = {
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: { usePointStyle: true, pointStyle: 'circle', padding: 20, font: { family: 'DM Sans', size: 11, weight: 'bold' }, color: '#A3AED0' }
+      },
+      tooltip: {
+        backgroundColor: '#1B254B',
+        titleColor: '#fff',
+        bodyColor: '#A3AED0',
+        padding: 14,
+        cornerRadius: 12,
+        displayColors: { boxWidth: 8 },
+        titleFont: { family: 'DM Sans', size: 13, weight: 'bold' },
+        bodyFont: { family: 'DM Sans', size: 12 },
+        borderColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1,
+      }
+    },
+    scales: {
+      x: { grid: { display: false, drawBorder: false }, ticks: { color: '#A3AED0', font: { family: 'DM Sans', weight: '500' } } },
+      y: { grid: { color: 'rgba(163, 174, 208, 0.1)', borderDash: [5, 5], drawBorder: false }, ticks: { color: '#A3AED0', padding: 10, font: { family: 'DM Sans', weight: '500' } } }
+    }
   };
 
   ngOnInit(): void {
-    // Simulate initial data loading
     setTimeout(() => {
       this.isLoading.set(false);
-      // Initialize charts after loading and view update
-      setTimeout(() => this.initCharts(), 50);
-    }, 1800);
+      setTimeout(() => this.initCharts(), 100);
+    }, 1500);
   }
 
-  ngAfterViewInit(): void {
-    // Initial charts init moved to ngOnInit after loading
-  }
+  ngAfterViewInit(): void { }
 
   private initCharts(): void {
-    // Stagger chart creation slightly so entrance animations feel sequential
-    if (!this.consentDonutRef) return; // Guard against view not ready
+    if (!this.consentDonutRef) return;
 
-    setTimeout(() => this.createConsentDonut(), 100);
-    setTimeout(() => this.createTppBar(), 180);
-    setTimeout(() => this.createQuoteBar(), 260);
-    setTimeout(() => this.createLobPie(), 340);
-    setTimeout(() => this.createApiPie(), 420);
-  }
-
-  private createConsentDonut(): void {
-    if (!this.consentDonutRef?.nativeElement) return;
-    const ctx = this.consentDonutRef.nativeElement.getContext('2d');
-    if (!ctx) return;
-    new Chart(ctx, {
+    // 1. Consent Donut
+    new Chart(this.consentDonutRef.nativeElement, {
       type: 'doughnut',
       data: {
-        labels: ['Authorized', 'Revoked', 'Suspended', 'Awaiting', 'Rejected', 'Expired'],
+        labels: ['Authorized', 'Revoked', 'Suspended', 'Awaiting'],
         datasets: [{
-          data: [400, 300, 100, 200, 200, 50],
-          backgroundColor: ['#05CD99', '#EE5D50', '#A0AEC0', '#4318FF', '#F56565', '#F5A623'],
-          borderWidth: 3,
-          borderColor: '#fff',
-          hoverOffset: 6,
+          data: [45, 20, 10, 25],
+          backgroundColor: ['#4318FF', '#EE5D50', '#A3AED0', '#FFB547'], // Accent, Danger, Secondary, Warning
+          borderWidth: 0,
+          hoverOffset: 15,
         }]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '72%',
-        animation: { animateRotate: true, animateScale: true, duration: 900, easing: 'easeInOutQuart' },
-        plugins: {
-          legend: { position: 'bottom', labels: this.legendLabels },
-          tooltip: this.tooltip as any,
-        },
+        ...this.commonOptions,
+        cutout: '75%',
+        plugins: { ...this.commonOptions.plugins, legend: { display: false } }, // Hide legend for cleaner look
+        scales: { x: { display: false }, y: { display: false } }
       }
     });
-  }
 
-  private createTppBar(): void {
-    if (!this.tppBarRef?.nativeElement) return;
-    const ctx = this.tppBarRef.nativeElement.getContext('2d');
-    if (!ctx) return;
-    new Chart(ctx, {
+    // 2. TPP Bar
+    new Chart(this.tppBarRef.nativeElement, {
       type: 'bar',
       data: {
-        labels: ['TPP Client Test', 'TPP A', 'TPP B'],
+        labels: ['Client Test', 'TPP Alpha', 'TPP Beta', 'TPP Gamma'],
         datasets: [
-          { label: 'Generated', data: [370, 50, 30], backgroundColor: '#6AD2FF', borderRadius: 6, barPercentage: 0.55, categoryPercentage: 0.75 },
-          { label: 'Accepted', data: [280, 20, 10], backgroundColor: '#4318FF', borderRadius: 6, barPercentage: 0.55, categoryPercentage: 0.75 },
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { duration: 900, easing: 'easeInOutQuart' },
-        plugins: {
-          legend: { position: 'bottom', labels: { ...this.legendLabels, pointStyle: 'circle' as const } },
-          tooltip: this.tooltip as any,
-        },
-        scales: {
-          y: {
-            beginAtZero: true, max: 400,
-            ticks: { stepSize: 100, font: { size: 10 }, color: '#b0b9cc' },
-            grid: { color: '#f0f2f7', drawTicks: false },
-            border: { display: false },
-          },
-          x: {
-            ticks: { font: { size: 10 }, color: '#b0b9cc' },
-            grid: { display: false },
-            border: { display: false },
+          {
+            label: 'Conversations',
+            data: [320, 210, 180, 120],
+            backgroundColor: '#4318FF',
+            borderRadius: 12,
+            barThickness: 28
           }
-        }
-      }
-    });
-  }
-
-  private createQuoteBar(): void {
-    if (!this.quoteBarRef?.nativeElement) return;
-    const ctx = this.quoteBarRef.nativeElement.getContext('2d');
-    if (!ctx) return;
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-        datasets: [
-          { label: 'Quote Generation', data: [100, 480, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], backgroundColor: '#4318FF', borderRadius: 4, barPercentage: 0.55 },
-          { label: 'Quote Acceptance', data: [80, 290, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], backgroundColor: '#6AD2FF', borderRadius: 4, barPercentage: 0.55 },
         ]
       },
       options: {
-        responsive: true,
+        ...this.commonOptions,
         maintainAspectRatio: false,
-        animation: { duration: 900, easing: 'easeInOutQuart' },
-        plugins: {
-          legend: {
-            position: 'top', align: 'end',
-            labels: { ...this.legendLabels, pointStyle: 'circle' as const, padding: 8 },
-          },
-          tooltip: this.tooltip as any,
-        },
+      }
+    });
+
+    // 3. Quote Bar (Grouped)
+    new Chart(this.quoteBarRef.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [
+          { label: 'Generated', data: [120, 190, 300, 500, 200, 300], backgroundColor: '#4318FF', borderRadius: 8, barPercentage: 0.6 },
+          { label: 'Accepted', data: [100, 150, 250, 420, 180, 250], backgroundColor: '#6AD2FF', borderRadius: 8, barPercentage: 0.6 }
+        ]
+      },
+      options: {
+        ...this.commonOptions,
+        maintainAspectRatio: false,
         scales: {
-          y: { beginAtZero: true, ticks: { display: false }, grid: { display: false }, border: { display: false } },
-          x: { ticks: { font: { size: 8 }, color: '#b0b9cc' }, grid: { display: false }, border: { display: false } }
+          ...this.commonOptions.scales,
+          y: { ...this.commonOptions.scales.y, display: false } // Hide Y axis for this one
         }
       }
     });
-  }
 
-  private createLobPie(): void {
-    if (!this.lobPieRef?.nativeElement) return;
-    const ctx = this.lobPieRef.nativeElement.getContext('2d');
-    if (!ctx) return;
-    new Chart(ctx, {
-      type: 'pie',
+    // 4. LOB Pie (Polar Area for variety)
+    new Chart(this.lobPieRef.nativeElement, {
+      type: 'polarArea',
       data: {
-        labels: ['MOTOR', 'MEDICAL', 'TRAVEL', 'HOME'],
+        labels: ['Motor', 'Medical', 'Travel', 'Home'],
         datasets: [{
-          data: [65, 5, 25, 5],
-          backgroundColor: ['#6AD2FF', '#E0E0E0', '#05CD99', '#1e2a5a'],
-          borderWidth: 3,
-          borderColor: '#fff',
-          hoverOffset: 5,
+          data: [150, 80, 45, 30],
+          backgroundColor: ['rgba(67, 24, 255, 0.7)', 'rgba(5, 205, 153, 0.7)', 'rgba(255, 181, 71, 0.7)', 'rgba(238, 93, 80, 0.7)'],
+          borderWidth: 0
         }]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { animateRotate: true, duration: 900, easing: 'easeInOutQuart' },
-        plugins: {
-          legend: { position: 'bottom', labels: this.legendLabels },
-          tooltip: this.tooltip as any,
-        },
-      }
-    });
-  }
-
-  private createApiPie(): void {
-    if (!this.apiPieRef?.nativeElement) return;
-    const ctx = this.apiPieRef.nativeElement.getContext('2d');
-    if (!ctx) return;
-    new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: ['Success (94.2%)', 'Failure (5.8%)'],
-        datasets: [{
-          data: [94.2, 5.8],
-          backgroundColor: ['#05CD99', '#EE5D50'],
-          borderWidth: 3,
-          borderColor: '#fff',
-          hoverOffset: 5,
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { animateRotate: true, duration: 900, easing: 'easeInOutQuart' },
-        plugins: {
-          legend: { position: 'bottom', labels: this.legendLabels },
-          tooltip: this.tooltip as any,
-        },
+        ...this.commonOptions,
+        scales: { r: { grid: { display: false }, ticks: { display: false } } }, // Remove polar grid
+        plugins: { ...this.commonOptions.plugins, legend: { position: 'right' } }
       }
     });
   }

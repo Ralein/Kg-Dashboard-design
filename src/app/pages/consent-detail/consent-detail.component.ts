@@ -20,437 +20,191 @@ interface Section {
   standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
-    <style>
-      @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(14px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes expandDown {
-        from { opacity: 0; transform: translateY(-6px); max-height: 0; }
-        to   { opacity: 1; transform: translateY(0);   max-height: 600px; }
-      }
-      @keyframes copyPop {
-        0%   { transform: scale(1); }
-        40%  { transform: scale(1.3); }
-        100% { transform: scale(1); }
-      }
-      @keyframes checkFade {
-        0%   { opacity: 0; transform: scale(0.6); }
-        40%  { opacity: 1; transform: scale(1.2); }
-        100% { opacity: 1; transform: scale(1); }
-      }
+    <div class="space-y-8 pb-10">
 
-      .fade-up  { animation: fadeUp 0.4s cubic-bezier(.22,1,.36,1) both; }
-      .expand   { animation: expandDown 0.28s cubic-bezier(.22,1,.36,1) both; overflow: hidden; }
-
-      /* ── Banner card ── */
-      .info-banner {
-        transition: box-shadow 0.2s;
-        box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(30,42,90,.05);
-      }
-
-      /* ── Meta field ── */
-      .meta-label {
-        font-size: 10px;
-        font-weight: 600;
-        letter-spacing: .09em;
-        text-transform: uppercase;
-        color: #9ca3af;
-        margin-bottom: 3px;
-      }
-      .meta-value {
-        font-size: 13px;
-        font-weight: 600;
-        color: #1a202c;
-        line-height: 1.4;
-      }
-
-      /* ── Copy button ── */
-      .copy-btn {
-        transition: color 0.15s, transform 0.15s;
-        cursor: pointer;
-      }
-      .copy-btn:hover  { color: #1e2a5a; }
-      .copy-btn.popped { animation: copyPop 0.3s ease; }
-
-      /* ── Suspend button ── */
-      .suspend-btn {
-        transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
-      }
-      .suspend-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 14px rgba(239,68,68,0.3);
-      }
-      .suspend-btn:active { transform: scale(0.97); }
-
-      /* ── Back button ── */
-      .back-btn {
-        transition: background 0.15s, border-color 0.15s, transform 0.15s;
-      }
-      .back-btn:hover {
-        background: #f3f4f6;
-        border-color: #d1d5db;
-        transform: translateX(-2px);
-      }
-
-      /* ── Policy card ── */
-      .policy-card {
-        transition: box-shadow 0.2s, transform 0.2s;
-      }
-      .policy-card:hover {
-        box-shadow: 0 4px 18px rgba(30,42,90,0.1);
-        transform: translateY(-2px);
-      }
-
-      /* ── Accordion ── */
-      .accordion-header {
-        transition: background 0.15s;
-        position: relative;
-      }
-      .accordion-header:hover { background: #f9fafb; }
-
-      .accordion-chevron {
-        transition: transform 0.25s cubic-bezier(.22,1,.36,1), color 0.15s;
-        color: #9ca3af;
-      }
-      .accordion-chevron.open {
-        transform: rotate(180deg);
-        color: #1e2a5a;
-      }
-
-      .accordion-body {
-        animation: expandDown 0.25s cubic-bezier(.22,1,.36,1) both;
-        overflow: hidden;
-      }
-
-      /* ── Policy badge ── */
-      .policy-badge {
-        transition: box-shadow 0.18s, transform 0.15s;
-      }
-      .policy-badge:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(30,42,90,0.25);
-      }
-
-      /* ── List items ── */
-      .info-item {
-        transition: background 0.15s, padding-left 0.15s;
-        border-radius: 6px;
-        padding: 3px 6px;
-        margin-left: -6px;
-      }
-      .info-item:hover {
-        background: rgba(30,42,90,0.04);
-        padding-left: 10px;
-      }
-
-      /* ── Divider ── */
-      .section-divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, #e5e7eb 20%, #e5e7eb 80%, transparent);
-        margin: 4px 0;
-      }
-
-      /* status pill */
-      .status-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 3px 10px;
-        border-radius: 99px;
-        font-size: 12px;
-        font-weight: 600;
-      }
-    </style>
-
-    <div class="space-y-6">
-
-      <!-- ── Page Title ── -->
-      <h1 class="fade-up text-2xl font-bold text-primary" style="animation-delay:0ms">
-        Consent Details
-      </h1>
-
-      <!-- ── Info Banner ── -->
-      <div class="fade-up info-banner bg-card rounded-xl border border-border overflow-hidden" style="animation-delay:60ms">
-
-        <!-- Top Row -->
-        <div class="bg-accent/5 border-b border-accent/20 px-6 py-5 flex items-start justify-between gap-4">
-          <div class="grid grid-cols-5 gap-6 flex-1">
-
-            <!-- Consent ID -->
-            <div>
-              <p class="meta-label">Consent ID</p>
-              <p class="meta-value flex items-center gap-1.5">
-                <span class="font-mono text-xs tracking-wide">7164XXXXXXX1277</span>
-                <button
-                  class="copy-btn text-gray-400"
-                  [class.popped]="copied"
-                  (click)="copyId()"
-                  aria-label="Copy consent ID"
-                >
-                  @if (!copied) {
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                    </svg>
-                  } @else {
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"
-                      style="animation: checkFade 0.3s ease both">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                  }
-                </button>
-              </p>
-            </div>
-
-            <!-- Status -->
-            <div>
-              <p class="meta-label">Status</p>
-              <span class="status-pill bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 mt-1">
-                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block"></span>
-                Authorized
-              </span>
-            </div>
-
-            <!-- TPP Name -->
-            <div>
-              <p class="meta-label">TPP Name</p>
-              <p class="meta-value">TPP Client Test</p>
-            </div>
-
-            <!-- Consent Type -->
-            <div>
-              <p class="meta-label">Consent Type</p>
-              <p class="meta-value">Long-Lived</p>
-            </div>
-
-            <!-- Emirates ID -->
-            <div>
-              <p class="meta-label">Emirates ID</p>
-              <p class="meta-value font-mono text-xs tracking-wide">784-1983-3183718-1</p>
-            </div>
-          </div>
-
-          <!-- Suspend button -->
-          <button
-            class="suspend-btn bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-full text-sm font-semibold
-                   flex items-center gap-2 cursor-pointer shrink-0 shadow-sm"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-              stroke-linecap="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="15" y1="9" x2="9" y2="15"/>
-              <line x1="9" y1="9" x2="15" y2="15"/>
-            </svg>
-            Suspend
-          </button>
-        </div>
-
-        <!-- Bottom Row -->
-        <div class="px-6 py-4 flex items-center justify-between gap-4">
-          <div class="grid grid-cols-5 gap-6 flex-1">
-            <div>
-              <p class="meta-label">Email</p>
-              <p class="meta-value text-xs">travelopen&#64;gmail.com</p>
-            </div>
-            <div>
-              <p class="meta-label">Base Consent ID</p>
-              <p class="meta-value font-mono text-xs tracking-wide">8dfbXXXXXXXbce1</p>
-            </div>
-            <div>
-              <p class="meta-label">Created Date</p>
-              <p class="meta-value">18 Feb 2026</p>
-            </div>
-            <div>
-              <p class="meta-label">Expiration Date</p>
-              <p class="meta-value">29 Dec 2026</p>
-            </div>
-            <div>
-              <p class="meta-label">Authorization Channel</p>
-              <p class="meta-value">Web</p>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="flex items-center gap-3 shrink-0">
-            <a class="text-sm font-medium text-info hover:underline cursor-pointer transition-colors">
-              List of Updates
-            </a>
-            <a routerLink="/consents"
-              class="back-btn border border-border px-5 py-2 rounded-lg text-sm font-medium cursor-pointer text-text
-                     flex items-center gap-1.5">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round">
-                <polyline points="15 18 9 12 15 6"/>
-              </svg>
-              Back
-            </a>
-          </div>
-        </div>
+      <!-- Page Title -->
+      <div class="flex items-center justify-between">
+         <div>
+            <h1 class="text-3xl font-bold text-primary tracking-tight">Consent Details</h1>
+            <p class="text-secondary text-sm mt-1 font-medium">Detailed view of authorization #7164...1277</p>
+         </div>
+         
+         <a routerLink="/consents" class="btn-primary bg-white/50 text-primary hover:bg-white hover:text-accent border-0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+            Back to List
+         </a>
       </div>
 
-      <!-- ── Content Grid ── -->
-      <div class="fade-up grid grid-cols-1 lg:grid-cols-2 gap-6" style="animation-delay:120ms">
-
-        <!-- ── Left: Policies ── -->
-        <div class="space-y-4">
-          <div class="bg-card rounded-xl border border-border p-6"
-            style="box-shadow:0 1px 3px rgba(0,0,0,.05)">
-
-            <h3 class="text-sm font-semibold text-text mb-4 flex items-center gap-2">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-              </svg>
-              Policy(s) to share with <span class="text-primary">TPP Client Test</span>
-            </h3>
-
-            <!-- Badge -->
-            <div class="mb-4">
-              <span class="policy-badge inline-flex items-center gap-2 bg-primary text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wide cursor-default shadow-sm">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-                  <line x1="4" y1="22" x2="4" y2="15"/>
-                </svg>
-                TRAVEL
-              </span>
-            </div>
-
-            <!-- Policy card -->
-            <div class="policy-card border border-border rounded-xl p-5 space-y-3 bg-white">
-              <div class="flex items-center gap-2 pb-2 border-b border-gray-100">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
-                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-                  <line x1="4" y1="22" x2="4" y2="15"/>
-                </svg>
-                <h4 class="font-bold text-sm text-text tracking-tight">Travel</h4>
-              </div>
-
-              <div class="space-y-2.5 text-sm">
-                @for (field of policyFields; track field.label) {
-                  <div class="flex items-start">
-                    <span class="text-gray-400 w-40 shrink-0 text-xs font-medium pt-0.5">{{ field.label }}</span>
-                    <span
-                      class="font-medium text-xs leading-relaxed"
-                      [class.text-info]="field.highlight === 'info'"
-                      [class.text-red-500]="field.highlight === 'danger'"
-                      [class.text-text]="!field.highlight"
-                    >{{ field.value }}</span>
-                  </div>
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── Right: Info Sharing ── -->
-        <div class="space-y-4">
-          <div class="bg-card rounded-xl border border-border p-6"
-            style="box-shadow:0 1px 3px rgba(0,0,0,.05)">
-
-            <h3 class="text-sm font-semibold text-text mb-4 flex items-center gap-2">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-              </svg>
-              Review the info you will be sharing
-            </h3>
-
-            <div class="space-y-2">
-              @for (section of sections; track section.title; let i = $index) {
-                <div
-                  class="border border-border rounded-xl overflow-hidden transition-all duration-200"
-                  [style.animation-delay]="(i * 60) + 'ms'"
-                  [class.border-primary]="section.open"
-                  style="box-shadow: {{ section.open ? '0 2px 10px rgba(30,42,90,0.07)' : 'none' }}"
-                >
-                  <!-- Accordion header -->
-                  <button
-                    (click)="section.open = !section.open"
-                    class="accordion-header w-full px-5 py-3.5 flex items-center justify-between cursor-pointer"
-                    [style.background]="section.open ? 'rgba(30,42,90,0.03)' : 'white'"
-                  >
-                    <span class="flex items-center gap-2 font-semibold text-sm"
-                      [class.text-primary]="section.open"
-                      [class.text-text]="!section.open"
-                    >
-                      @if (section.icon) {
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                          [attr.stroke]="section.open ? '#1e2a5a' : '#9ca3af'" stroke-width="2">
-                          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-                          <line x1="4" y1="22" x2="4" y2="15"/>
-                        </svg>
-                      } @else {
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                          [attr.stroke]="section.open ? '#1e2a5a' : '#9ca3af'" stroke-width="2">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                          <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                      }
-                      {{ section.title }}
-                    </span>
-                    <svg
-                      class="accordion-chevron"
-                      [class.open]="section.open"
-                      width="15" height="15" viewBox="0 0 24 24"
-                      fill="none" stroke="currentColor" stroke-width="2"
-                    >
-                      <polyline points="6 9 12 15 18 9"/>
-                    </svg>
-                  </button>
-
-                  <!-- Accordion body -->
-                  @if (section.open) {
-                    <div class="accordion-body border-t border-border bg-gray-50/40 px-5 py-4">
-                      @if (section.subSections) {
-                        <div class="space-y-2">
-                          @for (sub of section.subSections; track sub.title) {
-                            <div class="border border-gray-200 rounded-lg overflow-hidden bg-white">
-                              <button
-                                (click)="sub.open = !sub.open"
-                                class="accordion-header w-full px-4 py-2.5 flex items-center justify-between cursor-pointer"
-                              >
-                                <span class="font-semibold text-xs tracking-wide"
-                                  [class.text-primary]="sub.open"
-                                  [class.text-gray-600]="!sub.open"
-                                >{{ sub.title }}</span>
-                                <svg
-                                  class="accordion-chevron"
-                                  [class.open]="sub.open"
-                                  width="13" height="13" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2"
-                                >
-                                  <polyline points="6 9 12 15 18 9"/>
-                                </svg>
-                              </button>
-                              @if (sub.open) {
-                                <div class="accordion-body border-t border-gray-100 px-4 py-3">
-                                  <ul class="space-y-1.5">
-                                    @for (item of sub.items; track item) {
-                                      <li class="info-item flex items-center gap-2 text-xs text-gray-600">
-                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1e2a5a" stroke-width="3">
-                                          <polyline points="20 6 9 17 4 12"/>
-                                        </svg>
-                                        {{ item }}
-                                      </li>
-                                    }
-                                  </ul>
-                                </div>
-                              }
-                            </div>
-                          }
-                        </div>
-                      }
+      <!-- Info Banner Glass Card -->
+      <div class="glass-card overflow-hidden animate-spring" style="animation-delay: 100ms">
+         
+         <!-- Top Section with Gradient -->
+         <div class="px-8 py-6 bg-gradient-to-r from-accent/5 to-transparent border-b border-white/40">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-white/60 shadow-glass flex items-center justify-center text-accent">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     </div>
-                  }
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-xl font-bold text-primary font-mono tracking-tight">7164XXXXXXX1277</h2>
+                            <button (click)="copyId()" class="text-secondary hover:text-accent transition-colors relative" title="Copy ID">
+                                @if(!copied) {
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                } @else {
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success"><polyline points="20 6 9 17 4 12"/></svg>
+                                }
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-3 mt-1">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-success/10 text-success ring-1 ring-success/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                                Authorized
+                            </span>
+                            <span class="text-xs font-bold text-secondary uppercase tracking-wider">Long-Lived</span>
+                        </div>
+                    </div>
                 </div>
-              }
+
+                <div class="flex gap-4">
+                   <button class="px-5 py-2.5 rounded-xl bg-danger/10 text-danger font-bold text-sm hover:bg-danger hover:text-white transition-all shadow-sm hover:shadow-lg hover:shadow-danger/30 flex items-center gap-2">
+                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                       Suspend Consent
+                   </button>
+                </div>
+
             </div>
-          </div>
+         </div>
+
+         <!-- Details Grid -->
+         <div class="px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4">
+             <div>
+                 <p class="text-xs font-bold text-secondary uppercase tracking-wider mb-1">TPP Client</p>
+                 <p class="text-sm font-bold text-primary">TPP Client Test</p>
+             </div>
+             <div>
+                 <p class="text-xs font-bold text-secondary uppercase tracking-wider mb-1">Customer</p>
+                 <p class="text-sm font-bold text-primary">AZIZ ELGOUZOULI</p>
+                 <p class="text-xs text-secondary font-mono mt-0.5">784-1983-3183718-1</p>
+             </div>
+             <div>
+                 <p class="text-xs font-bold text-secondary uppercase tracking-wider mb-1">Valid From</p>
+                 <p class="text-sm font-bold text-primary">18 Feb 2026</p>
+             </div>
+             <div>
+                 <p class="text-xs font-bold text-secondary uppercase tracking-wider mb-1">Expires On</p>
+                 <p class="text-sm font-bold text-primary">29 Dec 2026</p>
+             </div>
+              <div>
+                 <p class="text-xs font-bold text-secondary uppercase tracking-wider mb-1">Linked Email</p>
+                 <p class="text-sm font-bold text-primary">travelopen&#64;gmail.com</p>
+             </div>
+              <div>
+                 <p class="text-xs font-bold text-secondary uppercase tracking-wider mb-1">Base Consent</p>
+                 <p class="text-xs font-bold text-primary font-mono">8dfbXXXXXXXbce1</p>
+             </div>
+         </div>
+
+      </div>
+
+      <!-- Content Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-spring" style="animation-delay: 200ms">
+        
+        <!-- Left Column: Policies -->
+        <div class="lg:col-span-1 space-y-6">
+           <div class="glass-card p-6">
+              <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                 <svg class="text-accent" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                 Shared Policies
+              </h3>
+              
+              <div class="space-y-4">
+                 <!-- Policy Item -->
+                 <div class="bg-white/40 rounded-xl p-4 border border-white/50 hover:bg-white/60 transition-colors">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-2.5 py-1 rounded-lg bg-accent text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-accent/20">Travel</span>
+                        <span class="w-2 h-2 rounded-full bg-danger" title="Expired"></span>
+                    </div>
+                    
+                    <div class="space-y-3">
+                       <div class="flex justify-between items-center text-sm">
+                          <span class="text-secondary font-medium">Policy No.</span>
+                          <span class="text-primary font-bold font-mono">HTL34008957</span>
+                       </div>
+                       <div class="flex justify-between items-center text-sm">
+                          <span class="text-secondary font-medium">Plan</span>
+                          <span class="text-primary font-bold text-right truncate ml-4">INDIVIDUAL-MEDICAL & TRAVEL</span>
+                       </div>
+                       <div class="flex justify-between items-center text-sm">
+                          <span class="text-secondary font-medium">End Date</span>
+                          <span class="text-primary font-bold">21 Sept 2025</span>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+
+        <!-- Right Column: Requested Info -->
+        <div class="lg:col-span-2 space-y-6">
+           <div class="glass-card p-6">
+               <h3 class="text-lg font-bold text-primary mb-6 flex items-center gap-2">
+                 <svg class="text-accent" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                 Information Requested by TPP
+              </h3>
+              
+              <div class="space-y-4">
+                 @for (section of sections; track section.title) {
+                    <div class="border border-white/40 rounded-xl overflow-hidden bg-white/30 hover:bg-white/50 transition-colors">
+                        
+                        <!-- Header -->
+                        <button (click)="section.open = !section.open" class="w-full px-5 py-4 flex items-center justify-between text-left">
+                            <span class="flex items-center gap-3 font-bold text-primary">
+                                @if (section.icon) {
+                                    <svg class="text-accent" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                } @else {
+                                    <svg class="text-secondary" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                }
+                                {{ section.title }}
+                            </span>
+                            <svg 
+                                class="text-secondary transition-transform duration-300" 
+                                [class.rotate-180]="section.open"
+                                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            >
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+
+                        <!-- Body -->
+                        @if (section.open) {
+                            <div class="border-t border-white/20 bg-white/20 px-5 py-4 space-y-4">
+                                @for (sub of section.subSections; track sub.title) {
+                                    <div class="bg-white/40 rounded-lg p-4">
+                                        <h4 class="text-sm font-bold text-primary mb-3">{{ sub.title }}</h4>
+                                        <ul class="space-y-2">
+                                            @for (item of sub.items; track item) {
+                                                <li class="flex items-center gap-2 text-sm text-secondary font-medium">
+                                                    <svg class="text-success" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                                    {{ item }}
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                    </div>
+                 }
+              </div>
+
+           </div>
         </div>
 
       </div>
+
     </div>
   `,
   styles: [`:host { display: block; }`]
@@ -459,11 +213,11 @@ export class ConsentDetailComponent {
   copied = false;
 
   readonly policyFields = [
-    { label: 'Policy Number',  value: 'HTL34008957',                               highlight: 'info'   },
-    { label: 'Plan Name',      value: 'INDIVIDUAL-MEDICAL & TRAVEL ASST(M PLUS)',  highlight: ''       },
-    { label: 'Passport Number',value: 'XQ3154786',                                 highlight: ''       },
-    { label: 'Status',         value: 'EXPIRED',                                   highlight: 'danger' },
-    { label: 'Cover End Date', value: '21 Sept 2025',                              highlight: ''       },
+    { label: 'Policy Number', value: 'HTL34008957', highlight: 'info' },
+    { label: 'Plan Name', value: 'INDIVIDUAL-MEDICAL & TRAVEL ASST(M PLUS)', highlight: '' },
+    { label: 'Passport Number', value: 'XQ3154786', highlight: '' },
+    { label: 'Status', value: 'EXPIRED', highlight: 'danger' },
+    { label: 'Cover End Date', value: '21 Sept 2025', highlight: '' },
   ];
 
   sections: Section[] = [
@@ -509,7 +263,7 @@ export class ConsentDetailComponent {
   ];
 
   copyId(): void {
-    navigator.clipboard?.writeText('7164XXXXXXX1277').catch(() => {});
+    navigator.clipboard?.writeText('7164XXXXXXX1277').catch(() => { });
     this.copied = true;
     setTimeout(() => { this.copied = false; }, 2000);
   }
