@@ -13,10 +13,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       <!-- Logo -->
       <div class="flex items-center px-4 h-16 border-b border-border">
         <div class="flex items-center gap-2 overflow-hidden">
-          <div class="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-white font-bold text-sm shrink-0">?</div>
-          @if (!collapsed()) {
-            
-          }
+          
         </div>
       </div>
 
