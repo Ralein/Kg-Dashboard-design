@@ -69,74 +69,84 @@ Chart.register(...registerables);
       <!-- Main Charts Layout -->
       @if (isLoading()) {
         <!-- SKELETON LAYOUT -->
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div class="glass-card h-[340px] p-6 flex flex-col items-center justify-center">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+          <div class="glass-card h-[340px] p-6 flex flex-col items-center justify-center col-span-1">
              <div class="w-32 h-32 rounded-full border-4 border-white/20 animate-spin border-t-accent"></div>
           </div>
-          <div class="glass-card h-[340px] p-6 flex items-end justify-center gap-4">
+          <div class="glass-card h-[340px] p-6 flex items-end justify-center gap-4 col-span-3">
              <div class="w-12 h-32 bg-white/20 rounded-t-lg animate-pulse"></div>
              <div class="w-12 h-48 bg-white/20 rounded-t-lg animate-pulse delay-75"></div>
              <div class="w-12 h-24 bg-white/20 rounded-t-lg animate-pulse delay-150"></div>
           </div>
+          <div class="glass-card h-[340px] p-6 flex items-end justify-center gap-4 col-span-2">
+             <div class="w-12 h-32 bg-white/20 rounded-t-lg animate-pulse"></div>
+             <div class="w-12 h-48 bg-white/20 rounded-t-lg animate-pulse delay-75"></div>
+          </div>
+          <div class="glass-card h-[340px] p-6 flex items-center justify-center col-span-1">
+             <div class="w-24 h-24 bg-white/20 rounded-full animate-pulse"></div>
+          </div>
+          <div class="glass-card h-[340px] p-6 flex items-center justify-center col-span-1">
+             <div class="w-24 h-24 bg-white/20 rounded-full animate-pulse"></div>
+          </div>
         </div>
       } @else {
         <!-- REAL CHARTS -->
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
             
             <!-- 1. Consent Analysis (Donut) -->
-            <div class="glass-card p-6 animate-spring flex flex-col" style="animation-delay: 300ms">
+            <div class="glass-card p-6 animate-spring flex flex-col col-span-1" style="animation-delay: 300ms">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-bold text-primary">Consent Analysis</h3>
-                    <button class="p-1.5 rounded-lg hover:bg-bg-app text-secondary hover:text-accent transition-colors">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                    </button>
+                    <h3 class="text-lg font-bold text-primary">Consent Analysis - Overview</h3>
                 </div>
                 <div class="relative flex-1 flex items-center justify-center">
                     <canvas #consentDonut></canvas>
-                    <!-- Inner Text Overlay -->
-                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span class="text-3xl font-bold text-primary">1,277</span>
-                        <span class="text-xs font-bold text-secondary uppercase tracking-widest">Total</span>
-                    </div>
                 </div>
             </div>
 
-            <!-- 2. TPP Consents (Bar) -->
-            <div class="glass-card p-6 animate-spring flex flex-col lg:col-span-2" style="animation-delay: 400ms">
+            <!-- 2. TPP Wise Consents (Bar) -->
+            <div class="glass-card p-6 animate-spring flex flex-col col-span-3" style="animation-delay: 400ms">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-bold text-primary">TPP Request Volume</h3>
-                     <span class="text-xs font-bold text-success bg-success/10 px-2 py-1 rounded-md">+12.5% vs last month</span>
+                    <h3 class="text-lg font-bold text-primary">TPP - Wise Consent Requests</h3>
                 </div>
-                <div class="flex-1">
+                <div class="flex-1 w-full relative">
                     <canvas #tppBar></canvas>
                 </div>
             </div>
 
-            <!-- 3. Quote Generation (Line/Bar) -->
-            <div class="glass-card p-6 animate-spring flex flex-col lg:col-span-2" style="animation-delay: 500ms">
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <h3 class="text-lg font-bold text-primary">Quote Traffic</h3>
-                        <p class="text-xs text-secondary mt-0.5">Generation vs Acceptance rate</p>
-                    </div>
-                     <div class="flex gap-2">
-                        <span class="w-3 h-3 rounded-full bg-accent"></span>
-                        <span class="w-3 h-3 rounded-full bg-accent-light"></span>
-                     </div>
+            <!-- 3. Quote Generation (Grouped Bar) -->
+            <div class="glass-card p-6 animate-spring flex flex-col col-span-2" style="animation-delay: 500ms">
+                 <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-bold text-primary">Quote Generation - Quote Acceptance(Monthly)</h3>
                 </div>
-                <div class="flex-1 w-full h-[250px]">
+                <div class="flex-1 w-full h-[250px] relative">
                     <canvas #quoteBar></canvas>
                 </div>
             </div>
 
-            <!-- 4. LOB Distribution (Polar) -->
-             <div class="glass-card p-6 animate-spring flex flex-col" style="animation-delay: 600ms">
+            <!-- 4. LOB Distribution (Polar/Pie) -->
+             <div class="glass-card p-6 animate-spring flex flex-col col-span-1" style="animation-delay: 600ms">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-primary">Line of Business</h3>
+                    <h3 class="text-lg font-bold text-primary">Consents Distribution by LOB</h3>
                 </div>
-                <div class="flex-1 flex items-center justify-center">
+                <div class="flex-1 flex items-center justify-center relative">
                     <canvas #lobPie></canvas>
                 </div>
+                 <div class="text-center mt-2">
+                    <a href="javascript:void(0)" class="text-xs text-accent font-bold hover:underline">View</a>
+                 </div>
+            </div>
+
+             <!-- 5. API Success Rate (Pie) -->
+             <div class="glass-card p-6 animate-spring flex flex-col col-span-1" style="animation-delay: 700ms">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-primary">API Success Rate</h3>
+                </div>
+                <div class="flex-1 flex items-center justify-center relative">
+                    <canvas #apiSuccessPie></canvas>
+                </div>
+                 <div class="text-center mt-2">
+                    <a href="javascript:void(0)" class="text-xs text-accent font-bold hover:underline">View</a>
+                 </div>
             </div>
             
         </div>
@@ -149,36 +159,91 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('tppBar') tppBarRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('quoteBar') quoteBarRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lobPie') lobPieRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('apiSuccessPie') apiSuccessPieRef!: ElementRef<HTMLCanvasElement>;
 
   isLoading = signal(true);
 
+  // Custom Plugin for Glow Effects
+  private readonly glowPlugin = {
+    id: 'glowPlugin',
+    beforeDatasetDraw: (chart: any, args: any, options: any) => {
+      const ctx = chart.ctx;
+      ctx.save();
+      ctx.shadowColor = options.shadowColor || 'rgba(0,0,0,0)';
+      ctx.shadowBlur = options.shadowBlur || 0;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+    },
+    afterDatasetDraw: (chart: any) => {
+      chart.ctx.restore();
+    }
+  };
+
   // Shared Chart Options
   private readonly commonOptions: any = {
+    responsive: true,
+    maintainAspectRatio: false,
     interaction: { mode: 'index', intersect: false },
     plugins: {
       legend: {
         display: true,
         position: 'bottom',
-        labels: { usePointStyle: true, pointStyle: 'circle', padding: 20, font: { family: 'DM Sans', size: 11, weight: 'bold' }, color: '#A3AED0' }
+        labels: {
+          usePointStyle: true,
+          pointStyle: 'circle',
+          padding: 20,
+          font: { family: 'DM Sans', size: 12, weight: 'bold' },
+          color: '#A3AED0',
+          boxWidth: 8
+        }
       },
       tooltip: {
-        backgroundColor: '#1B254B',
+        backgroundColor: 'rgba(27, 37, 75, 0.9)', // Darker, more opaque
         titleColor: '#fff',
         bodyColor: '#A3AED0',
-        padding: 14,
-        cornerRadius: 12,
-        displayColors: { boxWidth: 8 },
-        titleFont: { family: 'DM Sans', size: 13, weight: 'bold' },
-        bodyFont: { family: 'DM Sans', size: 12 },
-        borderColor: 'rgba(255,255,255,0.1)',
+        padding: 16,
+        cornerRadius: 16,
+        displayColors: true,
+        boxWidth: 8,
+        boxHeight: 8,
+        boxPadding: 4,
+        titleFont: { family: 'DM Sans', size: 14, weight: 'bold' },
+        bodyFont: { family: 'DM Sans', size: 13 },
+        borderColor: 'rgba(255,255,255,0.05)',
         borderWidth: 1,
+        callbacks: {
+          labelColor: (context: any) => {
+            return {
+              borderColor: 'transparent',
+              backgroundColor: context.dataset.backgroundColor,
+              borderWidth: 0,
+              borderRadius: 2,
+            };
+          }
+        }
       }
     },
     scales: {
-      x: { grid: { display: false, drawBorder: false }, ticks: { color: '#A3AED0', font: { family: 'DM Sans', weight: '500' } } },
-      y: { grid: { color: 'rgba(163, 174, 208, 0.1)', borderDash: [5, 5], drawBorder: false }, ticks: { color: '#A3AED0', padding: 10, font: { family: 'DM Sans', weight: '500' } } }
+      x: {
+        grid: { display: false, drawBorder: false },
+        ticks: { color: '#A3AED0', font: { family: 'DM Sans', weight: '500', size: 11 } }
+      },
+      y: {
+        grid: { color: 'rgba(163, 174, 208, 0.05)', borderDash: [0, 0], drawBorder: false }, // Very subtle grid
+        ticks: { color: '#A3AED0', padding: 10, font: { family: 'DM Sans', weight: '500', size: 11 } }
+      }
+    },
+    animation: {
+      duration: 2000,
+      easing: 'easeOutQuart'
     }
   };
+
+  constructor() {
+    // Register the custom plugin globally or per chart. Let's register it globally for simplicity here if we wanted, 
+    // but strict typing might complain. We will add it to specific chart instances.
+    Chart.register(this.glowPlugin);
+  }
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -190,7 +255,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void { }
 
   private createGradient(ctx: CanvasRenderingContext2D, colorStart: string, colorEnd: string) {
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
     gradient.addColorStop(0, colorStart);
     gradient.addColorStop(1, colorEnd);
     return gradient;
@@ -198,7 +263,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   // New helper for "Equalizer" bars
   private createVerticalGradient(ctx: CanvasRenderingContext2D, stops: string[]) {
-    const gradient = ctx.createLinearGradient(0, 400, 0, 0); // Bottom to Top
+    const gradient = ctx.createLinearGradient(0, 300, 0, 0); // Bottom to Top
     stops.forEach((color, index) => {
       gradient.addColorStop(index / (stops.length - 1), color);
     });
@@ -208,138 +273,202 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   private initCharts(): void {
     if (!this.consentDonutRef) return;
 
-    // 1. Consent Analysis (The "Reactor" Ring)
-    // Concept: Gauge style with dark track
+    // 1. Consent Analysis (Mixed Donut)
     const consentCtx = this.consentDonutRef.nativeElement.getContext('2d');
     if (consentCtx) {
+      // Vivid Neon Gradients
+      const authorizedGrad = this.createGradient(consentCtx, '#01B574', '#009E83'); // Neon Green
+      const revokedGrad = this.createGradient(consentCtx, '#FF5252', '#D32F2F');    // Neon Red
+      const suspendedGrad = this.createGradient(consentCtx, '#8F9BBA', '#707EAE'); // Muted Blue-Grey
+      const awaitingGrad = this.createGradient(consentCtx, '#3F51B5', '#303F9F'); // Indigo
+      const rejectedGrad = this.createGradient(consentCtx, '#FF1744', '#C62828'); // Deep Red
+      const expiredGrad = this.createGradient(consentCtx, '#FFA000', '#FF6F00'); // Amber
+
       new Chart(this.consentDonutRef.nativeElement, {
         type: 'doughnut',
         data: {
-          labels: ['Total', 'Remaining'],
+          labels: ['Authorized', 'Revoked', 'Suspended', 'Awaiting', 'Rejected', 'Expired'],
           datasets: [{
-            data: [1277, 300], // Dummy "Remaining" for full circle effect
-            backgroundColor: [
-              this.createGradient(consentCtx, '#00F0FF', '#0047FF'), // Cyan -> Blue (Active)
-              'rgba(255, 255, 255, 0.05)' // Dark transparent track
-            ],
+            data: [450, 120, 80, 50, 100, 30],
+            backgroundColor: [authorizedGrad, revokedGrad, suspendedGrad, awaitingGrad, rejectedGrad, expiredGrad],
             borderWidth: 0,
-            hoverOffset: 0,
+            hoverOffset: 15, // Larger expansion
+            hoverBorderWidth: 0,
+            // Custom plugin options
+            // @ts-ignore
+            glowPlugin: {
+              shadowColor: 'rgba(0, 0, 0, 0.3)',
+              shadowBlur: 15
+            }
           }]
         },
         options: {
           ...this.commonOptions,
-          cutout: '90%', // Very thin "Reactor" look
-          rotation: -90, // Start at top
-          circumference: 360,
-          plugins: { ...this.commonOptions.plugins, legend: { display: false }, tooltip: { enabled: false } }, // No tooltip for reactor look
-          scales: { x: { display: false }, y: { display: false } }
-        }
-      });
-    }
-
-    // 2. TPP Request Volume (The "Pulse" Line)
-    // Concept: High speed data stream with "Echo"
-    const tppCtx = this.tppBarRef.nativeElement.getContext('2d');
-    if (tppCtx) {
-      const mainGradient = tppCtx.createLinearGradient(0, 0, 0, 400);
-      mainGradient.addColorStop(0, 'rgba(0, 240, 255, 0.5)');
-      mainGradient.addColorStop(1, 'rgba(0, 240, 255, 0)');
-
-      new Chart(this.tppBarRef.nativeElement, {
-        type: 'line',
-        data: {
-          labels: ['Client Test', 'TPP Alpha', 'TPP Beta', 'TPP Gamma', 'TPP Delta', 'TPP Epsilon'],
-          datasets: [
-            {
-              // Main Pulse
-              label: 'Current',
-              data: [320, 550, 400, 700, 450, 600],
-              borderColor: '#00F0FF', // Cyan Neon
-              backgroundColor: mainGradient,
-              borderWidth: 3,
-              pointRadius: 0,
-              pointHoverRadius: 8,
-              pointHoverBackgroundColor: '#fff',
-              pointHoverBorderColor: '#00F0FF',
-              fill: true,
-              tension: 0.5, // Super smooth
-              order: 1
-            },
-            {
-              // Echo / Trail (Ghost line)
-              label: 'Echo',
-              data: [180, 400, 300, 550, 350, 480],
-              borderColor: 'rgba(0, 240, 255, 0.2)',
-              borderWidth: 2,
-              pointRadius: 0,
-              fill: false,
-              tension: 0.5,
-              order: 2
-            }
-          ]
-        },
-        options: {
-          ...this.commonOptions,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          scales: {
-            x: { ...this.commonOptions.scales.x, grid: { display: false } },
-            y: { ...this.commonOptions.scales.y, display: false } // Minimalist
+          cutout: '75%', // Thinner ring
+          plugins: {
+            ...this.commonOptions.plugins,
+            glowPlugin: { shadowColor: 'rgba(0,0,0,0.2)', shadowBlur: 10 },
+            legend: { display: true, position: 'bottom', labels: { boxWidth: 8, usePointStyle: true, padding: 20, font: { size: 11 } } }
           }
         }
       });
     }
 
-    // 3. Quote Traffic (The "Equalizer")
-    // Concept: Digital Audio Visualizer
+    // 2. TPP Consents (Vertical Bar Chart) - Neon Pillars
+    const tppCtx = this.tppBarRef.nativeElement.getContext('2d');
+    if (tppCtx) {
+      // High contrast neon gradients
+      const authGrad = this.createVerticalGradient(tppCtx, ['#00E676', 'rgba(0, 230, 118, 0.1)']);
+      const revGrad = this.createVerticalGradient(tppCtx, ['#FF4081', 'rgba(255, 64, 129, 0.1)']);
+      const susGrad = this.createVerticalGradient(tppCtx, ['#B0BEC5', 'rgba(176, 190, 197, 0.1)']);
+      const waitGrad = this.createVerticalGradient(tppCtx, ['#536DFE', 'rgba(83, 109, 254, 0.1)']);
+      const rejGrad = this.createVerticalGradient(tppCtx, ['#FF5252', 'rgba(255, 82, 82, 0.1)']);
+      const expGrad = this.createVerticalGradient(tppCtx, ['#FFAB40', 'rgba(255, 171, 64, 0.1)']);
+
+      new Chart(this.tppBarRef.nativeElement, {
+        type: 'bar',
+        data: {
+          labels: ['TPP Client Test', 'TPP Alpha', 'TPP Beta'],
+          datasets: [
+            { label: 'Authorized', data: [370, 200, 150], backgroundColor: authGrad, borderRadius: 6, barPercentage: 0.6, hoverBackgroundColor: '#00E676' },
+            { label: 'Revoked', data: [40, 30, 20], backgroundColor: revGrad, borderRadius: 6, barPercentage: 0.6, hoverBackgroundColor: '#FF4081' },
+            { label: 'Suspended', data: [10, 5, 2], backgroundColor: susGrad, borderRadius: 6, barPercentage: 0.6, hoverBackgroundColor: '#B0BEC5' },
+            { label: 'Awaiting', data: [40, 20, 10], backgroundColor: waitGrad, borderRadius: 6, barPercentage: 0.6, hoverBackgroundColor: '#536DFE' },
+            { label: 'Rejected', data: [340, 150, 100], backgroundColor: rejGrad, borderRadius: 6, barPercentage: 0.6, hoverBackgroundColor: '#FF5252' },
+            { label: 'Expired', data: [10, 5, 5], backgroundColor: expGrad, borderRadius: 6, barPercentage: 0.6, hoverBackgroundColor: '#FFAB40' }
+          ]
+        },
+        options: {
+          ...this.commonOptions,
+          scales: {
+            x: { ...this.commonOptions.scales.x, grid: { display: false }, stacked: false },
+            y: { ...this.commonOptions.scales.y, display: true, grid: { color: 'rgba(163, 174, 208, 0.1)', drawBorder: false }, min: 0, max: 400, ticks: { stepSize: 100 }, stacked: false }
+          },
+          plugins: {
+            ...this.commonOptions.plugins,
+            glowPlugin: { shadowColor: 'rgba(0,0,0,0.1)', shadowBlur: 8 },
+            legend: { display: true, position: 'bottom' }
+          }
+        }
+      });
+    }
+
+    // 3. Quote Generation (Grouped Bar) - Electric Blue/Teal
     const quoteCtx = this.quoteBarRef.nativeElement.getContext('2d');
     if (quoteCtx) {
-      // Multi-stop gradient like an LED meter
-      const eqGradient = this.createVerticalGradient(quoteCtx, ['#4318FF', '#FF0080', '#FFB547']); // Blue -> Pink -> Orange
+      const blueGrad = this.createVerticalGradient(quoteCtx, ['#2962FF', 'rgba(41, 98, 255, 0.2)']); // Deep Electric Blue
+      const tealGrad = this.createVerticalGradient(quoteCtx, ['#00BFA5', 'rgba(0, 191, 165, 0.2)']); // Teal
 
       new Chart(this.quoteBarRef.nativeElement, {
         type: 'bar',
         data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+          labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
           datasets: [
             {
-              label: 'Traffic',
-              data: [40, 65, 85, 45, 90, 55, 70, 30, 60, 95],
-              backgroundColor: eqGradient,
-              borderRadius: 2,
-              barPercentage: 0.4,
-              categoryPercentage: 0.8
+              label: 'Quote Generation',
+              data: [0, 480, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              backgroundColor: blueGrad,
+              borderRadius: 8,
+              borderSkipped: false,
+              barPercentage: 0.7,
+              categoryPercentage: 0.8,
+              hoverBackgroundColor: '#2962FF'
+            },
+            {
+              label: 'Quote Acceptance',
+              data: [0, 290, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              backgroundColor: tealGrad,
+              borderRadius: 8,
+              borderSkipped: false,
+              barPercentage: 0.7,
+              categoryPercentage: 0.8,
+              hoverBackgroundColor: '#00BFA5'
             }
           ]
         },
         options: {
           ...this.commonOptions,
-          maintainAspectRatio: false,
           scales: {
             x: { ...this.commonOptions.scales.x, grid: { display: false } },
-            y: { ...this.commonOptions.scales.y, display: false }
+            y: { ...this.commonOptions.scales.y, display: true, grid: { color: 'rgba(163, 174, 208, 0.1)', drawBorder: false }, min: 0, max: 500, ticks: { stepSize: 100 } }
           },
-          plugins: { ...this.commonOptions.plugins, legend: { display: false } }
+          plugins: {
+            ...this.commonOptions.plugins,
+            glowPlugin: { shadowColor: 'rgba(41, 98, 255, 0.2)', shadowBlur: 10 },
+            legend: { display: true, position: 'top', align: 'end' }
+          }
         }
       });
     }
 
-    // 4. LOB Pie (Unchanged)
-    new Chart(this.lobPieRef.nativeElement, {
-      type: 'polarArea',
-      data: {
-        labels: ['Motor', 'Medical', 'Travel', 'Home'],
-        datasets: [{
-          data: [150, 80, 45, 30],
-          backgroundColor: ['rgba(67, 24, 255, 0.7)', 'rgba(5, 205, 153, 0.7)', 'rgba(255, 181, 71, 0.7)', 'rgba(238, 93, 80, 0.7)'],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        ...this.commonOptions,
-        scales: { r: { grid: { display: false }, ticks: { display: false } } },
-        plugins: { ...this.commonOptions.plugins, legend: { position: 'right' } }
+    // 4. LOB Pie (Polar Area) - Modern & Transparent
+    const lobCtx = this.lobPieRef.nativeElement.getContext('2d');
+    if (lobCtx) {
+      new Chart(this.lobPieRef.nativeElement, {
+        type: 'polarArea',
+        data: {
+          labels: ['MOTOR', 'MEDICAL', 'TRAVEL', 'HOME'],
+          datasets: [{
+            data: [65, 15, 10, 10],
+            backgroundColor: [
+              'rgba(89, 195, 255, 0.85)', // Cyan
+              'rgba(227, 230, 238, 0.9)', // Light Grey
+              'rgba(75, 230, 200, 0.85)', // Green
+              'rgba(52, 71, 154, 0.85)'    // Dark Blue
+            ],
+            borderWidth: 0,
+            hoverBorderWidth: 2,
+            hoverBorderColor: '#fff',
+          }]
+        },
+        options: {
+          ...this.commonOptions,
+          scales: { r: { grid: { display: false }, ticks: { display: false }, backdropColor: 'transparent' } },
+          plugins: {
+            ...this.commonOptions.plugins,
+            glowPlugin: { shadowColor: 'rgba(0,0,0,0.2)', shadowBlur: 15 },
+            legend: { position: 'bottom', labels: { boxWidth: 10, padding: 20 } }
+          }
+        }
+      });
+    }
+
+    // 5. API Success Rate (Pie) - Radiant
+    if (this.apiSuccessPieRef) {
+      const apiCtx = this.apiSuccessPieRef.nativeElement.getContext('2d');
+      if (apiCtx) {
+        // Super bright gradients
+        const successGrad = this.createGradient(apiCtx, '#00E676', '#69F0AE'); // Neon Green
+        const failGrad = this.createGradient(apiCtx, '#FF1744', '#FF5252');   // Neon Red
+
+        new Chart(this.apiSuccessPieRef.nativeElement, {
+          type: 'pie',
+          data: {
+            labels: ['Success (94.2%)', 'Failure (5.8%)'],
+            datasets: [{
+              data: [94.2, 5.8],
+              backgroundColor: [successGrad, failGrad],
+              borderWidth: 0,
+              hoverOffset: 10,
+              hoverBorderWidth: 2,
+              hoverBorderColor: '#fff'
+            }]
+          },
+          options: {
+            ...this.commonOptions,
+            plugins: {
+              ...this.commonOptions.plugins,
+              glowPlugin: { shadowColor: 'rgba(0, 230, 118, 0.4)', shadowBlur: 20 },
+              legend: { position: 'bottom', labels: { boxWidth: 10, padding: 20 } },
+              tooltip: {
+                callbacks: {
+                  label: (context) => ` ${context.label}`
+                }
+              }
+            }
+          }
+        });
       }
-    });
+    }
   }
 }
