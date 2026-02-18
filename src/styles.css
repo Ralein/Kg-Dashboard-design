@@ -1,9 +1,6 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-@source "../app/**/*.ts";
-@source "../app/**/*.html";
-
 @theme {
     --color-primary: #1e2a5a;
     --color-primary-dark: #141d42;
@@ -28,6 +25,21 @@
     --color-status-expired: #e8a050;
     --color-status-suspended: #bbb;
     --font-family-sans: 'Inter', sans-serif;
+}
+
+/* Custom Utilities */
+@layer utilities {
+    .nav-link {
+        @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-light transition-all duration-200 hover:bg-gray-100;
+    }
+
+    .nav-link.active-link {
+        @apply bg-primary text-white;
+    }
+
+    .nav-link.active-link svg {
+        @apply stroke-white;
+    }
 }
 
 * {
