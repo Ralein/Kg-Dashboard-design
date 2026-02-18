@@ -1,40 +1,38 @@
-# Clone Dashboard Webpage with Angular
+# Dashboard UI Alignment Plan
 
-Cloning the provided "n-sure" dashboard images into a clean, readable, and responsive Angular application.
+Aligning the Angular dashboard to match the provided React/Tailwind reference EXACTLY.
+
+## User Review Required
+> [!IMPORTANT]
+> This plan changes the dashboard layout and component structure to match the provided React code.
 
 ## Proposed Changes
 
-### [Web Application]
+### [src/app/components/stats-card/](file:///Users/ralein/Desktop/Project/UI/src/app/components/stats-card/)
+#### [MODIFY] [stats-card.component.ts](file:///Users/ralein/Desktop/Project/UI/src/app/components/stats-card/stats-card.component.ts)
+- Refactor inputs to match reference:
+  - `title` (was label)
+  - `count` (was value)
+  - `iconBgColor` (class string)
+  - `iconColor` (class string)
+- Update icon switch to support: `chart`, `error`, `time`, `pause`, `description`.
+- Use Tailwind classes for styling instead of inline styles where appropriate.
 
-#### [NEW] [src/app/layout/sidebar](file:///Users/ralein/Desktop/Project/UI/src/app/layout/sidebar)
-Collapsible sidebar with navigation icons as seen in the images.
+### [src/app/pages/dashboard/](file:///Users/ralein/Desktop/Project/UI/src/app/pages/dashboard/)
+#### [MODIFY] [dashboard.component.ts](file:///Users/ralein/Desktop/Project/UI/src/app/pages/dashboard/dashboard.component.ts)
+- Update Layout:
+  - **Header**: "Dashboard"
+  - **Stats Row**: Grid 5 columns (`grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5`)
+  - **Selectors**: Year/Month dropdowns aligned right (`flex justify-end gap-4`)
+  - **Charts Row 1**: 2 columns (`lg:grid-cols-2`) -> Consent Pie, TPP Bar
+  - **Charts Row 2**: 3 columns (`lg:grid-cols-3`) -> Monthly Quote, LOB Pie, API Success
+- Container Styling: Match `rounded-[20px] bg-white p-4 shadow-sm`.
 
-#### [NEW] [src/app/layout/header](file:///Users/ralein/Desktop/Project/UI/src/app/layout/header)
-Top navigation bar with logo, search (if applicable), and user profile.
-
-#### [NEW] [src/app/features/dashboard](file:///Users/ralein/Desktop/Project/UI/src/app/features/dashboard)
-Main dashboard view containing:
-- Stat cards (Active, Revoked, Expired, Suspended Consents).
-- Charts (Donut, Bar, Pie) using Chart.js.
-- Filters (Year, Month).
-
-#### [NEW] [src/app/features/consent-management](file:///Users/ralein/Desktop/Project/UI/src/app/features/consent-management)
-Table view for managing consents with search and pagination.
-
-#### [NEW] [src/app/features/consent-details](file:///Users/ralein/Desktop/Project/UI/src/app/features/consent-details)
-Detailed view for a specific consent with summary info and expandable sections.
-
-#### [MODIFY] [src/styles.css](file:///Users/ralein/Desktop/Project/UI/src/styles.css)
-Global styles to match the color palette (dark blue, light gray backgrounds) and typography.
+### [src/styles.css](file:///Users/ralein/Desktop/Project/UI/src/styles.css)
+- Ensure `text-navy` is available (add to tailwind config or use arbitrary values).
 
 ## Verification Plan
-
-### Automated Tests
-- `ng test`: Run unit tests for core components.
-- `ng lint`: Ensure code quality follows Angular best practices.
-
 ### Manual Verification
-1.  **Dashboard Layout**: Verify the sidebar is collapsible and the layout shifts correctly.
-2.  **Chart Rendering**: Ensure charts display data correctly and match the visual style of the images.
-3.  **Table Functionality**: Test search and (mock) pagination in the Consent Management view.
-4.  **Responsive Design**: Verify the UI looks good on different screen sizes (Desktop, Tablet).
+- Verify Dashboard layout matches strict 5-column stats and specific chart grid.
+- Check all colors match the hex codes provided.
+- Verify chart containers have rounded corners and shadows.

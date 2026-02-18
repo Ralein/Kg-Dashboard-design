@@ -15,9 +15,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         <div class="flex items-center gap-2 overflow-hidden">
           <div class="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-white font-bold text-sm shrink-0">?</div>
           @if (!collapsed()) {
-            <span class="font-bold text-lg text-primary whitespace-nowrap">
-              n-sure <span class="text-xs text-text-light font-normal">OFI</span>
-            </span>
+            
           }
         </div>
       </div>
