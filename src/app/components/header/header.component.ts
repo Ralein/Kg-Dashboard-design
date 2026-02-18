@@ -114,7 +114,7 @@ import { CommonModule } from '@angular/common';
       <div class="brand-fade brand-logo flex items-center gap-2">
         <div class="flex items-baseline text-2xl font-bold tracking-tight">
           <div class="logo-icon flex items-center justify-center w-8 h-8 rounded-full mr-2">
-            <span class="text-white text-lg font-bold leading-none">n</span>
+            <span class="text-white text-lg font-bold leading-none">logo</span>
           </div>
           <span class="text-white">n-sure</span>
           <span
