@@ -7,18 +7,23 @@ import { HeaderComponent } from './components/header/header.component';
   selector: 'app-root',
   imports: [RouterOutlet, SidebarComponent, HeaderComponent],
   template: `
-    <div class="flex min-h-screen">
-      <!-- Sidebar -->
-      <app-sidebar (sidebarToggle)="onSidebarToggle($event)" />
+    <div class="min-h-screen bg-bg">
+      <!-- Header (Fixed Top) -->
+      <app-header />
 
-      <!-- Main content area -->
+      <!-- Sidebar (Fixed Left, Below Header) -->
+      <app-sidebar 
+        class="fixed left-0 top-16 bottom-0 z-40"
+        (sidebarToggle)="onSidebarToggle($event)" 
+      />
+
+      <!-- Main Content -->
       <div
-        class="flex-1 flex flex-col transition-all duration-300"
-        [class.ml-60]="!sidebarCollapsed()"
-        [class.ml-16]="sidebarCollapsed()"
+        class="flex flex-col min-h-screen transition-all duration-300 pt-16"
+        [class.pl-60]="!sidebarCollapsed()"
+        [class.pl-16]="sidebarCollapsed()"
       >
-        <app-header />
-        <main class="flex-1 p-6 bg-bg overflow-auto">
+        <main class="flex-1 p-6 overflow-x-hidden">
           <router-outlet />
         </main>
       </div>

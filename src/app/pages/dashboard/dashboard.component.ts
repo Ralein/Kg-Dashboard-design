@@ -38,17 +38,7 @@ Chart.register(...registerables);
         transform: translateY(-2px);
       }
 
-      /* header accent line */
-      .chart-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, #1e2a5a, #6AD2FF);
-        opacity: 0;
-        transition: opacity 0.25s;
-      }
-      .chart-card:hover::before { opacity: 1; }
+
 
       .chart-title {
         font-size: 13px;
