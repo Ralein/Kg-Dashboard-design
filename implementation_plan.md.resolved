@@ -1,0 +1,40 @@
+# Clone Dashboard Webpage with Angular
+
+Cloning the provided "n-sure OFI" dashboard images into a clean, readable, and responsive Angular application.
+
+## Proposed Changes
+
+### [Web Application]
+
+#### [NEW] [src/app/layout/sidebar](file:///Users/ralein/Desktop/Project/UI/src/app/layout/sidebar)
+Collapsible sidebar with navigation icons as seen in the images.
+
+#### [NEW] [src/app/layout/header](file:///Users/ralein/Desktop/Project/UI/src/app/layout/header)
+Top navigation bar with logo, search (if applicable), and user profile.
+
+#### [NEW] [src/app/features/dashboard](file:///Users/ralein/Desktop/Project/UI/src/app/features/dashboard)
+Main dashboard view containing:
+- Stat cards (Active, Revoked, Expired, Suspended Consents).
+- Charts (Donut, Bar, Pie) using Chart.js.
+- Filters (Year, Month).
+
+#### [NEW] [src/app/features/consent-management](file:///Users/ralein/Desktop/Project/UI/src/app/features/consent-management)
+Table view for managing consents with search and pagination.
+
+#### [NEW] [src/app/features/consent-details](file:///Users/ralein/Desktop/Project/UI/src/app/features/consent-details)
+Detailed view for a specific consent with summary info and expandable sections.
+
+#### [MODIFY] [src/styles.css](file:///Users/ralein/Desktop/Project/UI/src/styles.css)
+Global styles to match the color palette (dark blue, light gray backgrounds) and typography.
+
+## Verification Plan
+
+### Automated Tests
+- `ng test`: Run unit tests for core components.
+- `ng lint`: Ensure code quality follows Angular best practices.
+
+### Manual Verification
+1.  **Dashboard Layout**: Verify the sidebar is collapsible and the layout shifts correctly.
+2.  **Chart Rendering**: Ensure charts display data correctly and match the visual style of the images.
+3.  **Table Functionality**: Test search and (mock) pagination in the Consent Management view.
+4.  **Responsive Design**: Verify the UI looks good on different screen sizes (Desktop, Tablet).
