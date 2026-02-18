@@ -250,7 +250,7 @@ Chart.register(neonGlowPlugin, donutCenterTextPlugin);
                     <div class="h-full hover:brightness-110 cursor-pointer transition-all duration-200"
                       [style.width]="seg.pct + '%'"
                       [style.background]="seg.color"
-                      [title]="seg.label + ': ' + seg.value">
+                      [title]="seg.label + ': ' + seg.value + ' requests (' + (seg.pct | number:'1.0-1') + '%)'">
                     </div>
                   </ng-container>
                 </div>
@@ -304,7 +304,7 @@ Chart.register(neonGlowPlugin, donutCenterTextPlugin);
           <!-- Horizontal bars — one per LOB, fills all vertical space -->
           <div class="flex-1 flex flex-col justify-evenly">
             <ng-container *ngFor="let item of lobLegend">
-              <div>
+              <div [title]="item.label + ': ' + item.value + '% (' + item.count + ' policies)'" class="cursor-default">
                 <!-- Label row -->
                 <div class="flex items-center justify-between mb-1.5">
                   <div class="flex items-center gap-2">
@@ -334,7 +334,8 @@ Chart.register(neonGlowPlugin, donutCenterTextPlugin);
         </div>
 
         <!-- 5. API Success — unchanged arc gauge -->
-        <div class="chart-shell p-5 col-span-1 xl:col-span-1 flex flex-col h-[360px]" style="background:linear-gradient(160deg,#0F1232 0%,#1A1D3A 100%);">
+        <div class="chart-shell p-5 col-span-1 xl:col-span-1 flex flex-col h-[360px]" style="background:linear-gradient(160deg,#0F1232 0%,#1A1D3A 100%);"
+             title="API Success Rate: 94.2% (Target: 99.9%)">
           <div class="flex justify-between items-center mb-2">
             <div>
               <h3 class="text-base font-bold text-white leading-tight">API Success</h3>
@@ -365,8 +366,8 @@ Chart.register(neonGlowPlugin, donutCenterTextPlugin);
   `
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
-  @ViewChild('consentDonut')    consentDonutRef!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('quoteLine')       quoteLineRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('consentDonut') consentDonutRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('quoteLine') quoteLineRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('apiSuccessGauge') apiSuccessGaugeRef!: ElementRef<HTMLCanvasElement>;
 
   isLoading = signal(true);
@@ -374,19 +375,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // ── Consent legend ────────────────────────────────────────────────────
   consentLegend = [
     { label: 'Authorized', value: 350, color: '#4318FF', pct: 51 },
-    { label: 'Revoked',    value: 120, color: '#FF5252', pct: 18 },
-    { label: 'Suspended',  value: 80,  color: '#A3AED0', pct: 12 },
-    { label: 'Awaiting',   value: 50,  color: '#2B3674', pct: 7  },
-    { label: 'Rejected',   value: 60,  color: '#FF8F0C', pct: 9  },
-    { label: 'Expired',    value: 40,  color: '#FFCA28', pct: 6  },
+    { label: 'Revoked', value: 120, color: '#FF5252', pct: 18 },
+    { label: 'Suspended', value: 80, color: '#A3AED0', pct: 12 },
+    { label: 'Awaiting', value: 50, color: '#2B3674', pct: 7 },
+    { label: 'Rejected', value: 60, color: '#FF8F0C', pct: 9 },
+    { label: 'Expired', value: 40, color: '#FFCA28', pct: 6 },
   ];
 
   // ── FIX 1: LOB — horizontal bar data with gradient + count ───────────
   lobLegend = [
-    { label: 'MOTOR',   value: 65, count: '3,133', color: '#4318FF', gradient: 'linear-gradient(90deg, #4318FF, #6AD2FF)' },
-    { label: 'TRAVEL',  value: 20, count: '964',   color: '#05CD99', gradient: 'linear-gradient(90deg, #05CD99, #00E5B4)' },
-    { label: 'MEDICAL', value: 10, count: '482',   color: '#FF8F0C', gradient: 'linear-gradient(90deg, #FF8F0C, #FFCA28)' },
-    { label: 'HOME',    value: 10, count: '241',   color: '#2B3674', gradient: 'linear-gradient(90deg, #2B3674, #4318FF)' },
+    { label: 'MOTOR', value: 65, count: '3,133', color: '#4318FF', gradient: 'linear-gradient(90deg, #4318FF, #6AD2FF)' },
+    { label: 'TRAVEL', value: 20, count: '964', color: '#05CD99', gradient: 'linear-gradient(90deg, #05CD99, #00E5B4)' },
+    { label: 'MEDICAL', value: 10, count: '482', color: '#FF8F0C', gradient: 'linear-gradient(90deg, #FF8F0C, #FFCA28)' },
+    { label: 'HOME', value: 10, count: '241', color: '#2B3674', gradient: 'linear-gradient(90deg, #2B3674, #4318FF)' },
   ];
 
   // ── FIX 3: TPP — 4 client rows, fills card, shared legend at bottom ──
@@ -394,45 +395,45 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     {
       label: 'TPP Client Test', total: 510, active: true,
       segments: [
-        { label: 'Authorized', value: 360, color: 'linear-gradient(90deg,#4318FF,#6AD2FF)', pct: (360/510)*100 },
-        { label: 'Revoked',    value: 50,  color: '#FA9E93',  pct: (50/510)*100  },
-        { label: 'Rejected',   value: 40,  color: '#EE5D50',  pct: (40/510)*100  },
-        { label: 'Awaiting',   value: 30,  color: '#2B3674',  pct: (30/510)*100  },
-        { label: 'Expired',    value: 20,  color: '#FFCA28',  pct: (20/510)*100  },
-        { label: 'Suspended',  value: 10,  color: '#E2E8F0',  pct: (10/510)*100  },
+        { label: 'Authorized', value: 360, color: 'linear-gradient(90deg,#4318FF,#6AD2FF)', pct: (360 / 510) * 100 },
+        { label: 'Revoked', value: 50, color: '#FA9E93', pct: (50 / 510) * 100 },
+        { label: 'Rejected', value: 40, color: '#EE5D50', pct: (40 / 510) * 100 },
+        { label: 'Awaiting', value: 30, color: '#2B3674', pct: (30 / 510) * 100 },
+        { label: 'Expired', value: 20, color: '#FFCA28', pct: (20 / 510) * 100 },
+        { label: 'Suspended', value: 10, color: '#E2E8F0', pct: (10 / 510) * 100 },
       ]
     },
     {
       label: 'Open Finance Corp', total: 318, active: true,
       segments: [
-        { label: 'Authorized', value: 210, color: 'linear-gradient(90deg,#4318FF,#6AD2FF)', pct: (210/318)*100 },
-        { label: 'Revoked',    value: 30,  color: '#FA9E93',  pct: (30/318)*100  },
-        { label: 'Rejected',   value: 28,  color: '#EE5D50',  pct: (28/318)*100  },
-        { label: 'Awaiting',   value: 25,  color: '#2B3674',  pct: (25/318)*100  },
-        { label: 'Expired',    value: 15,  color: '#FFCA28',  pct: (15/318)*100  },
-        { label: 'Suspended',  value: 10,  color: '#E2E8F0',  pct: (10/318)*100  },
+        { label: 'Authorized', value: 210, color: 'linear-gradient(90deg,#4318FF,#6AD2FF)', pct: (210 / 318) * 100 },
+        { label: 'Revoked', value: 30, color: '#FA9E93', pct: (30 / 318) * 100 },
+        { label: 'Rejected', value: 28, color: '#EE5D50', pct: (28 / 318) * 100 },
+        { label: 'Awaiting', value: 25, color: '#2B3674', pct: (25 / 318) * 100 },
+        { label: 'Expired', value: 15, color: '#FFCA28', pct: (15 / 318) * 100 },
+        { label: 'Suspended', value: 10, color: '#E2E8F0', pct: (10 / 318) * 100 },
       ]
     },
     {
       label: 'FinBridge API', total: 195, active: true,
       segments: [
-        { label: 'Authorized', value: 120, color: 'linear-gradient(90deg,#4318FF,#6AD2FF)', pct: (120/195)*100 },
-        { label: 'Revoked',    value: 22,  color: '#FA9E93',  pct: (22/195)*100  },
-        { label: 'Rejected',   value: 18,  color: '#EE5D50',  pct: (18/195)*100  },
-        { label: 'Awaiting',   value: 20,  color: '#2B3674',  pct: (20/195)*100  },
-        { label: 'Expired',    value: 10,  color: '#FFCA28',  pct: (10/195)*100  },
-        { label: 'Suspended',  value: 5,   color: '#E2E8F0',  pct: (5/195)*100   },
+        { label: 'Authorized', value: 120, color: 'linear-gradient(90deg,#4318FF,#6AD2FF)', pct: (120 / 195) * 100 },
+        { label: 'Revoked', value: 22, color: '#FA9E93', pct: (22 / 195) * 100 },
+        { label: 'Rejected', value: 18, color: '#EE5D50', pct: (18 / 195) * 100 },
+        { label: 'Awaiting', value: 20, color: '#2B3674', pct: (20 / 195) * 100 },
+        { label: 'Expired', value: 10, color: '#FFCA28', pct: (10 / 195) * 100 },
+        { label: 'Suspended', value: 5, color: '#E2E8F0', pct: (5 / 195) * 100 },
       ]
     },
     {
       label: 'DataShare Ltd', total: 87, active: false,
       segments: [
-        { label: 'Authorized', value: 40, color: 'linear-gradient(90deg,#4318FF,#6AD2FF)', pct: (40/87)*100 },
-        { label: 'Revoked',    value: 15, color: '#FA9E93',  pct: (15/87)*100  },
-        { label: 'Rejected',   value: 12, color: '#EE5D50',  pct: (12/87)*100  },
-        { label: 'Awaiting',   value: 10, color: '#2B3674',  pct: (10/87)*100  },
-        { label: 'Expired',    value: 7,  color: '#FFCA28',  pct: (7/87)*100   },
-        { label: 'Suspended',  value: 3,  color: '#E2E8F0',  pct: (3/87)*100   },
+        { label: 'Authorized', value: 40, color: 'linear-gradient(90deg,#4318FF,#6AD2FF)', pct: (40 / 87) * 100 },
+        { label: 'Revoked', value: 15, color: '#FA9E93', pct: (15 / 87) * 100 },
+        { label: 'Rejected', value: 12, color: '#EE5D50', pct: (12 / 87) * 100 },
+        { label: 'Awaiting', value: 10, color: '#2B3674', pct: (10 / 87) * 100 },
+        { label: 'Expired', value: 7, color: '#FFCA28', pct: (7 / 87) * 100 },
+        { label: 'Suspended', value: 3, color: '#E2E8F0', pct: (3 / 87) * 100 },
       ]
     },
   ];
@@ -449,11 +450,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     displayColors: true,
     usePointStyle: true,
     titleFont: { family: 'DM Sans', size: 13, weight: 700 },
-    bodyFont:  { family: 'DM Sans', size: 12, weight: 500 },
+    bodyFont: { family: 'DM Sans', size: 12, weight: 500 },
     boxPadding: 4
   };
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -462,7 +463,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }, 1000);
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void { }
 
   private initCharts(): void {
     if (!this.consentDonutRef) return;
@@ -593,9 +594,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const ctx = canvas.getContext('2d')!;
     const dpr = window.devicePixelRatio || 1;
     const size = 220;
-    canvas.width  = size * dpr;
+    canvas.width = size * dpr;
     canvas.height = size * dpr;
-    canvas.style.width  = size + 'px';
+    canvas.style.width = size + 'px';
     canvas.style.height = size + 'px';
     ctx.scale(dpr, dpr);
 
@@ -632,7 +633,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       const successEnd = startAngle + sp * fullSweep;
       const ag = ctx.createLinearGradient(
         cx + r * Math.cos(startAngle), cy + r * Math.sin(startAngle),
-        cx + r * Math.cos(successEnd),  cy + r * Math.sin(successEnd)
+        cx + r * Math.cos(successEnd), cy + r * Math.sin(successEnd)
       );
       ag.addColorStop(0, '#4318FF'); ag.addColorStop(0.5, '#42CD7E'); ag.addColorStop(1, '#00F5A0');
       ctx.beginPath(); ctx.arc(cx, cy, r, startAngle, successEnd);
@@ -649,8 +650,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       ticks.forEach(t => {
         const a = startAngle + t * fullSweep;
         ctx.beginPath();
-        ctx.moveTo(cx + (r - trackW/2 - 6) * Math.cos(a), cy + (r - trackW/2 - 6) * Math.sin(a));
-        ctx.lineTo(cx + (r + trackW/2 + 6) * Math.cos(a), cy + (r + trackW/2 + 6) * Math.sin(a));
+        ctx.moveTo(cx + (r - trackW / 2 - 6) * Math.cos(a), cy + (r - trackW / 2 - 6) * Math.sin(a));
+        ctx.lineTo(cx + (r + trackW / 2 + 6) * Math.cos(a), cy + (r + trackW / 2 + 6) * Math.sin(a));
         ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1.5; ctx.lineCap = 'butt'; ctx.stroke();
       });
 
