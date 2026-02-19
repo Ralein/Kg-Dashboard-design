@@ -2,11 +2,12 @@ import { Component, signal, HostListener, Input, inject } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, NgClass, FormsModule], // Added FormsModule
+  imports: [CommonModule, NgClass, FormsModule],
   template: `
     <header
       class="fixed top-0 right-0 z-40 h-24 flex items-center justify-between px-8 transition-all duration-300"
@@ -66,15 +67,15 @@ import { FormsModule } from '@angular/forms';
             <!-- Avatar -->
             <div class="relative">
                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 text-white shadow-md ring-2 ring-white">
-                  <span class="text-xs font-bold">JD</span>
+                  <span class="text-xs font-bold">{{ getUserInitials() }}</span>
                </div>
                <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-success rounded-full border-2 border-white"></div>
             </div>
 
             <!-- Name + role -->
             <div class="hidden md:flex flex-col mr-1">
-              <span class="text-xs font-bold text-primary group-hover:text-accent transition-colors">John Doe</span>
-              <span class="text-[9px] font-bold text-secondary uppercase">Admin</span>
+              <span class="text-xs font-bold text-primary group-hover:text-accent transition-colors">{{ userService.currentUser().firstName }} {{ userService.currentUser().lastName }}</span>
+              <span class="text-[9px] font-bold text-secondary uppercase">{{ userService.currentUser().role }}</span>
             </div>
             
              <svg 
@@ -116,6 +117,7 @@ export class HeaderComponent {
   @Input() sidebarCollapsed = false;
 
   private router = inject(Router);
+  userService = inject(UserService);
 
   searchQuery = '';
   isFullscreen = false;
@@ -149,6 +151,13 @@ export class HeaderComponent {
     if (this.searchQuery.trim()) {
       this.router.navigate(['/consents'], { queryParams: { q: this.searchQuery } });
     }
+  }
+
+  getUserInitials(): string {
+    const user = this.userService.currentUser();
+    const first = user.firstName?.charAt(0) || '';
+    const last = user.lastName?.charAt(0) || '';
+    return (first + last).toUpperCase() || 'JD';
   }
 
   toggleFullscreen(): void {
