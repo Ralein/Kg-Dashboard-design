@@ -22,13 +22,13 @@ interface AuditLog {
   template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header Area -->
-      <div class="px-4">
+      <div>
         <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">Audit Logs</h1>
         <p class="text-[#A3AED0] text-sm font-medium">Track all system activities and API transactions</p>
       </div>
 
       <!-- Main Content Card -->
-      <div class="chart-shell p-0 overflow-hidden bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[600px] flex flex-col mx-4">
+      <div class="chart-shell p-0 overflow-hidden bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[600px] flex flex-col">
         
         <!-- Toolbar Row -->
         <div class="p-6 border-b border-gray-100/50">

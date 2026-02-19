@@ -44,7 +44,11 @@ export const routes: Routes = [
     },
     {
         path: 'reports',
-        redirectTo: 'dashboard'
+        loadComponent: () => import('./pages/reports/reports.component').then(m => m.ReportsComponent)
+    },
+    {
+        path: 'user-profile',
+        loadComponent: () => import('./pages/user-profile/user-profile.component').then(m => m.UserProfileComponent)
     },
     {
         path: 'audit',

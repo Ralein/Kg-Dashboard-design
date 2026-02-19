@@ -78,6 +78,17 @@ interface Quote {
                   <option>50</option>
                 </select>
               </div>
+              <div class="relative group">
+                <select class="glass-input pl-3 pr-8 py-2 cursor-pointer hover:bg-gray-50 text-[10px] font-bold text-[#2B3674] appearance-none min-w-[120px]">
+                  <option>Available</option>
+                  <option>ApplicationPending</option>
+                  <option>Policy Issued</option>
+                  <option>Clear Filter</option>
+                </select>
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                </div>
+              </div>
               <button class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
                 <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
               </button>

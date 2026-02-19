@@ -13,7 +13,7 @@ Chart.register(...registerables);
   template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header & Selector Row -->
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-4">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">API Monitoring</h1>
           <p class="text-[#A3AED0] text-sm font-medium">Real-time API performance and usage metrics</p>
@@ -23,8 +23,9 @@ Chart.register(...registerables);
            <div class="relative min-w-[200px]">
               <select class="glass-input pl-3 pr-10 py-2 w-full appearance-none cursor-pointer font-bold text-[#2B3674]">
                 <option>Adnic service</option>
-                <option>Travel Gateway</option>
-                <option>Medical API</option>
+                <option>Client Service</option>
+                <option>Data Sharing Service</option>
+                <option>Ozone Service</option>
               </select>
               <lucide-icon [img]="ChevronDown" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
            </div>
@@ -32,7 +33,7 @@ Chart.register(...registerables);
       </div>
 
       <!-- Top Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Usage Volume -->
         <div class="chart-shell p-6 flex flex-col gap-4">
           <div class="flex justify-between items-center">
@@ -69,7 +70,7 @@ Chart.register(...registerables);
                 <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Average</span>
                 <span class="text-[8px] font-bold bg-[#05CD99]/10 text-[#05CD99] px-1.5 py-0.5 rounded">Last 7 Days</span>
               </div>
-              <span class="text-2xl font-bold text-[#2B3674]">23975 MS</span>
+              <span class="text-2xl font-bold text-[#2B3674]">24227 MS</span>
             </div>
             <div class="flex flex-col">
               <div class="flex items-center gap-2 mb-1">
@@ -97,7 +98,7 @@ Chart.register(...registerables);
       </div>
 
       <!-- Bottom Grid: Stats & Monthly History -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4 mb-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <!-- Daily Stats List -->
         <div class="chart-shell p-6 lg:col-span-1 flex flex-col gap-6">
           <div class="flex justify-between items-center pb-2 border-b border-gray-50">

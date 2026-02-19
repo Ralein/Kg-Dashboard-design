@@ -58,25 +58,53 @@ import { FormsModule } from '@angular/forms';
         <div class="w-px h-6 bg-secondary/20"></div>
 
         <!-- User Section -->
-        <div class="group flex items-center gap-3 cursor-pointer pl-1">
-          
-          <!-- Avatar -->
-          <div class="relative">
-             <div class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 text-white shadow-md ring-2 ring-white">
-                <span class="text-xs font-bold">JD</span>
-             </div>
-             <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-success rounded-full border-2 border-white"></div>
+        <div class="relative">
+          <div 
+            (click)="toggleUserDropdown($event)"
+            class="group flex items-center gap-3 cursor-pointer pl-1"
+          >
+            <!-- Avatar -->
+            <div class="relative">
+               <div class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 text-white shadow-md ring-2 ring-white">
+                  <span class="text-xs font-bold">JD</span>
+               </div>
+               <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-success rounded-full border-2 border-white"></div>
+            </div>
+
+            <!-- Name + role -->
+            <div class="hidden md:flex flex-col mr-1">
+              <span class="text-xs font-bold text-primary group-hover:text-accent transition-colors">John Doe</span>
+              <span class="text-[9px] font-bold text-secondary uppercase">Admin</span>
+            </div>
+            
+             <svg 
+               class="text-secondary/70 transition-transform duration-300" 
+               [class.rotate-180]="userDropdownOpen()"
+               width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
+             >
+                  <path d="M7 10l5 5 5-5z"/>
+             </svg>
           </div>
 
-          <!-- Name + role -->
-          <div class="hidden md:flex flex-col mr-1">
-            <span class="text-xs font-bold text-primary group-hover:text-accent transition-colors">John Doe</span>
-            <span class="text-[9px] font-bold text-secondary uppercase">Admin</span>
+          <!-- Dropdown Menu -->
+          <div 
+            *ngIf="userDropdownOpen()"
+            class="absolute right-0 mt-3 w-48 bg-white/70 backdrop-blur-xl border border-white/20 rounded-xl shadow-glass overflow-hidden animate-fade-in py-1 z-50"
+          >
+            <button 
+              (click)="navigateToProfile()"
+              class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-[#2B3674] hover:bg-white/50 transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              User Account
+            </button>
+            <button 
+              class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-[#FF5252] hover:bg-white/50 transition-colors border-t border-white/10"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign Out
+            </button>
           </div>
-          
-           <svg class="text-secondary/70 group-hover:text-primary transition-transform duration-300 group-hover:rotate-180" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M7 10l5 5 5-5z"/>
-           </svg>
         </div>
 
       </div>
@@ -92,10 +120,29 @@ export class HeaderComponent {
   searchQuery = '';
   isFullscreen = false;
   isScrolled = false;
+  userDropdownOpen = signal(false);
 
   @HostListener('window:scroll')
   onScroll(): void {
     this.isScrolled = window.scrollY > 10;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.relative')) {
+      this.userDropdownOpen.set(false);
+    }
+  }
+
+  toggleUserDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.userDropdownOpen.update(v => !v);
+  }
+
+  navigateToProfile(): void {
+    this.userDropdownOpen.set(false);
+    this.router.navigate(['/user-profile']);
   }
 
   onSearch(): void {
