@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
   template: `
     <header
       class="fixed top-0 right-0 z-40 h-24 flex items-center justify-between px-8 transition-all duration-300"
-      [style.left]="sidebarCollapsed ? '5rem' : '16rem'"
+      [style.left]="sidebarCollapsed ? '5rem' : '18rem'"
       [ngClass]="{
         'bg-white/80 backdrop-blur-xl border-b border-white/20': isScrolled,
         'bg-transparent': !isScrolled

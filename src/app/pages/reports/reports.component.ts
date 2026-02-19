@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Search, Calendar, RotateCcw, Send, FileSpreadsheet, ChevronRight } from 'lucide-angular';
 
 @Component({
-    selector: 'app-reports',
-    standalone: true,
-    imports: [CommonModule, FormsModule, LucideAngularModule],
-    template: `
+  selector: 'app-reports',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LucideAngularModule],
+  template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header Area -->
       <div class="flex justify-between items-center">
@@ -69,7 +69,7 @@ import { LucideAngularModule, Search, Calendar, RotateCcw, Send, FileSpreadsheet
               <lucide-icon [img]="RotateCcw" class="w-3.5 h-3.5"></lucide-icon>
               Reset
             </button>
-            <button class="flex items-center gap-2 px-8 py-2 rounded-lg bg-[#707EAE] text-white font-bold text-xs hover:bg-[#2B3674] transition-all shadow-lg shadow-[#707EAE]/20">
+            <button class="px-8 py-2.5 rounded-xl bg-[#2B3674] text-white font-bold text-sm hover:bg-[#1B2559] transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2">
               Submit
             </button>
           </div>
@@ -94,17 +94,17 @@ import { LucideAngularModule, Search, Calendar, RotateCcw, Send, FileSpreadsheet
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host {
       display: block;
     }
   `]
 })
 export class ReportsComponent {
-    readonly Calendar = Calendar;
-    readonly RotateCcw = RotateCcw;
-    readonly Send = Send;
-    readonly Search = Search;
-    readonly FileSpreadsheet = FileSpreadsheet;
-    readonly ChevronRight = ChevronRight;
+  readonly Calendar = Calendar;
+  readonly RotateCcw = RotateCcw;
+  readonly Send = Send;
+  readonly Search = Search;
+  readonly FileSpreadsheet = FileSpreadsheet;
+  readonly ChevronRight = ChevronRight;
 }

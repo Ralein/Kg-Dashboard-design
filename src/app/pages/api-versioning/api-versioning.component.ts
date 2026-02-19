@@ -78,7 +78,7 @@ import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Downloa
               <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
               Create API Endpoint
            </button>
-           <button class="bg-[#4318FF] text-white px-8 py-2.5 rounded-xl font-bold text-sm tracking-tight hover:bg-[#3311DB] transition-all shadow-lg shadow-[#4318FF]/20 flex items-center gap-2">
+           <button class="px-8 py-2.5 rounded-xl bg-[#2B3674] text-white font-bold text-sm hover:bg-[#1B2559] transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2">
               <lucide-icon [img]="CheckCircle2" class="w-4 h-4"></lucide-icon>
               Submit
            </button>

@@ -18,7 +18,7 @@ interface NavItem {
     <aside
       class="fixed left-0 top-0 h-screen transition-all duration-300 ease-in-out z-50 flex flex-col"
       [ngClass]="{
-        'w-64': !collapsed(),
+        'w-[18rem]': !collapsed(),
         'w-20': collapsed()
       }"
     >
