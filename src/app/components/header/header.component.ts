@@ -10,10 +10,10 @@ import { UserService } from '../../services/user.service';
   imports: [CommonModule, NgClass, FormsModule],
   template: `
     <header
-      class="fixed top-0 right-0 z-40 h-24 flex items-center justify-between px-8 transition-all duration-300"
+      class="fixed top-0 right-0 z-40 h-24 flex items-center justify-between px-8 transition-all duration-300 ease-in-out"
       [style.left]="sidebarCollapsed ? '5rem' : '20rem'"
       [ngClass]="{
-        'bg-white/80 backdrop-blur-xl border-b border-white/20': isScrolled,
+        'premium-glass border-b-0': isScrolled,
         'bg-transparent': !isScrolled
       }"
     >
@@ -24,29 +24,29 @@ import { UserService } from '../../services/user.service';
       </div>
 
       <!-- ── Right Actions ── -->
-      <div class="glass-input px-2 py-1.5 flex items-center gap-2">
+      <div class="premium-glass px-2 py-1.5 rounded-2xl flex items-center gap-2 shadow-lg shadow-blue-500/5">
 
         <!-- Search (Functional) -->
-        <div class="relative hidden lg:block mr-2">
+        <div class="relative hidden lg:block mr-2 group">
            <input 
              type="text" 
              [(ngModel)]="searchQuery" 
              (keyup.enter)="onSearch()"
              placeholder="Search..." 
-             class="bg-transparent border-none outline-none text-sm text-primary font-medium w-40 placeholder:text-secondary/70"
+             class="bg-transparent border-none outline-none text-sm text-[#2B3674] font-medium w-40 placeholder:text-[#A3AED0] transition-all duration-300 focus:w-48"
            >
-           <button (click)="onSearch()" class="absolute right-0 top-1/2 -translate-y-1/2 text-secondary hover:text-accent transition-colors cursor-pointer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+           <button (click)="onSearch()" class="absolute right-0 top-1/2 -translate-y-1/2 text-[#A3AED0] group-hover:text-[#4318FF] transition-colors cursor-pointer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
            </button>
         </div>
 
         <!-- Fullscreen toggle -->
         <button
           (click)="toggleFullscreen()"
-          class="p-2 rounded-lg text-secondary hover:text-primary hover:bg-white/50 transition-all duration-200"
+          class="p-2 rounded-xl text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 transition-all duration-200"
           [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             @if (!isFullscreen) {
               <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
             } @else {
@@ -56,32 +56,32 @@ import { UserService } from '../../services/user.service';
         </button>
 
         <!-- Divider -->
-        <div class="w-px h-6 bg-secondary/20"></div>
+        <div class="w-px h-6 bg-[#A3AED0]/20"></div>
 
         <!-- User Section -->
         <div class="relative">
           <div 
             (click)="toggleUserDropdown($event)"
-            class="group flex items-center gap-3 cursor-pointer pl-1"
+            class="group flex items-center gap-3 cursor-pointer pl-1 pr-1"
           >
             <!-- Avatar -->
             <div class="relative">
-               <div class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 text-white shadow-md ring-2 ring-white">
-                  <span class="text-xs font-bold">{{ getUserInitials() }}</span>
+               <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#4318FF] to-[#868CFF] text-white shadow-lg shadow-blue-500/20 ring-2 ring-white transition-transform duration-300 group-hover:scale-105">
+                  <span class="text-sm font-bold">{{ getUserInitials() }}</span>
                </div>
-               <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-success rounded-full border-2 border-white"></div>
+               <div class="absolute bottom-0 right-0 w-3 h-3 bg-[#05CD99] rounded-full border-2 border-white animate-pulse"></div>
             </div>
 
             <!-- Name + role -->
             <div class="hidden md:flex flex-col mr-1">
-              <span class="text-xs font-bold text-primary group-hover:text-accent transition-colors">{{ userService.currentUser().firstName }} {{ userService.currentUser().lastName }}</span>
-              <span class="text-[9px] font-bold text-secondary uppercase">{{ userService.currentUser().role }}</span>
+              <span class="text-sm font-bold text-[#2B3674] group-hover:text-[#4318FF] transition-colors">{{ userService.currentUser().firstName }} {{ userService.currentUser().lastName }}</span>
+              <span class="text-[10px] font-bold text-[#A3AED0] uppercase tracking-wide">{{ userService.currentUser().role }}</span>
             </div>
             
              <svg 
-               class="text-secondary/70 transition-transform duration-300" 
+               class="text-[#A3AED0] transition-transform duration-300 group-hover:text-[#4318FF]" 
                [class.rotate-180]="userDropdownOpen()"
-               width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
+               width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
              >
                   <path d="M7 10l5 5 5-5z"/>
              </svg>
@@ -90,19 +90,24 @@ import { UserService } from '../../services/user.service';
           <!-- Dropdown Menu -->
           <div 
             *ngIf="userDropdownOpen()"
-            class="absolute right-0 mt-3 w-48 bg-white/70 backdrop-blur-xl border border-white/20 rounded-xl shadow-glass overflow-hidden animate-fade-in py-1 z-50"
+            class="absolute right-0 mt-4 w-56 premium-glass rounded-xl overflow-hidden animate-fade-in py-1 z-50 transform origin-top-right"
           >
+            <div class="px-4 py-3 border-b border-gray-100/50">
+               <p class="text-xs font-bold text-[#A3AED0] uppercase">Signed in as</p>
+               <p class="text-sm font-bold text-[#2B3674] truncate">{{ userService.currentUser().email }}</p>
+            </div>
+            
             <button 
               (click)="navigateToProfile()"
-              class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-[#2B3674] hover:bg-white/50 transition-colors"
+              class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-[#2B3674] hover:bg-[#4318FF]/5 hover:text-[#4318FF] transition-colors"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              User Account
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Profile Settings
             </button>
             <button 
-              class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-[#FF5252] hover:bg-white/50 transition-colors border-t border-white/10"
+              class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-[#EE5D50] hover:bg-[#EE5D50]/5 transition-colors border-t border-gray-100/50"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
               Sign Out
             </button>
           </div>

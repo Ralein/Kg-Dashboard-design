@@ -33,7 +33,7 @@
     }
 
     .premium-glass-dark {
-        @apply bg-navy-900/80 backdrop-blur-xl border border-white/10 shadow-2xl;
+        @apply bg-[#0C0F2E]/80 backdrop-blur-xl border border-white/10 shadow-2xl;
         background: linear-gradient(145deg, #0C0F2E 0%, #141836 60%, #0E1428 100%);
     }
 
@@ -120,10 +120,18 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #a3aed0;
+    background: rgba(163, 174, 208, 0.5);
+    /* Lighter secondary */
     border-radius: 10px;
+    backdrop-filter: blur(4px);
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: #4318FF;
+}
+
+/* Global Selection */
+::selection {
+    background: #4318FF;
+    color: white;
 }

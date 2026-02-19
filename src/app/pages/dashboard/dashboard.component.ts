@@ -85,7 +85,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
 
       <!-- Row 1: Consent & TPP -->
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <app-chart-card title="Consent Analysis" subtitle="Radial breakdown by authorization status" [dark]="true" [showLive]="true" delay="100ms">
+        <app-chart-card title="Consent Analysis" subtitle="Radial breakdown by authorization status"[showLive]="true" delay="100ms">
             @if (isLoading()) {
                 <div class="animate-pulse flex space-x-4 h-full items-center justify-center">
                     <div class="rounded-full bg-slate-700 h-40 w-40"></div>
@@ -95,7 +95,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
             }
         </app-chart-card>
 
-        <app-chart-card title="TPP Wise Consent Requests" subtitle="Lollipop distribution by client platform" [dark]="true" delay="200ms">
+        <app-chart-card title="TPP Wise Consent Requests" subtitle="Lollipop distribution by client platform" delay="200ms">
              @if (isLoading()) {
                 <div class="animate-pulse space-y-4 p-4">
                     <div class="h-4 bg-slate-700 rounded w-3/4"></div>

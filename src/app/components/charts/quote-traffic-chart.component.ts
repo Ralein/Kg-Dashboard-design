@@ -6,7 +6,8 @@ import { BaseChartComponent } from './base-chart.component';
     selector: 'app-quote-traffic-chart',
     standalone: true,
     imports: [CommonModule],
-    template: `<canvas #canvas class="w-full h-full"></canvas>`
+    template: `<canvas #canvas class="w-full h-full"></canvas>`,
+    styles: [`:host { display: block; position: relative; width: 100%; height: 100%; }`]
 })
 export class QuoteTrafficChartComponent extends BaseChartComponent {
     private months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
@@ -82,10 +83,11 @@ export class QuoteTrafficChartComponent extends BaseChartComponent {
         if (pts.length < 2) return;
         const ctx = this.ctx;
 
+        // Digital Vertical Scan Gradient
         const areaGrad = ctx.createLinearGradient(0, pT, 0, pT + cH);
-        areaGrad.addColorStop(0, color.replace(')', ', 0.35)').replace('rgb', 'rgba'));
-        areaGrad.addColorStop(0.7, color.replace(')', ', 0.08)').replace('rgb', 'rgba'));
-        areaGrad.addColorStop(1, 'transparent');
+        areaGrad.addColorStop(0, color.replace(')', ', 0.5)').replace('rgb', 'rgba')); // Intense top
+        areaGrad.addColorStop(0.2, color.replace(')', ', 0.1)').replace('rgb', 'rgba'));
+        areaGrad.addColorStop(1, 'transparent'); // Fade out completely
 
         this.smoothPath(pts);
         ctx.lineTo(pts[pts.length - 1][0], pT + cH);
@@ -94,21 +96,35 @@ export class QuoteTrafficChartComponent extends BaseChartComponent {
         ctx.fillStyle = areaGrad;
         ctx.fill();
 
+        // Neon Stroke
         this.smoothPath(pts);
         ctx.strokeStyle = color;
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 3;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.shadowColor = glowColor;
-        ctx.shadowBlur = 16;
+        ctx.shadowBlur = 20; // Heavy neon glow
         ctx.stroke();
         ctx.shadowBlur = 0;
 
+        // "Scan Line" Overlay (Horizontal line moving down)
+        const scanY = pT + (Date.now() % 2000) / 2000 * cH;
+        ctx.beginPath();
+        ctx.moveTo(pts[0][0], scanY);
+        ctx.lineTo(pts[pts.length - 1][0], scanY);
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Points (Hollow digital nodes)
         pts.forEach(([x, y]) => {
-            ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#111'; // Dark center
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = color;
             ctx.shadowColor = color; ctx.shadowBlur = 10;
-            ctx.fill(); ctx.shadowBlur = 0;
+            ctx.stroke(); ctx.shadowBlur = 0;
         });
     }
 
