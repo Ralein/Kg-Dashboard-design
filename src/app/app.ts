@@ -18,7 +18,7 @@ import { HeaderComponent } from './components/header/header.component';
       <!-- Main Content -->
       <div
         class="flex flex-col min-h-screen transition-all duration-300 pt-24"
-        [style.marginLeft]="sidebarCollapsed() ? '5rem' : '20rem'"
+        [style.marginLeft]="sidebarCollapsed() ? '5rem' : '17.5rem'"
       >
         <main class="flex-1 px-8 pb-8 animate-fade-in-up">
           <router-outlet />

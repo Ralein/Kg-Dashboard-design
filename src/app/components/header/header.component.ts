@@ -11,7 +11,7 @@ import { UserService } from '../../services/user.service';
   template: `
     <header
       class="fixed top-0 right-0 z-40 h-24 flex items-center justify-between px-8 transition-all duration-300 ease-in-out"
-      [style.left]="sidebarCollapsed ? '5rem' : '20rem'"
+      [style.left]="sidebarCollapsed ? '5rem' : '17.5rem'"
       [ngClass]="{
         'premium-glass border-b-0': isScrolled,
         'bg-transparent': !isScrolled
@@ -25,20 +25,6 @@ import { UserService } from '../../services/user.service';
 
       <!-- ── Right Actions ── -->
       <div class="premium-glass px-2 py-1.5 rounded-2xl flex items-center gap-2 shadow-lg shadow-blue-500/5">
-
-        <!-- Search (Functional) -->
-        <div class="relative hidden lg:block mr-2 group">
-           <input 
-             type="text" 
-             [(ngModel)]="searchQuery" 
-             (keyup.enter)="onSearch()"
-             placeholder="Search..." 
-             class="bg-transparent border-none outline-none text-sm text-[#2B3674] font-medium w-40 placeholder:text-[#A3AED0] transition-all duration-300 focus:w-48"
-           >
-           <button (click)="onSearch()" class="absolute right-0 top-1/2 -translate-y-1/2 text-[#A3AED0] group-hover:text-[#4318FF] transition-colors cursor-pointer">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-           </button>
-        </div>
 
         <!-- Fullscreen toggle -->
         <button
@@ -124,7 +110,6 @@ export class HeaderComponent {
   private router = inject(Router);
   userService = inject(UserService);
 
-  searchQuery = '';
   isFullscreen = false;
   isScrolled = false;
   userDropdownOpen = signal(false);
@@ -150,12 +135,6 @@ export class HeaderComponent {
   navigateToProfile(): void {
     this.userDropdownOpen.set(false);
     this.router.navigate(['/user-profile']);
-  }
-
-  onSearch(): void {
-    if (this.searchQuery.trim()) {
-      this.router.navigate(['/consents'], { queryParams: { q: this.searchQuery } });
-    }
   }
 
   getUserInitials(): string {

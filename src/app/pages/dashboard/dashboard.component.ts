@@ -42,7 +42,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
       <!-- Header -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-2">
         <div>
-          <h1 class="text-3xl font-black text-[#2B3674] tracking-tight">System Oversight</h1>
+          <h1 class="text-3xl font-black text-[#2B3674] tracking-tight">Dashboard</h1>
           <p class="text-[#A3AED0] text-sm font-bold uppercase tracking-widest mt-1">Operational Dynamics & Metrics</p>
         </div>
         <div class="flex items-center gap-2 premium-glass p-2 rounded-2xl shadow-sm">
@@ -93,53 +93,112 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
       <!-- Row 2: Quotes Deep-dive -->
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <app-chart-card title="Quote Traffic" subtitle="Monthly Generation vs Acceptance trends" delay="300ms">
-            <div header-actions class="flex items-center gap-4 mr-2">
-                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#7C5CFF]"></span><span class="text-[10px] text-[#A3AED0] font-bold">GEN</span></div>
-                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#05CD99]"></span><span class="text-[10px] text-[#A3AED0] font-bold">ACC</span></div>
-            </div>
-            <app-quote-traffic-chart></app-quote-traffic-chart>
+            @if (!isLoading()) {
+                <div header-actions class="flex items-center gap-4 mr-2">
+                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#7C5CFF]"></span><span class="text-[10px] text-[#A3AED0] font-bold">GEN</span></div>
+                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#05CD99]"></span><span class="text-[10px] text-[#A3AED0] font-bold">ACC</span></div>
+                </div>
+            }
+            @if (isLoading()) {
+                <div class="flex items-end justify-between h-full px-4 pb-2 gap-2">
+                    <div class="skeleton w-8 h-32 rounded-t-lg"></div>
+                    <div class="skeleton w-8 h-20 rounded-t-lg"></div>
+                    <div class="skeleton w-8 h-40 rounded-t-lg"></div>
+                    <div class="skeleton w-8 h-24 rounded-t-lg"></div>
+                    <div class="skeleton w-8 h-36 rounded-t-lg"></div>
+                    <div class="skeleton w-8 h-16 rounded-t-lg"></div>
+                </div>
+            } @else {
+                <app-quote-traffic-chart></app-quote-traffic-chart>
+            }
         </app-chart-card>
 
         <app-chart-card title="Quote Status" subtitle="Distribution of quotes across states" delay="400ms" [showFooter]="true">
-            <app-quote-status-chart [data]="quoteStatusData"></app-quote-status-chart>
-            <div footer class="flex justify-center gap-4">
-                @for (item of quoteStatusData; track item.label) {
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full" [style.background]="item.color" [style.box-shadow]="'0 0 6px '+item.color"></span>
-                        <span class="text-[10px] text-[#A3AED0] font-bold uppercase">{{ item.label }}</span>
-                        <span class="text-xs text-[#2B3674] font-black">{{ item.value }}</span>
+            @if (isLoading()) {
+                <div class="flex flex-col items-center justify-center h-full gap-4">
+                    <div class="skeleton w-40 h-40 rounded-full border-[6px] border-white"></div>
+                    <div class="flex gap-2">
+                        <div class="skeleton w-16 h-4 rounded"></div>
+                        <div class="skeleton w-16 h-4 rounded"></div>
+                        <div class="skeleton w-16 h-4 rounded"></div>
                     </div>
-                }
-            </div>
+                </div>
+            } @else {
+                <app-quote-status-chart [data]="quoteStatusData"></app-quote-status-chart>
+            }
+            @if (!isLoading()) {
+                <div footer class="flex justify-center gap-4">
+                    @for (item of quoteStatusData; track item.label) {
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full" [style.background]="item.color" [style.box-shadow]="'0 0 6px '+item.color"></span>
+                            <span class="text-[10px] text-[#A3AED0] font-bold uppercase">{{ item.label }}</span>
+                            <span class="text-xs text-[#2B3674] font-black">{{ item.value }}</span>
+                        </div>
+                    }
+                </div>
+            }
         </app-chart-card>
 
         <app-chart-card title="Quote LOB" subtitle="Volume breakdown by Business Line" delay="500ms">
-            <app-quote-lob-chart [data]="quoteLobData"></app-quote-lob-chart>
+            @if (isLoading()) {
+                <div class="flex flex-col justify-center h-full gap-4 px-4">
+                    <div class="skeleton w-full h-8 rounded-lg"></div>
+                    <div class="skeleton w-3/4 h-8 rounded-lg"></div>
+                    <div class="skeleton w-5/6 h-8 rounded-lg"></div>
+                    <div class="skeleton w-2/3 h-8 rounded-lg"></div>
+                </div>
+            } @else {
+                <app-quote-lob-chart [data]="quoteLobData"></app-quote-lob-chart>
+            }
         </app-chart-card>
       </div>
 
       <!-- Row 3: LOB & API -->
       <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <app-chart-card title="LOB Distribution" subtitle="Portfolio weight by Line of Business" delay="600ms" height="360px">
-            <app-lob-distribution-chart [data]="lobLegend"></app-lob-distribution-chart>
+            @if (isLoading()) {
+                <div class="flex items-center justify-center h-full">
+                    <div class="skeleton w-56 h-56 rounded-full"></div>
+                </div>
+            } @else {
+                <app-lob-distribution-chart [data]="lobLegend"></app-lob-distribution-chart>
+            }
         </app-chart-card>
 
         <app-chart-card title="API Success Rate" subtitle="Real-time healthy check · SLA 99.9%" [dark]="true" delay="700ms" height="360px">
-            <div header-actions class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mr-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-[10px] font-black text-emerald-500 tracking-widest">HEALTHY</span>
-            </div>
-            <app-api-success-chart></app-api-success-chart>
-            <div footer class="grid grid-cols-2 gap-4">
-                <div class="rounded-2xl p-4 bg-emerald-500/5 border border-emerald-500/10 text-center">
-                    <div class="text-2xl font-black text-emerald-400">94.2%</div>
-                    <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-1">SUCCESS</div>
+            @if (!isLoading()) {
+                <div header-actions class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mr-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[10px] font-black text-emerald-500 tracking-widest">HEALTHY</span>
                 </div>
-                <div class="rounded-2xl p-4 bg-red-500/5 border border-red-500/10 text-center">
-                    <div class="text-2xl font-black text-red-400">5.8%</div>
-                    <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-1">FAILURE</div>
+            }
+            @if (isLoading()) {
+                 <div class="flex flex-col items-center justify-center h-full gap-6">
+                    <!-- Gauge Arc Skeleton -->
+                    <div class="relative w-48 h-24 overflow-hidden">
+                        <div class="skeleton absolute top-0 left-0 w-48 h-48 rounded-full border-[20px] border-gray-700 border-b-transparent"></div>
+                    </div>
+                    <div class="skeleton w-24 h-8 rounded bg-gray-700"></div>
+                     <div class="grid grid-cols-2 gap-4 w-full px-8 mt-4">
+                        <div class="skeleton h-16 rounded-2xl bg-gray-800"></div>
+                        <div class="skeleton h-16 rounded-2xl bg-gray-800"></div>
+                    </div>
                 </div>
-            </div>
+            } @else {
+                <app-api-success-chart></app-api-success-chart>
+            }
+            @if (!isLoading()) {
+                <div footer class="grid grid-cols-2 gap-4">
+                    <div class="rounded-2xl p-4 bg-emerald-500/5 border border-emerald-500/10 text-center">
+                        <div class="text-2xl font-black text-emerald-400">94.2%</div>
+                        <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-1">SUCCESS</div>
+                    </div>
+                    <div class="rounded-2xl p-4 bg-red-500/5 border border-red-500/10 text-center">
+                        <div class="text-2xl font-black text-red-400">5.8%</div>
+                        <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-1">FAILURE</div>
+                    </div>
+                </div>
+            }
         </app-chart-card>
       </div>
     </div>
