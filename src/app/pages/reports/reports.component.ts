@@ -10,23 +10,34 @@ import { LucideAngularModule, Search, Calendar, RotateCcw, Send, FileSpreadsheet
   template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header Area -->
-      <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">Reports</h1>
+      <div class="flex justify-between items-center px-0">
+        <div>
+          <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">Reports</h1>
+          <p class="text-[#A3AED0] text-sm font-medium">Generate and export system performance reports</p>
+        </div>
       </div>
 
-      <!-- Search Criteria Banner -->
-      <div class="chart-shell bg-white shadow-glass border border-gray-100 overflow-visible">
-        <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-[#1B2559] rounded-t-[20px]">
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Search Criteria</h3>
-        </div>
+      <!-- Main Reports Container -->
+      <div class="chart-shell p-0 overflow-hidden bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[600px] flex flex-col">
         
-        <div class="p-8">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+        <!-- Search Criteria Header -->
+        <div class="p-6 border-b border-gray-100/50 bg-[#2B3674]/[0.02]">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-[#4318FF]/10 flex items-center justify-center">
+              <lucide-icon [img]="FileSpreadsheet" class="w-4 h-4 text-[#4318FF]"></lucide-icon>
+            </div>
+            <h3 class="text-sm font-bold text-[#2B3674] uppercase tracking-wider">Report Selection & Criteria</h3>
+          </div>
+        </div>
+
+        <!-- Inputs Grid -->
+        <div class="p-8 border-b border-gray-100/50">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Reports Dropdown -->
-            <div class="flex flex-col gap-2 relative group">
-              <label class="text-[11px] font-bold text-[#4318FF] uppercase tracking-wide">Reports*</label>
+            <div class="flex flex-col gap-1.5 relative group">
+              <label class="text-[11px] font-bold text-[#A3AED0] uppercase tracking-wide ml-1">Select Report Type<span class="text-red-500">*</span></label>
               <div class="relative">
-                <select class="glass-input pl-4 pr-10 py-3 w-full appearance-none cursor-pointer font-bold text-[#2B3674] border-[#4318FF]/20 focus:border-[#4318FF] transition-all bg-white">
+                <select class="glass-input pl-4 pr-10 py-3 w-full appearance-none cursor-pointer font-bold text-[#2B3674] border-gray-100 focus:border-[#4318FF] transition-all bg-white">
                   <option>Consent Expiry Forecast Report</option>
                   <option>Top TPP Usage Report</option>
                   <option>User Consent Activity Report</option>
@@ -38,61 +49,77 @@ import { LucideAngularModule, Search, Calendar, RotateCcw, Send, FileSpreadsheet
                   <option>Quote Transaction Report</option>
                   <option>LFI quote id search</option>
                 </select>
-                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#4318FF]">
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#A3AED0]">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                 </div>
               </div>
             </div>
 
             <!-- Period Start -->
-            <div class="flex flex-col gap-2">
-              <label class="text-[11px] font-bold text-[#A3AED0] uppercase tracking-wide">Period Start *</label>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[11px] font-bold text-[#A3AED0] uppercase tracking-wide ml-1">Period Start<span class="text-red-500">*</span></label>
               <div class="relative">
-                <input type="text" value="1/19/2026" class="glass-input pl-4 pr-10 py-3 w-full font-bold text-[#2B3674] border-gray-100 focus:border-[#4318FF] transition-all bg-white">
-                <lucide-icon [img]="Calendar" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0]"></lucide-icon>
+                <input type="text" value="01/01/2026" class="glass-input pl-4 pr-10 py-3 w-full font-bold text-[#2B3674] border-gray-100 focus:border-[#4318FF] transition-all bg-white">
+                <lucide-icon [img]="Calendar" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
               </div>
             </div>
 
             <!-- Period End -->
-            <div class="flex flex-col gap-2">
-              <label class="text-[11px] font-bold text-[#A3AED0] uppercase tracking-wide">Period End *</label>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[11px] font-bold text-[#A3AED0] uppercase tracking-wide ml-1">Period End<span class="text-red-500">*</span></label>
               <div class="relative">
-                <input type="text" value="2/19/2026" class="glass-input pl-4 pr-10 py-3 w-full font-bold text-[#2B3674] border-gray-100 focus:border-[#4318FF] transition-all bg-white">
-                <lucide-icon [img]="Calendar" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0]"></lucide-icon>
+                <input type="text" value="02/19/2026" class="glass-input pl-4 pr-10 py-3 w-full font-bold text-[#2B3674] border-gray-100 focus:border-[#4318FF] transition-all bg-white">
+                <lucide-icon [img]="Calendar" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
               </div>
             </div>
           </div>
 
           <!-- Actions -->
           <div class="flex justify-end gap-3 mt-8">
-            <button class="flex items-center gap-2 px-6 py-2 rounded-lg border border-[#F4F7FE] text-[#FF8F0C] font-bold text-xs hover:bg-[#FFF8F1] transition-all">
+            <button class="px-6 py-2.5 rounded-xl border border-gray-200 text-[#2B3674] font-bold text-sm hover:bg-gray-50 transition-all flex items-center gap-2">
               <lucide-icon [img]="RotateCcw" class="w-3.5 h-3.5"></lucide-icon>
               Reset
             </button>
-            <button class="px-8 py-2.5 rounded-xl bg-[#2B3674] text-white font-bold text-sm hover:bg-[#1B2559] transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2">
+            <button class="px-10 py-2.5 rounded-xl bg-[#2B3674] text-white font-bold text-sm hover:bg-[#1B2559] transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2">
               Submit
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- Result Area -->
-      <div class="chart-shell bg-white/50 border border-gray-50/50 min-h-[300px] flex flex-col items-center justify-center relative overflow-hidden">
-        <div class="absolute top-6 right-6">
-           <button class="p-2.5 bg-white rounded-lg shadow-glass border border-gray-100 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95">
-              <lucide-icon [img]="FileSpreadsheet" class="w-5 h-5"></lucide-icon>
-           </button>
-        </div>
-        
-        <div class="flex flex-col items-center opacity-20">
-           <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
-              <lucide-icon [img]="Search" class="w-8 h-8 text-[#2B3674]"></lucide-icon>
-           </div>
-           <p class="text-sm font-bold text-[#2B3674]">No data to display</p>
-           <p class="text-xs font-medium text-[#A3AED0] mt-1">Submit your criteria to generate a report</p>
+        <!-- Result Display Area -->
+        <div class="flex-1 flex flex-col relative min-h-[400px]">
+          
+          <!-- Result Toolbar (Transparent) -->
+          <div class="px-8 py-4 flex justify-between items-center">
+             <span class="text-xs font-bold text-[#A3AED0] uppercase tracking-widest">Report Preview</span>
+             <button class="p-2.5 bg-white rounded-xl shadow-glass border border-gray-100 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 flex items-center gap-2 px-4">
+                <lucide-icon [img]="FileSpreadsheet" class="w-4 h-4"></lucide-icon>
+                <span class="text-[10px] font-extrabold uppercase">Export Excel</span>
+             </button>
+          </div>
+
+          <!-- Empty State -->
+          <div class="flex-1 flex flex-col items-center justify-center">
+             <div class="relative mb-6">
+                <div class="absolute inset-0 bg-[#4318FF]/5 blur-2xl rounded-full"></div>
+                <div class="relative w-20 h-20 rounded-3xl bg-white/50 backdrop-blur-sm border border-white/80 shadow-glass flex items-center justify-center">
+                   <lucide-icon [img]="Search" class="w-8 h-8 text-[#A3AED0]"></lucide-icon>
+                </div>
+                <div class="absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl bg-[#2B3674] text-white flex items-center justify-center shadow-lg">
+                   <lucide-icon [img]="ChevronRight" class="w-5 h-5"></lucide-icon>
+                </div>
+             </div>
+             
+             <h4 class="text-lg font-bold text-[#2B3674]">Ready to Generate</h4>
+             <p class="text-sm font-medium text-[#A3AED0] mt-1 max-w-[280px] text-center">Customize your criteria above and click submit to view the report preview.</p>
+          </div>
+          
+          <!-- Subtle Grid Pattern for Results Area -->
+          <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-gray-50/50 to-transparent pointer-events-none"></div>
         </div>
       </div>
     </div>
+
   `,
   styles: [`
     :host {
