@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2 } from 'lucide-angular';
 
 @Component({
-    selector: 'app-api-versioning',
-    standalone: true,
-    imports: [CommonModule, FormsModule, LucideAngularModule],
-    template: `
+  selector: 'app-api-versioning',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LucideAngularModule],
+  template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header Area -->
       <div>
@@ -116,22 +116,21 @@ import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Downloa
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host {
       display: block;
-      padding: 24px;
     }
   `]
 })
 export class ApiVersioningComponent {
-    readonly ChevronDown = ChevronDown;
-    readonly CheckCircle2 = CheckCircle2;
-    readonly Search = Search;
-    readonly Filter = Filter;
-    readonly Download = Download;
-    readonly Plus = Plus;
-    readonly Settings2 = Settings2;
-    readonly Globe = Globe;
-    readonly FileJson = FileJson;
-    readonly Maximize2 = Maximize2;
+  readonly ChevronDown = ChevronDown;
+  readonly CheckCircle2 = CheckCircle2;
+  readonly Search = Search;
+  readonly Filter = Filter;
+  readonly Download = Download;
+  readonly Plus = Plus;
+  readonly Settings2 = Settings2;
+  readonly Globe = Globe;
+  readonly FileJson = FileJson;
+  readonly Maximize2 = Maximize2;
 }

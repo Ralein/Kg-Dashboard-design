@@ -5,21 +5,21 @@ import { RouterLink } from '@angular/router';
 import { LucideAngularModule, Search, Filter, Download, Eye, ChevronRight, ChevronLeft, ChevronsRight, ChevronsLeft } from 'lucide-angular';
 
 interface AuditLog {
-    id: string;
-    timestamp: string;
-    service: string;
-    action: string;
-    method: string;
-    groupName: string;
-    status: number;
-    duration: number;
+  id: string;
+  timestamp: string;
+  service: string;
+  action: string;
+  method: string;
+  groupName: string;
+  status: number;
+  duration: number;
 }
 
 @Component({
-    selector: 'app-audit-logs',
-    standalone: true,
-    imports: [CommonModule, FormsModule, LucideAngularModule, RouterLink],
-    template: `
+  selector: 'app-audit-logs',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LucideAngularModule, RouterLink],
+  template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header Area -->
       <div class="px-4">
@@ -113,33 +113,32 @@ interface AuditLog {
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host {
       display: block;
-      padding: 24px;
     }
   `]
 })
 export class AuditLogsComponent {
-    readonly Search = Search;
-    readonly Filter = Filter;
-    readonly Download = Download;
-    readonly Eye = Eye;
-    readonly ChevronRight = ChevronRight;
-    readonly ChevronLeft = ChevronLeft;
-    readonly ChevronsRight = ChevronsRight;
-    readonly ChevronsLeft = ChevronsLeft;
+  readonly Search = Search;
+  readonly Filter = Filter;
+  readonly Download = Download;
+  readonly Eye = Eye;
+  readonly ChevronRight = ChevronRight;
+  readonly ChevronLeft = ChevronLeft;
+  readonly ChevronsRight = ChevronsRight;
+  readonly ChevronsLeft = ChevronsLeft;
 
-    logs: AuditLog[] = [
-        { id: '1', timestamp: 'Feb 19, 2026, 10:27:33 AM', service: 'Adnic service', action: 'Quotation', method: '', groupName: 'Create Insurance Quote', status: 200, duration: 18562 },
-        { id: '2', timestamp: 'Feb 19, 2026, 10:27:33 AM', service: 'Ozone Service', action: 'Quotation', method: 'POST', groupName: 'Create Insurance Quote', status: 200, duration: 18559 },
-        { id: '3', timestamp: 'Feb 19, 2026, 10:27:32 AM', service: 'Adnic service', action: 'External API', method: 'POST', groupName: 'Home Quotation', status: 200, duration: 1059 },
-        { id: '4', timestamp: 'Feb 19, 2026, 10:26:55 AM', service: 'Adnic service', action: 'Quotation', method: '', groupName: 'Create Insurance Quote', status: 200, duration: 3350 },
-        { id: '5', timestamp: 'Feb 19, 2026, 10:26:55 AM', service: 'Ozone Service', action: 'Quotation', method: 'POST', groupName: 'Create Insurance Quote', status: 200, duration: 3332 },
-        { id: '6', timestamp: 'Feb 19, 2026, 10:26:54 AM', service: 'Adnic service', action: 'External API', method: 'POST', groupName: 'Home Quotation', status: 200, duration: 1580 },
-        { id: '7', timestamp: 'Feb 19, 2026, 10:25:48 AM', service: 'Adnic service', action: 'Quotation', method: '', groupName: 'Create Insurance Quote', status: 200, duration: 2377 },
-        { id: '8', timestamp: 'Feb 19, 2026, 10:25:48 AM', service: 'Ozone Service', action: 'Quotation', method: 'POST', groupName: 'Create Insurance Quote', status: 200, duration: 2374 },
-        { id: '9', timestamp: 'Feb 19, 2026, 10:25:47 AM', service: 'Adnic service', action: 'External API', method: 'POST', groupName: 'Home Quotation', status: 200, duration: 1131 },
-        { id: '10', timestamp: 'Feb 19, 2026, 10:25:38 AM', service: 'Adnic service', action: 'Quotation', method: '', groupName: 'Create Insurance Quote', status: 200, duration: 2168 },
-    ];
+  logs: AuditLog[] = [
+    { id: '1', timestamp: 'Feb 19, 2026, 10:27:33 AM', service: 'Adnic service', action: 'Quotation', method: '', groupName: 'Create Insurance Quote', status: 200, duration: 18562 },
+    { id: '2', timestamp: 'Feb 19, 2026, 10:27:33 AM', service: 'Ozone Service', action: 'Quotation', method: 'POST', groupName: 'Create Insurance Quote', status: 200, duration: 18559 },
+    { id: '3', timestamp: 'Feb 19, 2026, 10:27:32 AM', service: 'Adnic service', action: 'External API', method: 'POST', groupName: 'Home Quotation', status: 200, duration: 1059 },
+    { id: '4', timestamp: 'Feb 19, 2026, 10:26:55 AM', service: 'Adnic service', action: 'Quotation', method: '', groupName: 'Create Insurance Quote', status: 200, duration: 3350 },
+    { id: '5', timestamp: 'Feb 19, 2026, 10:26:55 AM', service: 'Ozone Service', action: 'Quotation', method: 'POST', groupName: 'Create Insurance Quote', status: 200, duration: 3332 },
+    { id: '6', timestamp: 'Feb 19, 2026, 10:26:54 AM', service: 'Adnic service', action: 'External API', method: 'POST', groupName: 'Home Quotation', status: 200, duration: 1580 },
+    { id: '7', timestamp: 'Feb 19, 2026, 10:25:48 AM', service: 'Adnic service', action: 'Quotation', method: '', groupName: 'Create Insurance Quote', status: 200, duration: 2377 },
+    { id: '8', timestamp: 'Feb 19, 2026, 10:25:48 AM', service: 'Ozone Service', action: 'Quotation', method: 'POST', groupName: 'Create Insurance Quote', status: 200, duration: 2374 },
+    { id: '9', timestamp: 'Feb 19, 2026, 10:25:47 AM', service: 'Adnic service', action: 'External API', method: 'POST', groupName: 'Home Quotation', status: 200, duration: 1131 },
+    { id: '10', timestamp: 'Feb 19, 2026, 10:25:38 AM', service: 'Adnic service', action: 'Quotation', method: '', groupName: 'Create Insurance Quote', status: 200, duration: 2168 },
+  ];
 }

@@ -10,7 +10,7 @@ import { LucideAngularModule, ChevronLeft, LayoutGrid, FileJson, FileCode, Print
     template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Top Action Bar -->
-      <div class="flex justify-between items-center px-4">
+      <div class="flex justify-between items-center">
          <div class="flex items-center gap-3">
             <button routerLink="/quotation-management" class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
                <lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon>
@@ -23,7 +23,7 @@ import { LucideAngularModule, ChevronLeft, LayoutGrid, FileJson, FileCode, Print
       </div>
 
       <!-- Main Info Banner -->
-      <div class="chart-shell bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass p-8 mx-4">
+      <div class="chart-shell bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass p-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-y-6 gap-x-8">
           <div class="flex flex-col gap-1">
             <span class="text-[10px] font-bold text-[#A3AED0] uppercase tracking-wider">Quote Id:</span>
@@ -64,7 +64,7 @@ import { LucideAngularModule, ChevronLeft, LayoutGrid, FileJson, FileCode, Print
       </div>
 
       <!-- Content Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 px-4 mb-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <!-- Sidebar Navigation for Quote Parts -->
         <div class="lg:col-span-3">
           <div class="chart-shell p-2 bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass">
@@ -159,7 +159,6 @@ import { LucideAngularModule, ChevronLeft, LayoutGrid, FileJson, FileCode, Print
     styles: [`
     :host {
       display: block;
-      padding: 24px;
     }
   `]
 })

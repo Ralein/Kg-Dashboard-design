@@ -10,7 +10,7 @@ import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
     template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Top Action Bar -->
-      <div class="flex justify-between items-center px-4">
+      <div class="flex justify-between items-center">
          <div class="flex items-center gap-3">
             <button routerLink="/audit-logs" class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
                <lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon>
@@ -24,7 +24,7 @@ import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
       </div>
 
       <!-- Main Banner Details -->
-      <div class="chart-shell bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass p-8 mx-4">
+      <div class="chart-shell bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass p-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-12">
           <div class="flex flex-col gap-1">
             <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Timestamp:</span>
@@ -108,7 +108,7 @@ import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
       </div>
 
       <!-- JSON Viewers Section -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <!-- Query Params -->
         <div class="chart-shell p-6 bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[300px]">
            <div class="flex items-center justify-between mb-4">
@@ -186,7 +186,6 @@ import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
     styles: [`
     :host {
       display: block;
-      padding: 24px;
     }
     pre { white-space: pre-wrap; word-wrap: break-word; }
   `]

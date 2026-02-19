@@ -1,229 +1,292 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, ChevronLeft, FileCheck, ShieldCheck, User, Mail, Calendar, Hash, Globe, Activity, Trash2, StopCircle, ClipboardCheck, AlertCircle } from 'lucide-angular';
+import { RouterLink, ActivatedRoute } from '@angular/router';
+import { LucideAngularModule, ChevronLeft, ShieldCheck, ClipboardCheck, History, Home as HomeIcon, ChevronUp, ChevronDown, CheckCircle2 } from 'lucide-angular';
 
-interface SubSection {
+interface NestedItem {
   title: string;
+  items?: string[];
+  description?: string;
   open: boolean;
-  items: string[];
 }
 
-interface Section {
+interface MainSection {
   title: string;
-  icon: boolean;
+  icon: any;
   open: boolean;
-  subSections: SubSection[];
+  subSections: NestedItem[];
 }
 
 @Component({
   selector: 'app-consent-detail',
   standalone: true,
-  imports: [RouterLink, CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, RouterLink],
   template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
-      <!-- Top Action Bar -->
-      <div class="flex justify-between items-center px-4">
-         <div class="flex items-center gap-3">
-            <button routerLink="/consent-management" class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
-               <lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon>
-            </button>
-            <h2 class="text-xl font-bold text-[#2B3674] tracking-tight">Consent Details</h2>
-         </div>
-         <div class="flex items-center gap-2">
-            <button class="px-6 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold text-[#2B3674] hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2">
-               <lucide-icon [img]="StopCircle" class="w-4 h-4"></lucide-icon>
-               Suspend Consent
-            </button>
-         </div>
+      <!-- Header Area -->
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-[#1B2559]">Consent Details</h1>
       </div>
 
-      <!-- Main Info Card -->
-      <div class="chart-shell bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass p-8 mx-4">
-        <div class="flex flex-col lg:flex-row gap-8 justify-between items-start">
-           <div class="flex items-start gap-4">
-              <div class="w-16 h-16 bg-[#4318FF]/10 rounded-2xl flex items-center justify-center text-[#4318FF]">
-                 <lucide-icon [img]="ShieldCheck" class="w-8 h-8"></lucide-icon>
-              </div>
-              <div class="flex flex-col gap-1">
-                 <div class="flex items-center gap-3">
-                    <h2 class="text-2xl font-bold text-[#2B3674] tracking-tight">7164XXXXXXX1277</h2>
-                    <button (click)="copyId()" class="p-1.5 hover:bg-gray-100 rounded-lg text-[#A3AED0] transition-colors">
-                       <lucide-icon [img]="ClipboardCheck" class="w-4 h-4"></lucide-icon>
-                    </button>
-                 </div>
-                 <div class="flex gap-2">
-                    <span class="px-3 py-0.5 rounded-md bg-[#05CD99]/10 text-[#05CD99] text-[10px] font-bold tracking-wider uppercase">Authorized</span>
-                    <span class="px-3 py-0.5 rounded-md bg-[#4318FF]/10 text-[#4318FF] text-[10px] font-bold tracking-wider uppercase">Long-Lived</span>
-                 </div>
-              </div>
-           </div>
-           
-           <div class="grid grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-6 flex-1 lg:ml-12 border-l border-gray-100/50 pl-12">
-              <div class="flex flex-col gap-1">
-                 <span class="text-[10px] font-bold text-[#A3AED0] uppercase">TPP Client</span>
-                 <span class="text-sm font-bold text-[#2B3674]">TPP Client Test</span>
-              </div>
-              <div class="flex flex-col gap-1">
-                 <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Customer</span>
-                 <span class="text-sm font-bold text-[#2B3674]">AZIZ ELGOUZOULI</span>
-                 <span class="text-[10px] font-mono font-medium text-[#A3AED0]">784-1983-3183718-1</span>
-              </div>
-              <div class="flex flex-col gap-1">
-                 <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Valid From</span>
-                 <span class="text-sm font-bold text-[#2B3674]">18 Feb 2026</span>
-              </div>
-              <div class="flex flex-col gap-1">
-                 <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Expires On</span>
-                 <span class="text-sm font-bold text-[#2B3674]">29 Dec 2026</span>
-              </div>
-              <div class="flex flex-col gap-1">
-                 <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Linked Email</span>
-                 <span class="text-xs font-medium text-[#2B3674]">travelopen&#64;gmail.com</span>
-              </div>
-              <div class="flex flex-col gap-1">
-                 <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Base Consent</span>
-                 <span class="text-[11px] font-mono font-bold text-[#2B3674]">8dfbXXXXXXXbce1</span>
-              </div>
-           </div>
+      <!-- Main Metadata Banner -->
+      <div class="chart-shell bg-white shadow-glass p-0 overflow-hidden border border-gray-100">
+        <!-- Top Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 p-6 border-b border-gray-50">
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold text-[#A3AED0]">Consent ID:</span>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-bold text-[#2B3674] font-mono">6a14XXXXXXX54c5</span>
+              <button (click)="copyId()" class="text-[#4318FF] hover:bg-[#4318FF]/5 p-1 rounded transition-colors">
+                <lucide-icon [img]="ClipboardCheck" class="w-3.5 h-3.5"></lucide-icon>
+              </button>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold text-[#A3AED0]">Status:</span>
+            <span class="text-sm font-bold text-[#2B3674]">Authorized</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold text-[#A3AED0]">TPP Name:</span>
+            <span class="text-sm font-bold text-[#2B3674]">TPP Client Test</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold text-[#A3AED0]">Consent Type:</span>
+            <span class="text-sm font-bold text-[#2B3674]">Long-Lived</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold text-[#A3AED0]">Emirates ID:</span>
+            <span class="text-sm font-bold text-[#2B3674]">784-1940-6161905-5</span>
+          </div>
+          <div class="flex items-start justify-end">
+            <button class="w-full py-2 bg-[#FFA000] text-white text-xs font-bold rounded-lg hover:bg-[#FF8F00] transition-colors shadow-lg shadow-[#FFA000]/20 flex items-center justify-center gap-2">
+              <span class="inline-block w-3 h-3 border-2 border-white/40 rounded-full border-t-white"></span>
+              Suspend
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 p-6 items-center">
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold text-[#A3AED0]">Email:</span>
+            <span class="text-sm font-bold text-[#2B3674]">homedata&#64;gmail.com</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold text-[#A3AED0]">Base Consent ID:</span>
+            <span class="text-sm font-bold text-[#2B3674] font-mono">1d15XXXXXXXbeb1</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold text-[#A3AED0]">Created Date:</span>
+            <span class="text-sm font-bold text-[#2B3674]">19 Feb 2026</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold text-[#A3AED0]">Expiration Date:</span>
+            <span class="text-sm font-bold text-[#2B3674]">29 Dec 2026</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold text-[#A3AED0]">Authorization Channel:</span>
+            <span class="text-sm font-bold text-[#2B3674]">Web</span>
+          </div>
+          <div class="flex items-center justify-end gap-3 lg:col-span-1">
+             <button class="flex items-center gap-1.5 text-[11px] font-bold text-[#2B3674] hover:text-[#4318FF] transition-colors">
+                <lucide-icon [img]="History" class="w-4 h-4"></lucide-icon>
+                <span class="border-b border-[#2B3674]">List of Updates</span>
+             </button>
+             <button routerLink="/consent-management" class="px-4 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-[#2B3674] hover:bg-gray-50">Back</button>
+          </div>
         </div>
       </div>
 
-      <!-- Nested Content -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mx-4 mb-10">
-         <!-- Left: Shared Policies -->
-         <div class="lg:col-span-4">
-            <div class="chart-shell p-6 bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass">
-               <div class="flex items-center gap-3 mb-6">
-                  <lucide-icon [img]="FileCheck" class="w-5 h-5 text-[#4318FF]"></lucide-icon>
-                  <h3 class="text-sm font-extrabold text-[#2B3674] uppercase tracking-wider">Shared Policies</h3>
-               </div>
-               <div class="bg-gray-50/50 rounded-2xl p-6 border border-gray-100 relative overflow-hidden group">
-                  <div class="absolute top-0 right-0 w-24 h-24 bg-[#FF5252]/5 rounded-bl-full animate-pulse transition-transform group-hover:scale-110"></div>
-                  <div class="flex justify-between items-start mb-4">
-                     <span class="px-3 py-1 rounded bg-[#4318FF] text-white text-[10px] font-extrabold tracking-widest uppercase shadow-lg shadow-[#4318FF]/20">TRAVEL</span>
-                     <lucide-icon [img]="AlertCircle" class="w-4 h-4 text-[#FF5252]"></lucide-icon>
-                  </div>
-                  <div class="space-y-4">
-                     <div class="flex justify-between">
-                        <span class="text-[11px] font-bold text-[#A3AED0]">Policy No.</span>
-                        <span class="text-[11px] font-mono font-extrabold text-[#2B3674]">HTL34008957</span>
-                     </div>
-                     <div class="flex flex-col gap-1">
-                        <span class="text-[11px] font-bold text-[#A3AED0]">Plan</span>
-                        <span class="text-[11px] font-extrabold text-[#2B3674]">INDIVIDUAL-MEDICAL & TRAVEL</span>
-                     </div>
-                     <div class="flex justify-between">
-                        <span class="text-[11px] font-bold text-[#A3AED0]">End Date</span>
-                        <span class="text-[11px] font-extrabold text-[#2B3674]">21 Sept 2025</span>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
+      <!-- Main Layout Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+        <!-- Left: Policy Explorer -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+          <div class="chart-shell bg-white p-6 shadow-glass border border-gray-100 flex-1">
+             <h3 class="text-sm font-bold text-[#2B3674] mb-6">Policy(s) to share with TPP Client Test</h3>
+             
+             <!-- Filter Icons -->
+             <div class="flex gap-2 mb-6">
+                <button class="px-5 py-2 bg-[#1B2559] text-white rounded-full flex items-center gap-2 text-xs font-bold transition-all shadow-lg shadow-[#1B2559]/20">
+                   <lucide-icon [img]="HomeIcon" class="w-4 h-4"></lucide-icon>
+                   HOME
+                </button>
+             </div>
 
-         <!-- Right: Info Requested -->
-         <div class="lg:col-span-8">
-            <div class="chart-shell p-6 bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass">
-               <div class="flex items-center gap-3 mb-8">
-                  <lucide-icon [img]="Activity" class="w-5 h-5 text-[#4318FF]"></lucide-icon>
-                  <h3 class="text-sm font-extrabold text-[#2B3674] uppercase tracking-wider">Information Requested by TPP</h3>
-               </div>
-               
-               <div class="flex flex-col gap-4">
-                 <div *ngFor="let section of sections" class="border border-gray-100/50 rounded-2xl bg-white/40 overflow-hidden">
-                    <button (click)="section.open = !section.open" class="w-full px-6 py-5 flex items-center justify-between group transition-all">
-                       <span class="flex items-center gap-4 text-xs font-extrabold text-[#2B3674] uppercase tracking-widest">
-                          <lucide-icon [img]="section.icon ? Globe : FileCheck" class="w-4 h-4 text-[#A3AED0] group-hover:text-[#4318FF] transition-colors"></lucide-icon>
-                          {{section.title}}
-                       </span>
-                       <lucide-icon [img]="ChevronLeft" class="w-4 h-4 text-[#A3AED0] transform transition-transform duration-300" [class.-rotate-90]="section.open" [class.rotate-0]="!section.open"></lucide-icon>
-                    </button>
-                    <div *ngIf="section.open" class="px-6 pb-6 pt-2 grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in">
-                        <div *ngFor="let sub of section.subSections" class="bg-gray-50/50 rounded-xl p-5 border border-gray-100/30">
-                           <h4 class="text-[11px] font-extrabold text-[#2B3674] uppercase tracking-widest mb-4 flex items-center gap-2">
-                              <div class="w-1 h-3 bg-[#4318FF] rounded-full"></div>
-                              {{sub.title}}
-                           </h4>
-                           <div class="flex flex-col gap-3">
-                              <div *ngFor="let item of sub.items" class="flex items-center gap-3">
-                                 <lucide-icon [img]="ClipboardCheck" class="w-3.5 h-3.5 text-[#05CD99]"></lucide-icon>
-                                 <span class="text-xs font-semibold text-[#A3AED0]">{{item}}</span>
+             <!-- Policy Card -->
+             <div class="border-2 border-[#1B2559] rounded-2xl p-6 relative overflow-hidden bg-white">
+                <div class="absolute top-0 left-0 w-1 bg-[#1B2559] h-full"></div>
+                <div class="flex items-center gap-3 mb-6">
+                   <lucide-icon [img]="HomeIcon" class="w-5 h-5 text-[#05CD99]"></lucide-icon>
+                   <span class="text-md font-bold text-[#2B3674]">Villa</span>
+                </div>
+                
+                <div class="space-y-4">
+                   <div class="flex flex-col gap-0.5">
+                      <span class="text-xs font-bold text-[#A3AED0]">Plan Name:</span>
+                      <span class="text-xs font-bold text-[#2B3674]">HOME SAFE PLATINUM</span>
+                   </div>
+                   <div class="flex flex-col gap-0.5">
+                      <span class="text-xs font-bold text-[#A3AED0]">Policy Number:</span>
+                      <span class="text-xs font-bold text-[#2B3674] font-mono uppercase">A13170006228-R02</span>
+                   </div>
+                   <div class="flex flex-col gap-0.5">
+                      <span class="text-xs font-bold text-[#A3AED0]">Status:</span>
+                      <span class="text-xs font-bold text-[#2B3674]">EXPIRED</span>
+                   </div>
+                   <div class="flex flex-col gap-0.5">
+                      <span class="text-xs font-bold text-[#A3AED0]">Cover End Date:</span>
+                      <span class="text-xs font-bold text-[#2B3674]">29 Jul 2021</span>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
+
+        <!-- Right: Accordion Review -->
+        <div class="lg:col-span-7">
+          <div class="chart-shell bg-white p-0 shadow-glass border border-gray-100 flex flex-col min-h-[600px]">
+             <div class="p-6 border-b border-gray-50">
+               <h3 class="text-sm font-bold text-[#2B3674]">Review the info you will be sharing</h3>
+             </div>
+             
+             <div class="flex-1 p-6 space-y-4">
+               <!-- Top Level "HOME" Accordion -->
+               <div class="border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+                  <button (click)="toggleHome()" class="w-full p-4 flex justify-between items-center group bg-white hover:bg-gray-50 transition-colors">
+                     <div class="flex items-center gap-3">
+                        <lucide-icon [img]="HomeIcon" class="w-4 h-4 text-[#2B3674]"></lucide-icon>
+                        <span class="text-xs font-bold text-[#2B3674] uppercase tracking-widest">HOME</span>
+                     </div>
+                     <lucide-icon [img]="homeOpen ? ChevronUp : ChevronDown" class="w-4 h-4 text-[#A3AED0]"></lucide-icon>
+                  </button>
+
+                  <div *ngIf="homeOpen" class="border-t border-gray-50 flex flex-col">
+                     <div *ngFor="let sub of sections" class="border-b border-gray-50 last:border-b-0">
+                        <button (click)="sub.open = !sub.open" class="w-full p-4 flex justify-between items-center bg-white hover:bg-gray-50 transition-colors pl-8">
+                           <span class="text-xs font-bold text-[#2B3674]">{{sub.title}}</span>
+                           <lucide-icon [img]="sub.open ? ChevronUp : ChevronDown" class="w-4 h-4 text-[#A3AED0]"></lucide-icon>
+                        </button>
+                        
+                        <div *ngIf="sub.open" class="bg-gray-50 px-8 py-4 space-y-3 animate-fade-in pl-12">
+                           <ng-container *ngIf="sub.items">
+                              <div *ngFor="let item of sub.items" class="flex items-start gap-3">
+                                 <span class="text-xs font-medium text-[#2B3674] leading-relaxed flex items-start gap-2">
+                                    <span class="mt-1.5 w-1 h-1 bg-[#2B3674] rounded-full shrink-0"></span>
+                                    {{item}}
+                                 </span>
                               </div>
-                           </div>
+                           </ng-container>
+                           <p *ngIf="sub.description" class="text-xs font-medium text-[#2B3674] leading-relaxed border-l-2 border-[#FFA000] pl-4 italic">
+                              {{sub.description}}
+                           </p>
                         </div>
-                    </div>
-                 </div>
+                     </div>
+                  </div>
                </div>
-            </div>
-         </div>
+             </div>
+          </div>
+        </div>
       </div>
     </div>
   `,
-  styles: [`:host { display: block; }`]
+  styles: [`
+    :host {
+      display: block;
+    }
+    .animate-fade-in-up {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  `]
 })
-export class ConsentDetailComponent {
-  copied = false;
+export class ConsentDetailComponent implements OnInit {
+  private route = inject(ActivatedRoute);
 
-  readonly ChevronLeft = ChevronLeft;
-  readonly FileCheck = FileCheck;
-  readonly ShieldCheck = ShieldCheck;
-  readonly User = User;
-  readonly Mail = Mail;
-  readonly Calendar = Calendar;
-  readonly Hash = Hash;
-  readonly Globe = Globe;
-  readonly Activity = Activity;
-  readonly Trash2 = Trash2;
-  readonly StopCircle = StopCircle;
   readonly ClipboardCheck = ClipboardCheck;
-  readonly AlertCircle = AlertCircle;
+  readonly History = History;
+  readonly HomeIcon = HomeIcon;
+  readonly ChevronUp = ChevronUp;
+  readonly ChevronDown = ChevronDown;
 
-  sections: Section[] = [
+  homeOpen = true;
+
+  sections: NestedItem[] = [
     {
-      title: 'TRAVEL',
-      icon: true,
+      title: 'Policy Details',
       open: true,
-      subSections: [
-        {
-          title: 'Policy Details',
-          open: true,
-          items: [
-            'Your Insurance Policy Number',
-            'The cover start date and end date, when applicable'
-          ]
-        }
+      items: [
+        'Your Insurance Policy Number',
+        'The cover start date and end date, when applicable'
       ]
     },
     {
       title: 'Your Basic Customer Details',
-      icon: false,
       open: false,
-      subSections: [
-        {
-          title: 'Personal Info',
-          open: false,
-          items: ['Full Name', 'Emirates ID', 'Email Address', 'Phone Number']
-        }
+      items: [
+        'Your full name',
+        'Address information',
+        'Contact information',
+        'Date of Birth'
       ]
     },
     {
       title: 'Your Detailed Customer Details',
-      icon: false,
       open: false,
-      subSections: [
-        {
-          title: 'Extended Info',
-          open: false,
-          items: ['Date of Birth', 'Nationality', 'Address', 'Occupation']
-        }
+      items: [
+        'Your identity details',
+        'Your employment details, when held.'
+      ]
+    },
+    {
+      title: 'Product Information',
+      open: false,
+      items: [
+        'Your insurance coverage details',
+        'Details of the item, property, or individual covered under the insurance policy.',
+        'Details of any insurance cover add-ons included in the policy',
+        'Details of the parties covered by the insurance policy'
+      ]
+    },
+    {
+      title: 'Claims Details',
+      open: false,
+      items: [
+        'Details of any insurance claims declared during the insurance application.',
+        'Details of any subsequent claims made during the duration of the policy.'
+      ]
+    },
+    {
+      title: 'Premium Details',
+      open: false,
+      description: 'As part of your consent, the premium details for the selected insurance policies will be securely shared with TPP Client Test. To protect this information, your premium details will be encrypted when requested. A one-time code will be sent to your mobile ending 971. You will need to provide this code to TPP Client Test when prompted, so they can display your premium details. Please note: this code will expire after 2 hours. After that, the premium details won’t be available to view unless you request them again.'
+    },
+    {
+      title: 'Payment Details',
+      open: false,
+      items: [
+        'Your bank account details used or being used to make the insurance premiums.'
       ]
     }
   ];
 
-  copyId(): void {
-    navigator.clipboard?.writeText('7164XXXXXXX1277').catch(() => { });
-    this.copied = true;
-    setTimeout(() => { this.copied = false; }, 2000);
+  ngOnInit() { }
+
+  toggleHome() {
+    this.homeOpen = !this.homeOpen;
+  }
+
+  copyId() {
+    navigator.clipboard.writeText('6a14XXXXXXX54c5');
+    // Optional: show toast/notification
   }
 }

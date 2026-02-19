@@ -7,10 +7,10 @@ import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
 @Component({
-    selector: 'app-api-monitoring',
-    standalone: true,
-    imports: [CommonModule, FormsModule, LucideAngularModule],
-    template: `
+  selector: 'app-api-monitoring',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LucideAngularModule],
+  template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header & Selector Row -->
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-4">
@@ -171,10 +171,9 @@ Chart.register(...registerables);
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host {
       display: block;
-      padding: 24px;
     }
     .chart-shell {
       background: white;
@@ -185,101 +184,101 @@ Chart.register(...registerables);
   `]
 })
 export class ApiMonitoringComponent implements AfterViewInit {
-    @ViewChild('groupsDonut') groupsDonutRef!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('monthlyBar') monthlyBarRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('groupsDonut') groupsDonutRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('monthlyBar') monthlyBarRef!: ElementRef<HTMLCanvasElement>;
 
-    readonly ChevronDown = ChevronDown;
-    readonly Activity = Activity;
-    readonly Clock = Clock;
-    readonly PieChart = PieChart;
-    readonly BarChart3 = BarChart3;
-    readonly Info = Info;
+  readonly ChevronDown = ChevronDown;
+  readonly Activity = Activity;
+  readonly Clock = Clock;
+  readonly PieChart = PieChart;
+  readonly BarChart3 = BarChart3;
+  readonly Info = Info;
 
-    ngAfterViewInit(): void {
-        this.initCharts();
-    }
+  ngAfterViewInit(): void {
+    this.initCharts();
+  }
 
-    private initCharts() {
-        // API Groups Donut (Empty/Placeholder)
-        new Chart(this.groupsDonutRef.nativeElement, {
-            type: 'doughnut',
-            data: {
-                labels: ['No Data'],
-                datasets: [{
-                    data: [100],
-                    backgroundColor: ['#F4F7FE'],
-                    borderWidth: 0
-                }]
+  private initCharts() {
+    // API Groups Donut (Empty/Placeholder)
+    new Chart(this.groupsDonutRef.nativeElement, {
+      type: 'doughnut',
+      data: {
+        labels: ['No Data'],
+        datasets: [{
+          data: [100],
+          backgroundColor: ['#F4F7FE'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        cutout: '80%',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      }
+    });
+
+    // Monthly Status Chart
+    new Chart(this.monthlyBarRef.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: ['February'],
+        datasets: [
+          {
+            label: 'Total API Calls',
+            data: [1500],
+            backgroundColor: '#2B3674',
+            borderRadius: 6,
+            barPercentage: 0.6,
+            categoryPercentage: 0.4
+          },
+          {
+            label: 'Successful API Calls',
+            data: [1320],
+            backgroundColor: '#05CD99',
+            borderRadius: 6,
+            barPercentage: 0.6,
+            categoryPercentage: 0.4
+          },
+          {
+            label: 'Failed API Calls',
+            data: [180],
+            backgroundColor: '#FF8F0C',
+            borderRadius: 6,
+            barPercentage: 0.6,
+            categoryPercentage: 0.4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: '#F4F7FE' },
+            ticks: {
+              color: '#A3AED0',
+              font: { size: 10, weight: 'bold' }
             },
-            options: {
-                cutout: '80%',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                }
-            }
-        });
-
-        // Monthly Status Chart
-        new Chart(this.monthlyBarRef.nativeElement, {
-            type: 'bar',
-            data: {
-                labels: ['February'],
-                datasets: [
-                    {
-                        label: 'Total API Calls',
-                        data: [1500],
-                        backgroundColor: '#2B3674',
-                        borderRadius: 6,
-                        barPercentage: 0.6,
-                        categoryPercentage: 0.4
-                    },
-                    {
-                        label: 'Successful API Calls',
-                        data: [1320],
-                        backgroundColor: '#05CD99',
-                        borderRadius: 6,
-                        barPercentage: 0.6,
-                        categoryPercentage: 0.4
-                    },
-                    {
-                        label: 'Failed API Calls',
-                        data: [180],
-                        backgroundColor: '#FF8F0C',
-                        borderRadius: 6,
-                        barPercentage: 0.6,
-                        categoryPercentage: 0.4
-                    }
-                ]
+            border: { display: false }
+          },
+          x: {
+            grid: { display: false },
+            ticks: {
+              color: '#2B3674',
+              font: { size: 11, weight: 'bold' }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: '#F4F7FE' },
-                        ticks: {
-                            color: '#A3AED0',
-                            font: { size: 10, weight: 'bold' }
-                        },
-                        border: { display: false }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: {
-                            color: '#2B3674',
-                            font: { size: 11, weight: 'bold' }
-                        },
-                        border: { display: false }
-                    }
-                }
-            }
-        });
-    }
+            border: { display: false }
+          }
+        }
+      }
+    });
+  }
 }

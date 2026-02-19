@@ -4,24 +4,24 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Search, UserPlus, Edit2, Ban, Filter, Download } from 'lucide-angular';
 
 interface User {
-    username: string;
-    role: string;
-    active: boolean;
-    firstName: string;
-    lastName: string;
-    mobile: string;
-    email: string;
-    createdOn: string;
+  username: string;
+  role: string;
+  active: boolean;
+  firstName: string;
+  lastName: string;
+  mobile: string;
+  email: string;
+  createdOn: string;
 }
 
 @Component({
-    selector: 'app-user-creation',
-    standalone: true,
-    imports: [CommonModule, FormsModule, LucideAngularModule],
-    template: `
+  selector: 'app-user-creation',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LucideAngularModule],
+  template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header Area -->
-      <div class="flex justify-between items-center px-4">
+      <div class="flex justify-between items-center">
         <div>
           <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">User Creation</h1>
           <p class="text-[#A3AED0] text-sm font-medium">Manage platform users and permissions</p>
@@ -33,7 +33,7 @@ interface User {
       </div>
 
       <!-- Main Content Card -->
-      <div class="chart-shell p-0 overflow-hidden bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[600px] flex flex-col mx-4">
+      <div class="chart-shell p-0 overflow-hidden bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[600px] flex flex-col">
         
         <!-- Search & Filter Row -->
         <div class="p-6 border-b border-gray-100/50">
@@ -132,31 +132,30 @@ interface User {
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host {
       display: block;
-      padding: 24px;
     }
   `]
 })
 export class UserCreationComponent {
-    readonly Search = Search;
-    readonly UserPlus = UserPlus;
-    readonly Edit2 = Edit2;
-    readonly Ban = Ban;
-    readonly Filter = Filter;
-    readonly Download = Download;
+  readonly Search = Search;
+  readonly UserPlus = UserPlus;
+  readonly Edit2 = Edit2;
+  readonly Ban = Ban;
+  readonly Filter = Filter;
+  readonly Download = Download;
 
-    users: User[] = [
-        { username: 'usertestName', role: 'User', active: false, firstName: 'Test', lastName: 'Name', mobile: '7894561210', email: 'username@gmail.com', createdOn: '2026-02-12' },
-        { username: 'userNameFirst', role: 'User', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561213', email: 'userNameFirst@gmail.com', createdOn: '2026-02-12' },
-        { username: 'usertestNameFirst', role: 'User', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561212', email: 'username2@gmail.com', createdOn: '2026-02-12' },
-        { username: 'usertestName1', role: 'User', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561211', email: 'username1@gmail.com', createdOn: '2026-02-12' },
-        { username: 'testName', role: 'Admin', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561230', email: 'name@gmail.com', createdOn: '2026-02-12' },
-        { username: 'TestUser', role: 'Admin', active: true, firstName: 'Test', lastName: 'User', mobile: '8899887766', email: 'Testuser@ggmail.com', createdOn: '2026-02-04' },
-        { username: 'TestAdmin', role: 'User', active: true, firstName: 'Test', lastName: 'Admin', mobile: '9988776655', email: 'TestAdmin@ggmail.com', createdOn: '2026-02-04' },
-        { username: 'Jay', role: 'Admin', active: true, firstName: 'Jayaramani', lastName: 'Ashokraj', mobile: '1234567890', email: 'jayaraman.a@kgisl.com', createdOn: '2025-11-04' },
-        { username: 'Nithyaa', role: 'User', active: true, firstName: 'Nithyaai', lastName: 'M', mobile: '8765432311', email: 'nithyaa@kgisl.com', createdOn: '2025-08-01' },
-        { username: 'Suvitha', role: 'Admin', active: true, firstName: 'Suvitha', lastName: 'R', mobile: '8765676456', email: 'suvitha@kgisl.com', createdOn: '2025-07-10' },
-    ];
+  users: User[] = [
+    { username: 'usertestName', role: 'User', active: false, firstName: 'Test', lastName: 'Name', mobile: '7894561210', email: 'username@gmail.com', createdOn: '2026-02-12' },
+    { username: 'userNameFirst', role: 'User', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561213', email: 'userNameFirst@gmail.com', createdOn: '2026-02-12' },
+    { username: 'usertestNameFirst', role: 'User', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561212', email: 'username2@gmail.com', createdOn: '2026-02-12' },
+    { username: 'usertestName1', role: 'User', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561211', email: 'username1@gmail.com', createdOn: '2026-02-12' },
+    { username: 'testName', role: 'Admin', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561230', email: 'name@gmail.com', createdOn: '2026-02-12' },
+    { username: 'TestUser', role: 'Admin', active: true, firstName: 'Test', lastName: 'User', mobile: '8899887766', email: 'Testuser@ggmail.com', createdOn: '2026-02-04' },
+    { username: 'TestAdmin', role: 'User', active: true, firstName: 'Test', lastName: 'Admin', mobile: '9988776655', email: 'TestAdmin@ggmail.com', createdOn: '2026-02-04' },
+    { username: 'Jay', role: 'Admin', active: true, firstName: 'Jayaramani', lastName: 'Ashokraj', mobile: '1234567890', email: 'jayaraman.a@kgisl.com', createdOn: '2025-11-04' },
+    { username: 'Nithyaa', role: 'User', active: true, firstName: 'Nithyaai', lastName: 'M', mobile: '8765432311', email: 'nithyaa@kgisl.com', createdOn: '2025-08-01' },
+    { username: 'Suvitha', role: 'Admin', active: true, firstName: 'Suvitha', lastName: 'R', mobile: '8765676456', email: 'suvitha@kgisl.com', createdOn: '2025-07-10' },
+  ];
 }

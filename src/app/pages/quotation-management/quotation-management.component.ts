@@ -161,7 +161,6 @@ interface Quote {
     styles: [`
     :host {
       display: block;
-      padding: 24px;
     }
     .shadow-glass {
       box-shadow: 0 4px 24px rgba(67, 24, 255, 0.05);
