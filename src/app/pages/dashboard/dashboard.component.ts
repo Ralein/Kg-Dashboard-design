@@ -70,7 +70,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
         <app-chart-card title="Consent Analysis" subtitle="Radial breakdown by authorization status" [showLive]="true" delay="100ms">
             @if (isLoading()) {
                 <div class="animate-pulse flex space-x-4 h-full items-center justify-center">
-                    <div class="rounded-full bg-slate-700 h-40 w-40"></div>
+                    <div class="skeleton rounded-full h-40 w-40"></div>
                 </div>
             } @else {
                 <app-consent-analysis-chart [data]="consentData"></app-consent-analysis-chart>
@@ -80,9 +80,9 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
         <app-chart-card title="TPP Wise Consent Requests" subtitle="Lollipop distribution by client platform" delay="200ms">
             @if (isLoading()) {
                 <div class="animate-pulse space-y-4 p-4">
-                    <div class="h-4 bg-slate-700 rounded w-3/4"></div>
-                    <div class="h-4 bg-slate-700 rounded w-1/2"></div>
-                    <div class="h-4 bg-slate-700 rounded w-5/6"></div>
+                    <div class="skeleton h-4 rounded w-3/4"></div>
+                    <div class="skeleton h-4 rounded w-1/2"></div>
+                    <div class="skeleton h-4 rounded w-5/6"></div>
                 </div>
             } @else {
                 <app-tpp-requests-chart [data]="tppData"></app-tpp-requests-chart>
@@ -176,12 +176,12 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
                  <div class="flex flex-col items-center justify-center h-full gap-6">
                     <!-- Gauge Arc Skeleton -->
                     <div class="relative w-48 h-24 overflow-hidden">
-                        <div class="skeleton absolute top-0 left-0 w-48 h-48 rounded-full border-[20px] border-gray-700 border-b-transparent"></div>
+                        <div class="skeleton absolute top-0 left-0 w-48 h-48 rounded-full border-[20px] border-gray-200 border-b-transparent"></div>
                     </div>
-                    <div class="skeleton w-24 h-8 rounded bg-gray-700"></div>
+                    <div class="skeleton w-24 h-8 rounded"></div>
                      <div class="grid grid-cols-2 gap-4 w-full px-8 mt-4">
-                        <div class="skeleton h-16 rounded-2xl bg-gray-800"></div>
-                        <div class="skeleton h-16 rounded-2xl bg-gray-800"></div>
+                        <div class="skeleton h-16 rounded-2xl"></div>
+                        <div class="skeleton h-16 rounded-2xl"></div>
                     </div>
                 </div>
             } @else {

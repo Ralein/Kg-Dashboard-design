@@ -1,5 +1,5 @@
 import { Component, signal, HostListener, Input, inject } from '@angular/core';
-import { CommonModule, NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
@@ -7,20 +7,16 @@ import { UserService } from '../../services/user.service';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, NgClass, FormsModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <header
       class="fixed top-0 right-0 z-40 h-24 flex items-center justify-between px-8 transition-all duration-300 ease-in-out"
       [style.left]="sidebarCollapsed ? '5rem' : '17.5rem'"
-      [ngClass]="{
-        'premium-glass border-b-0': isScrolled,
-        'bg-transparent': !isScrolled
-      }"
     >
 
-      <!-- ── Left: Breadcrumbs / Page Title (Optional) ── -->
+      <!-- ── Left: Breadcrumbs / Page Title ── -->
       <div class="flex items-center gap-3">
-         <!-- Placeholder if needed -->
+
       </div>
 
       <!-- ── Right Actions ── -->
