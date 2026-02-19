@@ -37,7 +37,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
     }
   `],
   template: `
-    <div class="flex flex-col gap-6 p-4">
+    <div class="flex flex-col gap-6">
       
       <!-- Header -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-2">
