@@ -18,7 +18,7 @@ interface NavItem {
     <aside
       class="fixed left-0 top-0 h-screen transition-all duration-300 ease-in-out z-50 flex flex-col"
       [ngClass]="{
-        'w-[18rem]': !collapsed(),
+        'w-[20rem]': !collapsed(),
         'w-20': collapsed()
       }"
     >
@@ -92,7 +92,7 @@ interface NavItem {
 
               <!-- Label Container with Transition -->
               <div class="overflow-hidden transition-all duration-300 ease-in-out"
-                   [style.width]="collapsed() ? '0px' : '140px'"
+                   [style.width]="collapsed() ? '0px' : '250px'"
                    [style.opacity]="collapsed() ? '0' : '1'"
                    [style.marginLeft]="collapsed() ? '0px' : '12px'">
                 <span class="text-sm font-medium whitespace-nowrap transition-colors duration-200 group-hover:text-primary nav-text block">

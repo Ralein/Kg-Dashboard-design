@@ -46,29 +46,24 @@ interface User {
                   class="glass-input pl-10 pr-4 py-2 w-full text-xs font-medium"
                 >
              </div>
-             <div class="flex items-center gap-6 w-full md:w-auto">
-                <div class="flex items-center gap-3">
-                  <span class="text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider whitespace-nowrap">Items per page:</span>
-                  <div class="relative">
-                    <select class="bg-white border border-gray-100 rounded-lg px-3 py-1.5 text-xs font-bold text-[#2B3674] outline-none cursor-pointer appearance-none min-w-[60px] shadow-sm">
-                      <option>10</option>
-                      <option>20</option>
-                    </select>
-                    <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg>
-                    </div>
-                  </div>
+              <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="flex items-center gap-2 bg-gray-50/50 p-1 rounded-lg">
+                  <span class="text-[10px] font-bold text-[#A3AED0] px-2">Items per page:</span>
+                  <select class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4">
+                    <option>10</option>
+                    <option>20</option>
+                  </select>
                 </div>
-                <span class="text-xs font-bold text-[#2B3674] min-w-[80px]">1 – 10 of 13</span>
+                <span class="text-xs font-semibold text-[#A3AED0]">1 – 10 of 13</span>
                 <div class="flex gap-2">
-                   <button class="p-2.5 bg-white rounded-xl border border-gray-100 text-[#A3AED0] hover:text-[#4318FF] transition-all shadow-sm hover:shadow-md">
+                   <button class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
                       <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
                    </button>
-                   <button class="p-2.5 bg-white rounded-xl border border-gray-100 text-[#A3AED0] hover:text-[#4318FF] transition-all shadow-sm hover:shadow-md">
+                   <button class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
                       <lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon>
                    </button>
                 </div>
-             </div>
+              </div>
           </div>
         </div>
 
