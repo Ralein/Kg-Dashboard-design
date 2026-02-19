@@ -53,9 +53,9 @@ interface NavItem {
              
           <!-- Logo Group -->
           <div class="flex items-center gap-3 relative z-10">
-            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-white shadow-lg shadow-primary/30 transition-transform duration-300 hover:scale-105 flex-shrink-0 cursor-pointer" 
+            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-lg shadow-black/5 transition-transform duration-300 hover:scale-105 flex-shrink-0 cursor-pointer overflow-hidden" 
                  (click)="collapsed() ? toggleCollapse() : null">
-              <span class="text-xl font-bold leading-none">logo</span>
+              <img src="cropped-favicon.png" alt="n-sure logo" class="w-8 h-8 object-cover">
             </div>
             
             <div class="flex flex-col overflow-hidden transition-all duration-300"

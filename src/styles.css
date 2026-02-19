@@ -1,26 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 @layer base {
+    :root {
+        --primary: #4318FF;
+        --secondary: #707EAE;
+        --brand-blue: #4318FF;
+        --brand-purple: #7C5CFF;
+        --brand-green: #05CD99;
+        --brand-orange: #FF8F0C;
+        --brand-red: #EE5D50;
+        --text-navy: #2B3674;
+        --text-gray: #A3AED0;
+        --bg-glass: rgba(255, 255, 255, 0.7);
+        --bg-glass-dark: rgba(12, 15, 46, 0.8);
+    }
+
     body {
         @apply bg-[#F4F7FE] text-[#2B3674] min-h-screen font-sans;
+        background-image:
+            radial-gradient(at 0% 0%, rgba(67, 24, 255, 0.03) 0px, transparent 50%),
+            radial-gradient(at 100% 0%, rgba(5, 205, 153, 0.03) 0px, transparent 50%);
+        background-attachment: fixed;
     }
 }
 
 @layer components {
+    .premium-glass {
+        @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl shadow-blue-500/5;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.4) 100%);
+    }
+
+    .premium-glass-dark {
+        @apply bg-navy-900/80 backdrop-blur-xl border border-white/10 shadow-2xl;
+        background: linear-gradient(145deg, #0C0F2E 0%, #141836 60%, #0E1428 100%);
+    }
+
     .glass-card {
-        @apply bg-white rounded-[20px] shadow-sm border-none;
+        @apply bg-white rounded-[20px] shadow-sm border-none transition-all duration-300;
+
+        &:hover {
+            @apply shadow-xl shadow-blue-500/10 -translate-y-1;
+        }
     }
 
     .glass-input {
-        @apply bg-transparent border border-gray-200 rounded-lg text-sm font-medium text-[#2B3674] focus:border-[#4318FF] focus:ring-0 outline-none transition-all;
+        @apply bg-white/50 backdrop-blur-md border border-gray-200 rounded-xl text-sm font-medium text-[#2B3674] focus:border-[#4318FF] focus:bg-white focus:ring-4 focus:ring-[#4318FF]/5 outline-none transition-all px-4 py-2;
     }
 
     .btn-primary {
-        @apply bg-[#4318FF] text-white hover:bg-[#3311DB] rounded-xl shadow-lg shadow-[#4318FF]/20 transition-all active:scale-95;
+        @apply bg-[#4318FF] text-white hover:bg-[#3311DB] rounded-xl shadow-lg shadow-[#4318FF]/20 transition-all active:scale-95 px-6 py-2.5 font-bold;
     }
 }
 
