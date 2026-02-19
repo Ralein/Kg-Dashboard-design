@@ -32,7 +32,7 @@ export class QuoteLobChartComponent extends BaseChartComponent {
             ctx.moveTo(startX - 50, y);
             ctx.lineTo(startX + totalW + 50, y);
         }
-        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.strokeStyle = 'rgba(163, 174, 208, 0.2)'; // Light Gray
         ctx.lineWidth = 1;
         ctx.stroke();
 
@@ -46,16 +46,14 @@ export class QuoteLobChartComponent extends BaseChartComponent {
 
             // Label
             if (p === 1) {
-                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.fillStyle = '#A3AED0'; // Gray Label
                 ctx.font = '600 10px "DM Sans",sans-serif';
                 ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-                ctx.fillText(d.name, x + barW / 2, y + 20);
+                ctx.fillText(d.label, x + barW / 2, y + 20);
 
                 ctx.fillStyle = d.color;
                 ctx.font = '700 12px "DM Sans",sans-serif';
-                ctx.shadowColor = d.color; ctx.shadowBlur = 8;
                 ctx.fillText(String(d.value), x + barW / 2, y - h - 25);
-                ctx.shadowBlur = 0;
             }
         });
     }

@@ -6,7 +6,8 @@ import { BaseChartComponent } from './base-chart.component';
     selector: 'app-tpp-requests-chart',
     standalone: true,
     imports: [CommonModule],
-    template: `<canvas #canvas class="w-full h-full"></canvas>`
+    template: `<canvas #canvas class="w-full h-full"></canvas>`,
+    styles: [`:host { display: block; width: 100%; height: 100%; }`]
 })
 export class TppRequestsChartComponent extends BaseChartComponent {
     @Input() data: any[] = [];

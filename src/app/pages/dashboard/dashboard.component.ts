@@ -53,24 +53,6 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
           <select class="glass-input border-none bg-transparent hover:bg-slate-50 cursor-pointer">
             <option>February</option><option>January</option>
           </select>
-          <button 
-            (click)="refresh()" 
-            class="btn-primary ml-2 py-2 min-w-[100px] flex items-center justify-center gap-2 transition-all duration-300"
-            [class.opacity-75]="isRefreshing()"
-            [disabled]="isRefreshing()">
-            @if (isRefreshing()) {
-              <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <span>...</span>
-            } @else {
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span>REFRESH</span>
-            }
-          </button>
         </div>
       </div>
 
@@ -85,7 +67,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
 
       <!-- Row 1: Consent & TPP -->
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <app-chart-card title="Consent Analysis" subtitle="Radial breakdown by authorization status"[showLive]="true" delay="100ms">
+        <app-chart-card title="Consent Analysis" subtitle="Radial breakdown by authorization status" [showLive]="true" delay="100ms">
             @if (isLoading()) {
                 <div class="animate-pulse flex space-x-4 h-full items-center justify-center">
                     <div class="rounded-full bg-slate-700 h-40 w-40"></div>
@@ -96,7 +78,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
         </app-chart-card>
 
         <app-chart-card title="TPP Wise Consent Requests" subtitle="Lollipop distribution by client platform" delay="200ms">
-             @if (isLoading()) {
+            @if (isLoading()) {
                 <div class="animate-pulse space-y-4 p-4">
                     <div class="h-4 bg-slate-700 rounded w-3/4"></div>
                     <div class="h-4 bg-slate-700 rounded w-1/2"></div>
@@ -110,28 +92,28 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
 
       <!-- Row 2: Quotes Deep-dive -->
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <app-chart-card title="Quote Traffic" subtitle="Monthly Generation vs Acceptance trends" [dark]="true" delay="300ms">
+        <app-chart-card title="Quote Traffic" subtitle="Monthly Generation vs Acceptance trends" delay="300ms">
             <div header-actions class="flex items-center gap-4 mr-2">
-                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#7C5CFF]"></span><span class="text-[10px] text-white/50 font-bold">GEN</span></div>
-                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#05CD99]"></span><span class="text-[10px] text-white/50 font-bold">ACC</span></div>
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#7C5CFF]"></span><span class="text-[10px] text-[#A3AED0] font-bold">GEN</span></div>
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#05CD99]"></span><span class="text-[10px] text-[#A3AED0] font-bold">ACC</span></div>
             </div>
             <app-quote-traffic-chart></app-quote-traffic-chart>
         </app-chart-card>
 
-        <app-chart-card title="Quote Status" subtitle="Distribution of quotes across states" [dark]="true" delay="400ms" [showFooter]="true">
+        <app-chart-card title="Quote Status" subtitle="Distribution of quotes across states" delay="400ms" [showFooter]="true">
             <app-quote-status-chart [data]="quoteStatusData"></app-quote-status-chart>
             <div footer class="flex justify-center gap-4">
                 @for (item of quoteStatusData; track item.label) {
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full" [style.background]="item.color" [style.box-shadow]="'0 0 6px '+item.color"></span>
-                        <span class="text-[10px] text-white/40 font-bold uppercase">{{ item.label }}</span>
-                        <span class="text-xs text-white font-black">{{ item.value }}</span>
+                        <span class="text-[10px] text-[#A3AED0] font-bold uppercase">{{ item.label }}</span>
+                        <span class="text-xs text-[#2B3674] font-black">{{ item.value }}</span>
                     </div>
                 }
             </div>
         </app-chart-card>
 
-        <app-chart-card title="Quote LOB" subtitle="Volume breakdown by Business Line" [dark]="true" delay="500ms">
+        <app-chart-card title="Quote LOB" subtitle="Volume breakdown by Business Line" delay="500ms">
             <app-quote-lob-chart [data]="quoteLobData"></app-quote-lob-chart>
         </app-chart-card>
       </div>

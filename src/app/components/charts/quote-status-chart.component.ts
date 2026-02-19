@@ -6,7 +6,8 @@ import { BaseChartComponent } from './base-chart.component';
     selector: 'app-quote-status-chart',
     standalone: true,
     imports: [CommonModule],
-    template: `<canvas #canvas class="w-full h-full"></canvas>`
+    template: `<canvas #canvas class="w-full h-full"></canvas>`,
+    styles: [`:host { display: block; width: 100%; height: 100%; }`]
 })
 export class QuoteStatusChartComponent extends BaseChartComponent {
     @Input() data: any[] = [];
@@ -50,15 +51,14 @@ export class QuoteStatusChartComponent extends BaseChartComponent {
             ctx.fillStyle = d.color;
             ctx.font = '700 10px "DM Sans",sans-serif';
             ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            ctx.shadowColor = d.color; ctx.shadowBlur = 8;
             ctx.fillText(d.label.toUpperCase(), cx, 4);
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = 'rgba(255,255,255,0.25)';
+
+            ctx.fillStyle = '#A3AED0'; // Gray text
             ctx.font = '500 9px "DM Sans",sans-serif';
             ctx.fillText(`n=${d.value}`, cx, 16);
 
             ctx.beginPath(); ctx.arc(cx, cy, cr, 0, Math.PI * 2);
-            ctx.fillStyle = `${d.color}09`; ctx.fill();
+            ctx.fillStyle = `${d.color}15`; ctx.fill(); // Slightly darker bg for visibility
 
             if (this.clusters[i]) {
                 this.clusters[i].forEach((pt: any, j: number) => {
@@ -69,8 +69,7 @@ export class QuoteStatusChartComponent extends BaseChartComponent {
                     ctx.beginPath();
                     ctx.arc(cx + dx, cy + dy, pt.r, 0, Math.PI * 2);
                     ctx.fillStyle = d.color;
-                    ctx.shadowColor = d.color; ctx.shadowBlur = 6;
-                    ctx.fill(); ctx.shadowBlur = 0;
+                    ctx.fill();
                     ctx.globalAlpha = 1;
                 });
             }
@@ -79,7 +78,7 @@ export class QuoteStatusChartComponent extends BaseChartComponent {
                 ctx.beginPath(); ctx.arc(cx, cy, cr, 0, Math.PI * 2);
                 ctx.strokeStyle = d.color;
                 ctx.lineWidth = 1;
-                ctx.globalAlpha = 0.18;
+                ctx.globalAlpha = 0.3;
                 ctx.setLineDash([4, 6]); ctx.stroke(); ctx.setLineDash([]);
                 ctx.globalAlpha = 1;
             }

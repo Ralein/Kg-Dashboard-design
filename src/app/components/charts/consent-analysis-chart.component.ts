@@ -6,7 +6,8 @@ import { BaseChartComponent } from './base-chart.component';
     selector: 'app-consent-analysis-chart',
     standalone: true,
     imports: [CommonModule],
-    template: `<canvas #canvas class="w-full h-full"></canvas>`
+    template: `<canvas #canvas class="w-full h-full"></canvas>`,
+    styles: [`:host { display: block; width: 100%; height: 100%; }`]
 })
 export class ConsentAnalysisChartComponent extends BaseChartComponent {
     @Input() data: any[] = [];
@@ -32,22 +33,19 @@ export class ConsentAnalysisChartComponent extends BaseChartComponent {
             // Track ring
             ctx.beginPath();
             ctx.arc(cx, cy, r, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+            ctx.strokeStyle = 'rgba(163, 174, 208, 0.1)'; // Light gray track
             ctx.lineWidth = track;
             ctx.lineCap = 'round';
             ctx.stroke();
 
-            // Outer glow
+            // Outer glow (reduced for light mode)
             ctx.beginPath();
             ctx.arc(cx, cy, r, start, start + pct);
             ctx.strokeStyle = seg.color;
-            ctx.lineWidth = track + 4;
-            ctx.globalAlpha = 0.18;
-            ctx.shadowColor = seg.color;
-            ctx.shadowBlur = 18;
+            ctx.lineWidth = track + 2;
+            ctx.globalAlpha = 0.1;
             ctx.stroke();
             ctx.globalAlpha = 1;
-            ctx.shadowBlur = 0;
 
             // Main arc
             const grad = ctx.createLinearGradient(
@@ -61,17 +59,14 @@ export class ConsentAnalysisChartComponent extends BaseChartComponent {
             ctx.strokeStyle = grad;
             ctx.lineWidth = track;
             ctx.lineCap = 'round';
-            ctx.shadowColor = seg.color;
-            ctx.shadowBlur = 14;
             ctx.stroke();
-            ctx.shadowBlur = 0;
 
             // Tip dot
             const endA = start + pct;
             ctx.beginPath();
             ctx.arc(cx + r * Math.cos(endA), cy + r * Math.sin(endA), track * 0.55, 0, Math.PI * 2);
             ctx.fillStyle = '#fff';
-            ctx.shadowColor = seg.color; ctx.shadowBlur = 12;
+            ctx.shadowColor = 'rgba(0,0,0,0.1)'; ctx.shadowBlur = 4;
             ctx.fill(); ctx.shadowBlur = 0;
 
             // Labels (final frame only)
@@ -82,13 +77,13 @@ export class ConsentAnalysisChartComponent extends BaseChartComponent {
                 ctx.fillStyle = seg.color;
                 ctx.font = '700 10px "DM Sans",sans-serif';
                 ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-                ctx.shadowColor = seg.color; ctx.shadowBlur = 8;
                 ctx.fillText(`${Math.round((seg.value / seg.total) * 100)}%`, rx, ry);
-                ctx.shadowBlur = 0;
-                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+
+                ctx.fillStyle = '#2B3674'; // Navy text
                 ctx.font = '500 9px "DM Sans",sans-serif';
                 ctx.fillText(seg.label, rx, ry + 12);
-                ctx.fillStyle = 'rgba(255,255,255,0.25)';
+
+                ctx.fillStyle = '#A3AED0'; // Gray text
                 ctx.fillText(String(seg.value), rx + 44, ry);
             }
         });
@@ -97,12 +92,12 @@ export class ConsentAnalysisChartComponent extends BaseChartComponent {
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.font = `800 ${Math.round(minR * 0.9)}px "DM Sans",sans-serif`;
         const tg = ctx.createLinearGradient(cx - 30, cy - 20, cx + 30, cy + 20);
-        tg.addColorStop(0, '#ffffff'); tg.addColorStop(1, '#7C5CFF');
-        ctx.fillStyle = tg; ctx.shadowColor = '#7C5CFF'; ctx.shadowBlur = 20;
+        tg.addColorStop(0, '#2B3674'); tg.addColorStop(1, '#4318FF');
+        ctx.fillStyle = tg;
         ctx.fillText('700', cx, cy - 8);
-        ctx.shadowBlur = 0;
+
         ctx.font = `500 10px "DM Sans",sans-serif`;
-        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        ctx.fillStyle = '#A3AED0';
         ctx.fillText('total', cx, cy + 14);
     }
 }
