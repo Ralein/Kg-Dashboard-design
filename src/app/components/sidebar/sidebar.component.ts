@@ -55,7 +55,7 @@ interface NavItem {
           <div class="flex items-center gap-3 relative z-10">
             <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-white shadow-lg shadow-primary/30 transition-transform duration-300 hover:scale-105 flex-shrink-0 cursor-pointer" 
                  (click)="collapsed() ? toggleCollapse() : null">
-              <span class="text-xl font-bold leading-none">n</span>
+              <span class="text-xl font-bold leading-none">logo</span>
             </div>
             
             <div class="flex flex-col overflow-hidden transition-all duration-300"
