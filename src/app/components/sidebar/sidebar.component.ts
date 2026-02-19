@@ -1,6 +1,6 @@
 import { Component, signal, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { LucideAngularModule, LayoutDashboard, Users, UserCheck, ShieldCheck, FileCheck, FileText, Server, ClipboardList } from 'lucide-angular';
+import { LucideAngularModule, LayoutDashboard, UserPlus, FileCheck, FileText, Settings2, Activity, ClipboardList, ShieldCheck } from 'lucide-angular';
 import { CommonModule } from '@angular/common';
 
 interface NavItem {
@@ -152,13 +152,13 @@ export class SidebarComponent {
 
   readonly navItems: NavItem[] = [
     { route: '/dashboard', label: 'Dashboard', exact: true, icon: LayoutDashboard },
-    { route: '/customers', label: 'Customers', icon: Users },
-    { route: '/users', label: 'Users', icon: UserCheck },
-    { route: '/security', label: 'Security', icon: ShieldCheck },
-    { route: '/consents', label: 'Consent Management', icon: FileCheck },
+    { route: '/user-creation', label: 'User Creation', icon: UserPlus },
+    { route: '/consent-management', label: 'Consent Management', icon: ShieldCheck },
+    { route: '/quotation-management', label: 'Quotation Management', icon: FileCheck },
+    { route: '/api-versioning', label: 'API Versioning', icon: Settings2 },
+    { route: '/api-monitoring', label: 'API Monitoring', icon: Activity },
     { route: '/reports', label: 'Reports', icon: FileText },
-    { route: '/tpp', label: 'TPP Management', icon: Server },
-    { route: '/audit', label: 'Audit Log', icon: ClipboardList },
+    { route: '/audit-logs', label: 'Audit Logs', icon: ClipboardList },
   ];
 
   toggleCollapse(): void {

@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { LucideAngularModule, Search, FileCheck, ClipboardList, Filter, Download, Eye, RotateCcw, ChevronRight, ChevronLeft, ChevronsRight, ChevronsLeft } from 'lucide-angular';
 
 type ConsentStatus = 'Authorized' | 'AwaitingAuthorization' | 'Revoked' | 'Expired' | 'Suspended';
 
@@ -18,197 +19,151 @@ interface Consent {
 @Component({
   selector: 'app-consent-list',
   standalone: true,
-  imports: [RouterLink, CommonModule, FormsModule, NgClass],
+  imports: [RouterLink, CommonModule, FormsModule, NgClass, LucideAngularModule],
   template: `
-    <div class="space-y-8 pb-10">
-      <!-- ... (rest of template remains same logic, just keeping it valid) ... -->
-      <!-- Page Title -->
+    <div class="flex flex-col gap-6 animate-fade-in-up">
+      <!-- Header Area -->
       <div>
-         <h1 class="text-3xl font-bold text-primary tracking-tight">Consent Management</h1>
-         <p class="text-secondary text-sm mt-1 font-medium">Manage and monitor all active and historical consents.</p>
+        <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">Consent Management</h1>
+        <p class="text-[#A3AED0] text-sm font-medium">Manage and monitor all active and historical consents</p>
       </div>
 
-      <!-- Main Glass Card -->
-      <div class="glass-card overflow-hidden animate-spring" style="animation-delay: 100ms">
+      <!-- Main Content Card -->
+      <div class="chart-shell p-0 overflow-hidden bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[600px] flex flex-col">
+        
+        <!-- Tabs & Filters Row -->
+        <div class="p-6 pb-0 border-b border-gray-100/50">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-100">
+              <button 
+                (click)="switchTab('current')"
+                class="px-8 py-3 text-sm font-bold transition-all relative"
+                [class.text-[#4318FF]]="activeTab === 'current'"
+                [class.text-[#A3AED0]]="activeTab !== 'current'"
+              >
+                <span class="flex items-center gap-2">
+                   <lucide-icon [img]="FileCheck" class="w-4 h-4"></lucide-icon>
+                   CURRENT
+                </span>
+                <div *ngIf="activeTab === 'current'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4318FF] rounded-full"></div>
+              </button>
+              <button 
+                (click)="switchTab('history')"
+                class="px-8 py-3 text-sm font-bold transition-all relative"
+                [class.text-[#4318FF]]="activeTab === 'history'"
+                [class.text-[#A3AED0]]="activeTab !== 'history'"
+              >
+                <span class="flex items-center gap-2">
+                   <lucide-icon [img]="ClipboardList" class="w-4 h-4"></lucide-icon>
+                   HISTORY
+                </span>
+                <div *ngIf="activeTab === 'history'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4318FF] rounded-full"></div>
+              </button>
+            </div>
 
-        <!-- Tabs & Controls Toolbar -->
-        <div class="px-6 py-5 border-b border-white/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          
-          <!-- Modern Tabs -->
-          <div class="flex p-1 bg-bg-app/50 backdrop-blur rounded-xl gap-1 relative shadow-inner">
-            <button
-              (click)="switchTab('current')"
-              class="relative z-10 px-6 py-2 text-sm font-bold rounded-lg transition-all duration-300"
-              [class.text-white]="activeTab === 'current'"
-              [class.shadow-lg]="activeTab === 'current'"
-              [class.shadow-accent/30]="activeTab === 'current'"
-              [class.text-secondary]="activeTab !== 'current'"
-              [class.bg-accent]="activeTab === 'current'"
-              [class.hover:text-primary]="activeTab !== 'current'"
-            >
-              Current
-            </button>
-            <button
-              (click)="switchTab('history')"
-              class="relative z-10 px-6 py-2 text-sm font-bold rounded-lg transition-all duration-300"
-              [class.text-white]="activeTab === 'history'"
-              [class.shadow-lg]="activeTab === 'history'"
-              [class.shadow-accent/30]="activeTab === 'history'"
-              [class.text-secondary]="activeTab !== 'history'"
-              [class.bg-accent]="activeTab === 'history'"
-              [class.hover:text-primary]="activeTab !== 'history'"
-            >
-              History
-            </button>
-          </div>
-
-          <!-- Search & Filter -->
-          <div class="flex items-center gap-3">
-             <div class="relative group">
-                <input
-                  type="text"
+            <!-- Toolbar -->
+            <div class="flex items-center gap-3 w-full md:w-auto">
+              <div class="relative flex-1 md:w-64">
+                <lucide-icon [img]="Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0]"></lucide-icon>
+                <input 
+                  type="text" 
                   [(ngModel)]="searchQuery"
-                  placeholder="Search consents..."
-                  class="glass-input pl-10 pr-4 py-2 text-sm w-64 text-primary bg-white/40 focus:bg-white/70"
-                />
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-secondary group-focus-within:text-accent transition-colors" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                   <circle cx="11" cy="11" r="8"/>
-                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-             </div>
-             
-             <!-- Pagination Select -->
-             <div class="relative group">
-                <select 
-                    [(ngModel)]="itemsPerPage"
-                    class="glass-input appearance-none pl-3 pr-8 py-2 text-sm font-bold text-primary cursor-pointer hover:bg-white/60 bg-white/40 focus:bg-white/70"
+                  placeholder="Search Consents..." 
+                  class="glass-input pl-10 pr-4 py-2 w-full text-xs"
                 >
-                    <option [value]="10">10</option>
-                    <option [value]="25">25</option>
-                    <option [value]="50">50</option>
+              </div>
+              <div class="flex items-center gap-2 bg-gray-50/50 p-1 rounded-lg">
+                <span class="text-[10px] font-bold text-[#A3AED0] px-2">Items per page:</span>
+                <select [(ngModel)]="itemsPerPage" class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4">
+                  <option [value]="10">10</option>
+                  <option [value]="25">25</option>
+                  <option [value]="50">50</option>
                 </select>
-                <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-secondary">
-                   <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
-                </div>
-             </div>
+              </div>
+              <button class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
+                <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
+              </button>
+              <button class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
+                <lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon>
+              </button>
+            </div>
           </div>
-
         </div>
 
-        <!-- Glass Grid Table -->
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
+        <!-- Table Area -->
+        <div class="flex-1 overflow-x-auto">
+          <table class="w-full text-left">
             <thead>
-              <tr class="text-left border-b border-white/20">
-                @for (col of columns; track col) {
-                  <th class="px-6 py-4 font-bold text-xs uppercase tracking-wider text-secondary">
-                    {{ col }}
-                  </th>
-                }
+              <tr class="border-b border-gray-50 bg-gray-50/30">
+                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Consent ID</th>
+                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Customer Name</th>
+                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">TPP Name</th>
+                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Created On</th>
+                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Expires On</th>
+                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Status</th>
+                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider text-right">Action</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-white/20">
-
-              <!-- Loading Skeleton -->
-              @if (loading) {
-                 @for (i of [1,2,3,4,5]; track i) {
-                   <tr class="animate-pulse">
-                     <td class="px-6 py-4"><div class="h-4 w-24 bg-gray-200/50 rounded"></div></td>
-                     <td class="px-6 py-4"><div class="h-4 w-32 bg-gray-200/50 rounded"></div></td>
-                     <td class="px-6 py-4"><div class="h-4 w-20 bg-gray-200/50 rounded"></div></td>
-                     <td class="px-6 py-4"><div class="h-4 w-24 bg-gray-200/50 rounded"></div></td>
-                     <td class="px-6 py-4"><div class="h-4 w-24 bg-gray-200/50 rounded"></div></td>
-                     <td class="px-6 py-4"><div class="h-6 w-20 bg-gray-200/50 rounded-full"></div></td>
-                     <td class="px-6 py-4"><div class="h-8 w-8 bg-gray-200/50 rounded-lg"></div></td>
-                   </tr>
-                 }
-              }
-
-              <!-- Data Rows -->
-              @if (!loading) {
-                @for (consent of pagedConsents; track consent.id; let i = $index) {
-                  <tr
-                    class="group transition-colors hover:bg-white/30 animate-spring"
-                    [style.animation-delay]="(i * 50) + 'ms'"
-                  >
-                    <!-- Consent ID -->
-                    <td class="px-6 py-4">
-                      <div class="flex items-center gap-2">
-                         <div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center text-accent">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                         </div>
-                         <a [routerLink]="['/consents', consent.id]" class="font-mono font-semibold text-primary group-hover:text-accent transition-colors">
-                            {{ consent.consentId.substring(0, 8) }}...
-                         </a>
-                      </div>
-                    </td>
-
-                    <!-- Customer -->
-                    <td class="px-6 py-4 font-semibold text-primary">
-                        {{ consent.customerName === '-' ? '—' : consent.customerName }}
-                    </td>
-
-                    <!-- TPP -->
-                    <td class="px-6 py-4 text-secondary font-medium">
-                        {{ consent.tppName }}
-                    </td>
-
-                    <!-- Dates -->
-                    <td class="px-6 py-4 text-secondary font-mono text-xs">
-                       {{ formatDate(consent.createdOn) }}
-                    </td>
-                     <td class="px-6 py-4 text-secondary font-mono text-xs">
-                       {{ formatDate(consent.expiresOn) }}
-                    </td>
-
-                    <!-- Status -->
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-sm" [ngClass]="getStatusClass(consent.status)">
-                           <span class="w-1.5 h-1.5 rounded-full" [ngClass]="getStatusDot(consent.status)"></span>
-                           {{ getStatusLabel(consent.status) }}
-                        </span>
-                    </td>
-
-                    <!-- Action -->
-                    <td class="px-6 py-4">
-                       <a [routerLink]="['/consents', consent.id]" class="inline-flex py-1.5 px-3 rounded-lg bg-white/50 text-accent font-bold text-xs hover:bg-accent hover:text-white transition-all shadow-sm hover:shadow-glow">
-                          View
-                       </a>
-                    </td>
-                  </tr>
-                }
-              }
+            <tbody class="divide-y divide-gray-50/50">
+              <tr *ngFor="let consent of pagedConsents; let i = index" class="hover:bg-gray-50/40 transition-colors group">
+                <td class="px-6 py-4">
+                  <span [routerLink]="['/consents', consent.id]" class="text-xs font-bold text-[#4318FF] hover:underline cursor-pointer">{{consent.consentId.substring(0, 12)}}...</span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-xs font-medium text-[#2B3674]">{{consent.customerName === '-' ? '—' : consent.customerName}}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-xs font-medium text-[#2B3674]">{{consent.tppName}}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-xs text-[#A3AED0]">{{formatDate(consent.createdOn)}}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-xs text-[#A3AED0]">{{formatDate(consent.expiresOn)}}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-md" [ngClass]="getStatusClass(consent.status)">
+                    {{getStatusLabel(consent.status)}}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <div class="flex justify-end gap-2">
+                    <button class="p-2 rounded-lg bg-gray-100/50 text-[#A3AED0] hover:bg-[#4318FF] hover:text-white transition-all transform group-hover:scale-110 active:scale-95 shadow-sm">
+                      <lucide-icon [img]="RotateCcw" class="w-3.5 h-3.5"></lucide-icon>
+                    </button>
+                    <button [routerLink]="['/consents', consent.id]" class="p-2 rounded-lg bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform group-hover:scale-110 active:scale-95 shadow-sm">
+                      <lucide-icon [img]="Eye" class="w-3.5 h-3.5"></lucide-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
-
+          
           <!-- Empty State -->
-          @if (!loading && filteredConsents.length === 0) {
-            <div class="flex flex-col items-center justify-center py-16 text-center animate-spring">
-               <div class="w-16 h-16 bg-bg-app rounded-full flex items-center justify-center mb-4 text-secondary">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-               </div>
-               <h3 class="text-lg font-bold text-primary">No consents found</h3>
-               <p class="text-secondary text-sm mt-1">Try adjusting your search filters.</p>
-               <button (click)="searchQuery = ''" class="mt-4 text-accent font-bold text-sm hover:underline">Clear Search</button>
-            </div>
-          }
+          <div *ngIf="!loading && filteredConsents.length === 0" class="flex flex-col items-center justify-center py-20 opacity-40">
+            <lucide-icon [img]="Search" class="w-12 h-12 mb-4"></lucide-icon>
+            <p class="text-sm font-bold">No consents found for the selected criteria</p>
+          </div>
         </div>
-        
-         <!-- Footer / Pagination Info -->
-         <div class="px-6 py-4 border-t border-white/20 flex items-center justify-between text-xs font-bold text-secondary bg-white/20">
-            <span>Showing {{ pagedConsents.length }} of {{ filteredConsents.length }} results</span>
-            <div class="flex gap-2">
-                @for (btn of paginationBtns; track btn.label) {
-                    <button class="w-8 h-8 rounded-lg flex items-center justify-center bg-white/40 hover:bg-white hover:text-accent disabled:opacity-50 transition-all shadow-sm">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                           <polyline [attr.points]="btn.p1"/>
-                           @if(btn.p2) { <polyline [attr.points]="btn.p2"/> }
-                        </svg>
-                    </button>
-                }
-            </div>
-         </div>
 
+        <!-- Pagination -->
+        <div class="p-6 border-t border-gray-100/50 flex flex-col md:flex-row justify-between items-center gap-4">
+          <span class="text-xs font-semibold text-[#A3AED0]">
+            Showing <span class="text-[#2B3674]">1 – {{pagedConsents.length}}</span> of <span class="text-[#2B3674]">{{filteredConsents.length}}</span>
+          </span>
+          <div class="flex items-center gap-1">
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] transition-colors"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] transition-colors"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
+             <div class="flex items-center mx-2 overflow-hidden rounded-lg border border-gray-100">
+               <button class="w-8 h-8 flex items-center justify-center text-xs font-bold bg-[#4318FF] text-white">1</button>
+               <button class="w-8 h-8 flex items-center justify-center text-xs font-bold hover:bg-gray-50">2</button>
+             </div>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] transition-colors"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] transition-colors"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
+          </div>
+        </div>
       </div>
     </div>
   `,
@@ -225,6 +180,18 @@ export class ConsentListComponent implements OnInit {
   hoveredRow: string | null = null;
 
   readonly columns = ['Consent ID', 'Customer', 'TPP', 'Created', 'Expires', 'Status', 'Action'];
+
+  readonly Search = Search;
+  readonly Filter = Filter;
+  readonly Download = Download;
+  readonly Eye = Eye;
+  readonly RotateCcw = RotateCcw;
+  readonly ChevronRight = ChevronRight;
+  readonly ChevronLeft = ChevronLeft;
+  readonly ChevronsRight = ChevronsRight;
+  readonly ChevronsLeft = ChevronsLeft;
+  readonly FileCheck = FileCheck;
+  readonly ClipboardList = ClipboardList;
 
   readonly paginationBtns = [
     { label: 'First', p1: '11 17 6 12 11 7', p2: '18 17 13 12 18 7' },
@@ -283,11 +250,11 @@ export class ConsentListComponent implements OnInit {
 
   getStatusClass(status: string): string {
     const map: Record<string, string> = {
-      Authorized: 'bg-success/10 text-success ring-1 ring-success/20',
-      AwaitingAuthorization: 'bg-warning/10 text-warning ring-1 ring-warning/20',
-      Revoked: 'bg-danger/10 text-danger ring-1 ring-danger/20',
-      Expired: 'bg-orange-100 text-orange-600 ring-1 ring-orange-200',
-      Suspended: 'bg-secondary/10 text-secondary ring-1 ring-secondary/20',
+      Authorized: 'bg-[#05CD99]/10 text-[#05CD99]',
+      AwaitingAuthorization: 'bg-[#FF8F0C]/10 text-[#FF8F0C]',
+      Revoked: 'bg-[#FF5252]/10 text-[#FF5252]',
+      Expired: 'bg-[#A3AED0]/10 text-[#A3AED0]',
+      Suspended: 'bg-gray-100 text-[#2B3674]',
     };
     return map[status] ?? 'bg-secondary/10 text-secondary ring-1 ring-secondary/20';
   }
