@@ -36,17 +36,17 @@ Chart.register(...registerables);
       <!-- Top Stats Grid — UNCHANGED layout, graphs enhanced -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-        <!-- Usage Volume — UNCHANGED -->
-        <div class="chart-shell p-6 flex flex-col gap-4">
-          <div class="flex justify-between items-center">
+        <!-- Usage Volume — ENHANCED with Sparkline -->
+        <div class="premium-glass p-6 flex flex-col gap-4 relative overflow-hidden group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300">
+          <div class="flex justify-between items-center relative z-10">
             <h3 class="text-sm font-bold text-[#2B3674] uppercase tracking-wider">Usage Volume - TPM</h3>
             <lucide-icon [img]="Activity" class="w-4 h-4 text-[#4318FF]"></lucide-icon>
           </div>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-4 relative z-10">
             <div class="flex flex-col">
               <div class="flex items-center gap-2 mb-1">
                 <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Average</span>
-                <span class="text-[8px] font-bold bg-[#05CD99]/10 text-[#05CD99] px-1.5 py-0.5 rounded">Last 7 Days</span>
+                <span class="text-[8px] font-bold bg-[#4318FF]/10 text-[#4318FF] px-1.5 py-0.5 rounded">Last 7 Days</span>
               </div>
               <span class="text-2xl font-bold text-[#2B3674]">2 TPM</span>
             </div>
@@ -58,46 +58,51 @@ Chart.register(...registerables);
               <span class="text-2xl font-bold text-[#2B3674]">22 TPM</span>
             </div>
           </div>
+          <!-- Mini Sparkline Background -->
+          <div class="absolute inset-x-0 bottom-0 h-16 opacity-40 group-hover:opacity-60 transition-opacity">
+            <canvas #usageSparkline class="w-full h-full"></canvas>
+          </div>
         </div>
 
-        <!-- Response Time — UNCHANGED -->
-        <div class="chart-shell p-6 flex flex-col gap-4">
-          <div class="flex justify-between items-center">
-            <h3 class="text-sm font-bold text-[#2B3674] uppercase tracking-wider">Response Time - Milliseconds</h3>
+        <!-- Response Time — ENHANCED with Sparkline -->
+        <div class="premium-glass p-6 flex flex-col gap-4 relative overflow-hidden group hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-300">
+          <div class="flex justify-between items-center relative z-10">
+            <h3 class="text-sm font-bold text-[#2B3674] uppercase tracking-wider">Response Time - MS</h3>
             <lucide-icon [img]="Clock" class="w-4 h-4 text-[#05CD99]"></lucide-icon>
           </div>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-4 relative z-10">
             <div class="flex flex-col">
               <div class="flex items-center gap-2 mb-1">
                 <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Average</span>
                 <span class="text-[8px] font-bold bg-[#05CD99]/10 text-[#05CD99] px-1.5 py-0.5 rounded">Last 7 Days</span>
               </div>
-              <span class="text-2xl font-bold text-[#2B3674]">24227 MS</span>
+              <span class="text-2xl font-bold text-[#2B3674]">24,227</span>
             </div>
             <div class="flex flex-col">
               <div class="flex items-center gap-2 mb-1">
                 <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Maximum</span>
-                <span class="text-[8px] font-bold bg-[#05CD99]/10 text-[#05CD99] px-1.5 py-0.5 rounded">Last 7 Days</span>
+                <span class="text-[8px] font-bold bg-[#FF5252]/10 text-[#FF5252] px-1.5 py-0.5 rounded">Last 7 Days</span>
               </div>
-              <span class="text-2xl font-bold text-[#2B3674]">4668574 MS</span>
+              <span class="text-2xl font-bold text-[#2B3674]">4.6M</span>
             </div>
+          </div>
+          <!-- Mini Sparkline Background -->
+          <div class="absolute inset-x-0 bottom-0 h-16 opacity-40 group-hover:opacity-60 transition-opacity">
+            <canvas #responseSparkline class="w-full h-full"></canvas>
           </div>
         </div>
 
-        <!-- API Groups Donut — ENHANCED empty state -->
-        <div class="chart-shell p-6 flex flex-col gap-4">
+        <!-- API Groups Donut — ENHANCED rich mockup -->
+        <div class="premium-glass p-6 flex flex-col gap-4 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-300">
           <div class="flex justify-between items-center">
             <h3 class="text-sm font-bold text-[#2B3674] uppercase tracking-wider">By API Groups</h3>
             <lucide-icon [img]="PieChart" class="w-4 h-4 text-[#FF8F0C]"></lucide-icon>
           </div>
           <div class="flex-1 flex items-center justify-center relative min-h-[120px]">
             <canvas #groupsDonut></canvas>
-            <!-- ENHANCED: styled empty state overlay -->
-            <div class="donut-empty-overlay">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C5CEDF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>
-              </svg>
-              <span class="donut-empty-label">No data available</span>
+            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span class="text-xl font-bold text-[#2B3674]">100%</span>
+              <span class="text-[8px] font-bold text-[#A3AED0] uppercase tracking-tighter">Active</span>
             </div>
           </div>
         </div>
@@ -209,6 +214,8 @@ Chart.register(...registerables);
   `]
 })
 export class ApiMonitoringComponent implements AfterViewInit {
+  @ViewChild('usageSparkline') usageSparklineRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('responseSparkline') responseSparklineRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('groupsDonut') groupsDonutRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('monthlyBar') monthlyBarRef!: ElementRef<HTMLCanvasElement>;
 
@@ -224,31 +231,85 @@ export class ApiMonitoringComponent implements AfterViewInit {
   }
 
   private initCharts(): void {
+    this.buildSparkline(this.usageSparklineRef.nativeElement, '#4318FF', [12, 15, 18, 14, 22, 19, 21]);
+    this.buildSparkline(this.responseSparklineRef.nativeElement, '#05CD99', [24000, 26000, 22000, 25000, 28000, 23000, 24227]);
     this.buildDonut();
     this.buildMonthlyBar();
   }
 
-  // ── Donut: styled empty ring ──────────────────────────────────────────
+  private buildSparkline(canvas: HTMLCanvasElement, color: string, data: number[]): void {
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: data.map((_, i) => i),
+        datasets: [{
+          data: data,
+          borderColor: color,
+          borderWidth: 2,
+          pointRadius: 0,
+          fill: true,
+          backgroundColor: (ctx) => {
+            const chart = ctx.chart;
+            const { ctx: c, chartArea } = chart;
+            if (!chartArea) return undefined;
+            const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+            gradient.addColorStop(0, `${color}20`);
+            gradient.addColorStop(1, `${color}00`);
+            return gradient;
+          },
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        interaction: { intersect: false }
+      }
+    });
+  }
+
+  // ── Donut: Rich 6-category mockup ──────────────────────────────────────────
   private buildDonut(): void {
     new Chart(this.groupsDonutRef.nativeElement, {
       type: 'doughnut',
       data: {
-        labels: ['No Data'],
+        labels: ['Search', 'Auth', 'Payments', 'Users', 'Orders', 'Analytics'],
         datasets: [{
-          data: [100],
-          backgroundColor: ['#F0F3FF'],
+          data: [35, 20, 15, 12, 10, 8],
+          backgroundColor: [
+            '#4318FF', // Primary
+            '#05CD99', // Success
+            '#FF8F0C', // Warning
+            '#EE5D50', // Danger
+            '#7C5CFF', // Purple
+            '#A3AED0'  // Gray
+          ],
           borderWidth: 0,
+          hoverOffset: 10
         }]
       },
       options: {
-        cutout: '78%',
+        cutout: '82%',
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
-          tooltip: { enabled: false }
+          tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            titleColor: '#2B3674',
+            bodyColor: '#2B3674',
+            borderColor: '#E2E8F0',
+            borderWidth: 1,
+            padding: 10,
+            displayColors: true,
+            usePointStyle: true,
+            bodyFont: { weight: 'bold', size: 11 }
+          }
         },
-        animation: { duration: 600, easing: 'easeOutQuart' }
+        animation: { duration: 1000, easing: 'easeOutQuart' }
       }
     });
   }
