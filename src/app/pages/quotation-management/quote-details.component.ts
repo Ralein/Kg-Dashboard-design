@@ -4,15 +4,15 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule, ChevronLeft, LayoutGrid, FileJson, FileCode, Printer, Share2 } from 'lucide-angular';
 
 @Component({
-    selector: 'app-quote-details',
-    standalone: true,
-    imports: [CommonModule, LucideAngularModule, RouterLink],
-    template: `
+   selector: 'app-quote-details',
+   standalone: true,
+   imports: [CommonModule, LucideAngularModule, RouterLink],
+   template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Top Action Bar -->
       <div class="flex justify-between items-center">
          <div class="flex items-center gap-3">
-            <button routerLink="/quotation-management" class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
+            <button routerLink="/quotation-management" class="p-2 bg-white/40 rounded-xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                <lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon>
             </button>
             <h2 class="text-xl font-bold text-[#2B3674] tracking-tight">Quote Details</h2>
@@ -23,7 +23,7 @@ import { LucideAngularModule, ChevronLeft, LayoutGrid, FileJson, FileCode, Print
       </div>
 
       <!-- Main Info Banner -->
-      <div class="chart-shell bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass p-8">
+      <div class="premium-glass p-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-y-6 gap-x-8">
           <div class="flex flex-col gap-1">
             <span class="text-[10px] font-bold text-[#A3AED0] uppercase tracking-wider">Quote Id:</span>
@@ -67,7 +67,7 @@ import { LucideAngularModule, ChevronLeft, LayoutGrid, FileJson, FileCode, Print
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <!-- Sidebar Navigation for Quote Parts -->
         <div class="lg:col-span-3">
-          <div class="chart-shell p-2 bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass">
+          <div class="premium-glass p-2">
              <h3 class="p-4 text-sm font-bold text-[#2B3674] border-b border-gray-100">Quote Name</h3>
              <div class="flex flex-col py-2">
                 <button class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#4318FF] text-white text-xs font-bold shadow-lg shadow-[#4318FF]/20 text-left">
@@ -88,7 +88,7 @@ import { LucideAngularModule, ChevronLeft, LayoutGrid, FileJson, FileCode, Print
 
         <!-- Main JSON Viewer -->
         <div class="lg:col-span-9">
-          <div class="chart-shell p-0 bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass overflow-hidden flex flex-col min-h-[500px]">
+          <div class="premium-glass p-0 overflow-hidden flex flex-col min-h-[500px]">
              <div class="p-4 border-b border-gray-100/50 flex justify-between items-center">
                 <h3 class="text-sm font-bold text-[#1B2559]">Review the info of quote</h3>
                 <div class="flex gap-2">
@@ -156,21 +156,21 @@ import { LucideAngularModule, ChevronLeft, LayoutGrid, FileJson, FileCode, Print
       </div>
     </div>
   `,
-    styles: [`
+   styles: [`
     :host {
       display: block;
     }
   `]
 })
 export class QuoteDetailsComponent implements OnInit {
-    private route = inject(ActivatedRoute);
+   private route = inject(ActivatedRoute);
 
-    readonly ChevronLeft = ChevronLeft;
-    readonly LayoutGrid = LayoutGrid;
-    readonly FileJson = FileJson;
-    readonly FileCode = FileCode;
+   readonly ChevronLeft = ChevronLeft;
+   readonly LayoutGrid = LayoutGrid;
+   readonly FileJson = FileJson;
+   readonly FileCode = FileCode;
 
-    ngOnInit() {
-        // Load quote by id
-    }
+   ngOnInit() {
+      // Load quote by id
+   }
 }

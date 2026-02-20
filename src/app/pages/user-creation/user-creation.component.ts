@@ -23,17 +23,17 @@ interface User {
       <!-- Header Area -->
       <div class="flex justify-between items-center">
         <div>
-          <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">User Creation</h1>
-          <p class="text-[#A3AED0] text-sm font-medium">Manage platform users and permissions</p>
+          <h1 class="text-3xl font-black text-[#2B3674] tracking-tight">User Creation</h1>
+          <p class="text-[#A3AED0] text-sm font-bold uppercase tracking-widest mt-1">Manage platform users and permissions</p>
         </div>
-        <button class="px-8 py-2.5 rounded-xl bg-[#2B3674] text-white font-bold text-sm hover:bg-[#1B2559] transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2">
+        <button class="px-8 py-2.5 rounded-2xl bg-[#2B3674] text-white font-bold text-sm hover:bg-[#1B2559] transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
            <lucide-icon [img]="UserPlus" class="w-4 h-4"></lucide-icon>
            <span>Create User</span>
         </button>
       </div>
 
       <!-- Main Content Card -->
-      <div class="chart-shell p-0 overflow-hidden bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[600px] flex flex-col">
+      <div class="premium-glass p-0 overflow-hidden min-h-[600px] flex flex-col animate-fade-in-up" style="animation-delay: 100ms;">
         
         <!-- Search & Filter Row -->
         <div class="p-6 border-b border-gray-100/50">
@@ -47,7 +47,7 @@ interface User {
                 >
              </div>
               <div class="flex items-center gap-3 w-full md:w-auto">
-                <div class="flex items-center gap-2 bg-gray-50/50 p-1 rounded-lg">
+                <div class="flex items-center gap-2 bg-white/40 p-1 rounded-2xl border border-white/20">
                   <span class="text-[10px] font-bold text-[#A3AED0] px-2">Items per page:</span>
                   <select class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4">
                     <option>10</option>
@@ -56,10 +56,10 @@ interface User {
                 </div>
                 <span class="text-xs font-semibold text-[#A3AED0]">1 – 10 of 13</span>
                 <div class="flex gap-2">
-                   <button class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
+                   <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                       <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
                    </button>
-                   <button class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
+                   <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                       <lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon>
                    </button>
                 </div>
@@ -80,7 +80,7 @@ interface User {
                 <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Mobile</th>
                 <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Email</th>
                 <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Created On</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider text-right">Actions</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-50/50">
@@ -92,12 +92,12 @@ interface User {
                   <span class="text-xs font-medium text-[#2B3674]">{{user.role}}</span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-md"
+                  <span class="text-[9px] font-extrabold px-2.5 py-1 rounded-lg shadow-sm"
                     [class.bg-[#05CD99]/10]="user.active"
                     [class.text-[#05CD99]]="user.active"
                     [class.bg-[#FF5252]/10]="!user.active"
                     [class.text-[#FF5252]]="!user.active">
-                    {{user.active ? 'Active' : 'Inactive'}}
+                    {{user.active ? 'ACTIVE' : 'INACTIVE'}}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
@@ -116,11 +116,11 @@ interface User {
                   <span class="text-xs text-[#A3AED0]">{{user.createdOn}}</span>
                 </td>
                 <td class="px-6 py-4 text-right whitespace-nowrap">
-                  <div class="flex justify-end gap-2">
-                    <button class="p-1.5 rounded-lg bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform group-hover:scale-105 shadow-sm">
+                  <div class="flex justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                    <button class="p-1.5 rounded-xl bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm">
                       <lucide-icon [img]="Edit2" class="w-3.5 h-3.5"></lucide-icon>
                     </button>
-                    <button class="p-1.5 rounded-lg bg-[#FF5252]/10 text-[#FF5252] hover:bg-[#FF5252] hover:text-white transition-all transform group-hover:scale-105 shadow-sm">
+                    <button class="p-1.5 rounded-xl bg-[#FF5252]/10 text-[#FF5252] hover:bg-[#FF5252] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm">
                       <lucide-icon [img]="Ban" class="w-3.5 h-3.5"></lucide-icon>
                     </button>
                   </div>

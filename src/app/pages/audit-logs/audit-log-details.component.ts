@@ -4,15 +4,15 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
 
 @Component({
-    selector: 'app-audit-log-details',
-    standalone: true,
-    imports: [CommonModule, LucideAngularModule, RouterLink],
-    template: `
+  selector: 'app-audit-log-details',
+  standalone: true,
+  imports: [CommonModule, LucideAngularModule, RouterLink],
+  template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Top Action Bar -->
       <div class="flex justify-between items-center">
          <div class="flex items-center gap-3">
-            <button routerLink="/audit-logs" class="p-2 bg-white rounded-lg shadow-sm border border-gray-100 text-[#4318FF] hover:bg-gray-50 transition-colors">
+            <button routerLink="/audit-logs" class="p-2 bg-white/40 rounded-xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                <lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon>
             </button>
             <h2 class="text-lg font-bold text-[#20244F]">Audit Log Details</h2>
@@ -24,7 +24,7 @@ import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
       </div>
 
       <!-- Main Banner Details -->
-      <div class="chart-shell bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass p-8">
+      <div class="premium-glass p-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-12">
           <div class="flex flex-col gap-1">
             <span class="text-[10px] font-bold text-[#A3AED0] uppercase">Timestamp:</span>
@@ -110,7 +110,7 @@ import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
       <!-- JSON Viewers Section -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <!-- Query Params -->
-        <div class="chart-shell p-6 bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[300px]">
+        <div class="premium-glass p-6 min-h-[300px]">
            <div class="flex items-center justify-between mb-4">
               <h3 class="text-xs font-extrabold text-[#2B3674] uppercase tracking-wider">Query Params</h3>
            </div>
@@ -120,7 +120,7 @@ import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
         </div>
 
         <!-- Request Body -->
-        <div class="chart-shell p-6 bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[300px]">
+        <div class="premium-glass p-6 min-h-[300px]">
            <div class="flex items-center justify-between mb-4">
               <h3 class="text-xs font-extrabold text-[#2B3674] uppercase tracking-wider">Request Body</h3>
            </div>
@@ -152,7 +152,7 @@ import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
         </div>
 
         <!-- Response Body -->
-        <div class="chart-shell p-6 bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[300px]">
+        <div class="premium-glass p-6 min-h-[300px]">
            <div class="flex items-center justify-between mb-4">
               <h3 class="text-xs font-extrabold text-[#2B3674] uppercase tracking-wider">Response Body</h3>
            </div>
@@ -183,7 +183,7 @@ import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host {
       display: block;
     }
@@ -191,13 +191,13 @@ import { LucideAngularModule, ChevronLeft, Download, X } from 'lucide-angular';
   `]
 })
 export class AuditLogDetailsComponent implements OnInit {
-    private route = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
 
-    readonly ChevronLeft = ChevronLeft;
-    readonly Download = Download;
-    readonly X = X;
+  readonly ChevronLeft = ChevronLeft;
+  readonly Download = Download;
+  readonly X = X;
 
-    ngOnInit() {
-        // In real app, load data by route.snapshot.params['id']
-    }
+  ngOnInit() {
+    // In real app, load data by route.snapshot.params['id']
+  }
 }

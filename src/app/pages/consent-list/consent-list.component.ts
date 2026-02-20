@@ -24,8 +24,8 @@ interface Consent {
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header Area -->
       <div>
-        <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">Consent Management</h1>
-        <p class="text-[#A3AED0] text-sm font-medium">Manage and monitor all active and historical consents</p>
+        <h1 class="text-3xl font-black text-[#2B3674] tracking-tight">Consent Management</h1>
+        <p class="text-[#A3AED0] text-sm font-bold uppercase tracking-widest mt-1">Manage and monitor all active and historical consents</p>
       </div>
 
       <!-- Main Content Card -->
@@ -73,7 +73,7 @@ interface Consent {
                   class="glass-input pl-10 pr-4 py-2 w-full text-xs transition-all duration-300 focus:w-full focus:shadow-[0_0_0_2px_rgba(67,24,255,0.1)]"
                 >
               </div>
-              <div class="flex items-center gap-2 bg-white/40 p-1 rounded-xl border border-white/20">
+              <div class="flex items-center gap-2 bg-white/40 p-1 rounded-2xl border border-white/20">
                 <span class="text-[10px] font-bold text-[#A3AED0] px-2 uppercase tracking-wide">Show:</span>
                 <select [(ngModel)]="itemsPerPage" class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4 focus:ring-0">
                   <option [value]="10">10</option>
@@ -81,10 +81,10 @@ interface Consent {
                   <option [value]="50">50</option>
                 </select>
               </div>
-              <button class="p-2 bg-white/40 rounded-xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
+              <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                 <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
               </button>
-              <button class="p-2 bg-white/40 rounded-xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
+              <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                 <lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon>
               </button>
             </div>
@@ -96,13 +96,13 @@ interface Consent {
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b border-white/10 bg-white/5">
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Consent ID</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Customer Name</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">TPP Name</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Created On</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Expires On</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Status</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider text-right">Action</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Consent ID</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Customer Name</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">TPP Name</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Created On</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Expires On</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Status</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider text-right">Action</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5">
@@ -129,10 +129,10 @@ interface Consent {
                 </td>
                 <td class="px-6 py-4 text-right">
                   <div class="flex justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                    <button class="p-2 rounded-lg bg-white/50 text-[#A3AED0] hover:bg-[#4318FF] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm">
+                    <button class="p-2 rounded-xl bg-white/50 text-[#A3AED0] hover:bg-[#4318FF] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm">
                       <lucide-icon [img]="RotateCcw" class="w-3.5 h-3.5"></lucide-icon>
                     </button>
-                    <button [routerLink]="['/consents', consent.id]" class="p-2 rounded-lg bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm">
+                    <button [routerLink]="['/consents', consent.id]" class="p-2 rounded-xl bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm">
                       <lucide-icon [img]="Eye" class="w-3.5 h-3.5"></lucide-icon>
                     </button>
                   </div>
@@ -157,16 +157,16 @@ interface Consent {
             Showing <span class="text-[#2B3674]">1 – {{pagedConsents.length}}</span> of <span class="text-[#2B3674]">{{filteredConsents.length}}</span>
           </span>
           <div class="flex items-center gap-2">
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-lg transition-all"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-lg transition-all"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
              
-             <div class="flex items-center mx-2 gap-1">
-               <button class="w-8 h-8 flex items-center justify-center text-xs font-bold bg-[#4318FF] text-white rounded-lg shadow-lg shadow-[#4318FF]/20 transform transition-transform hover:scale-105">1</button>
-               <button class="w-8 h-8 flex items-center justify-center text-xs font-bold text-[#A3AED0] hover:bg-white/40 rounded-lg transition-all">2</button>
+             <div class="flex items-center mx-2 gap-1.5">
+               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold bg-[#4318FF] text-white rounded-xl shadow-lg shadow-[#4318FF]/20 transform transition-transform hover:scale-110">1</button>
+               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold text-[#A3AED0] hover:bg-white/40 rounded-xl transition-all">2</button>
              </div>
-
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-lg transition-all"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-lg transition-all"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
+ 
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
           </div>
         </div>
       </div>

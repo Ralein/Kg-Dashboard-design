@@ -16,11 +16,11 @@ Chart.register(...registerables);
       <!-- Header & Selector Row — UNCHANGED -->
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">API Monitoring</h1>
-          <p class="text-[#A3AED0] text-sm font-medium">Real-time API performance and usage metrics</p>
+          <h1 class="text-3xl font-black text-[#2B3674] tracking-tight">API Monitoring</h1>
+          <p class="text-[#A3AED0] text-sm font-bold uppercase tracking-widest mt-1">Real-time API performance and usage metrics</p>
         </div>
-        <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100/50 flex items-center gap-4">
-          <span class="text-xs font-bold text-[#A3AED0] uppercase tracking-wider">Select Service</span>
+        <div class="bg-white/40 p-3 rounded-2xl shadow-sm border border-white/20 flex items-center gap-4">
+          <span class="text-[11px] font-bold text-[#A3AED0] uppercase tracking-widest">Select Service</span>
           <div class="relative min-w-[200px]">
             <select class="glass-input pl-3 pr-10 py-2 w-full appearance-none cursor-pointer font-bold text-[#2B3674]">
               <option>Adnic service</option>
@@ -108,7 +108,7 @@ Chart.register(...registerables);
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
         <!-- Daily Stats List — UNCHANGED -->
-        <div class="chart-shell p-6 lg:col-span-1 flex flex-col gap-6">
+        <div class="premium-glass p-6 lg:col-span-1 flex flex-col gap-6">
           <div class="flex justify-between items-center pb-2 border-b border-gray-50">
             <h3 class="text-sm font-bold text-[#2B3674] uppercase tracking-wider">Daily Stats</h3>
             <lucide-icon [img]="Info" class="w-4 h-4 text-[#A3AED0]"></lucide-icon>
@@ -153,7 +153,7 @@ Chart.register(...registerables);
         </div>
 
         <!-- Monthly History Bar — ENHANCED pure canvas -->
-        <div class="chart-shell p-6 lg:col-span-2 flex flex-col gap-6">
+        <div class="premium-glass p-6 lg:col-span-2 flex flex-col gap-6">
           <div class="flex justify-between items-center pb-2 border-b border-gray-100/50">
             <h3 class="text-sm font-bold text-[#2B3674] uppercase tracking-wider">API Status Chart - Monthly</h3>
             <lucide-icon [img]="BarChart3" class="w-4 h-4 text-[#4318FF]"></lucide-icon>
@@ -184,11 +184,8 @@ Chart.register(...registerables);
   styles: [`
     :host { display: block; }
 
-    .chart-shell {
-      background: white;
-      border-radius: 20px;
-      border: 1px solid rgba(0,0,0,0.03);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    .premium-glass {
+      /* Handled by global styles, but adding specific padding/flex if needed */
     }
 
     /* ── Donut empty state ─────────────────────────── */
@@ -213,14 +210,14 @@ Chart.register(...registerables);
 })
 export class ApiMonitoringComponent implements AfterViewInit {
   @ViewChild('groupsDonut') groupsDonutRef!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('monthlyBar')  monthlyBarRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('monthlyBar') monthlyBarRef!: ElementRef<HTMLCanvasElement>;
 
   readonly ChevronDown = ChevronDown;
-  readonly Activity    = Activity;
-  readonly Clock       = Clock;
-  readonly PieChart    = PieChart;
-  readonly BarChart3   = BarChart3;
-  readonly Info        = Info;
+  readonly Activity = Activity;
+  readonly Clock = Clock;
+  readonly PieChart = PieChart;
+  readonly BarChart3 = BarChart3;
+  readonly Info = Info;
 
   ngAfterViewInit(): void {
     this.initCharts();
@@ -248,7 +245,7 @@ export class ApiMonitoringComponent implements AfterViewInit {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend:  { display: false },
+          legend: { display: false },
           tooltip: { enabled: false }
         },
         animation: { duration: 600, easing: 'easeOutQuart' }
@@ -259,20 +256,20 @@ export class ApiMonitoringComponent implements AfterViewInit {
   // ── Monthly Bar: animate once bottom-to-top, then completely static ──
   private buildMonthlyBar(): void {
     const canvas = this.monthlyBarRef.nativeElement;
-    const ctx    = canvas.getContext('2d')!;
-    const dpr    = window.devicePixelRatio || 1;
+    const ctx = canvas.getContext('2d')!;
+    const dpr = window.devicePixelRatio || 1;
 
     const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const datasets = [
-      { label: 'Total',      values: [0,1500,0,0,0,0,0,0,0,0,0,0], color: '#2B3674', gradEnd: 'rgba(43,54,116,0.25)',  glow: 'rgba(43,54,116,0.35)'  },
-      { label: 'Successful', values: [0,1320,0,0,0,0,0,0,0,0,0,0], color: '#05CD99', gradEnd: 'rgba(5,205,153,0.2)',   glow: 'rgba(5,205,153,0.4)'   },
-      { label: 'Failed',     values: [0, 180,0,0,0,0,0,0,0,0,0,0], color: '#FF8F0C', gradEnd: 'rgba(255,143,12,0.2)', glow: 'rgba(255,143,12,0.4)'  },
+      { label: 'Total', values: [0, 1500, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#2B3674', gradEnd: 'rgba(43,54,116,0.25)', glow: 'rgba(43,54,116,0.35)' },
+      { label: 'Successful', values: [0, 1320, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#05CD99', gradEnd: 'rgba(5,205,153,0.2)', glow: 'rgba(5,205,153,0.4)' },
+      { label: 'Failed', values: [0, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#FF8F0C', gradEnd: 'rgba(255,143,12,0.2)', glow: 'rgba(255,143,12,0.4)' },
     ];
     const maxVal = 1800;
-    const numDS  = datasets.length;
+    const numDS = datasets.length;
     const animDur = 1100;
-    const ease = (t: number) => t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+    const ease = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
     // All layout vars — filled on first rAF once DOM has settled
     let W = 0, H = 0;
@@ -298,18 +295,18 @@ export class ApiMonitoringComponent implements AfterViewInit {
           ctx.font = '500 9px "DM Sans", system-ui, sans-serif';
           ctx.textAlign = 'right';
           ctx.textBaseline = 'middle';
-          ctx.fillText(v >= 1000 ? (v/1000).toFixed(1)+'k' : String(v), padL - 7, y);
+          ctx.fillText(v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(v), padL - 7, y);
         }
       });
 
       // Bars + labels
       labels.forEach((month, col) => {
-        const slotX  = padL + col * slotW;
+        const slotX = padL + col * slotW;
         const groupX = slotX + (slotW - groupW) / 2;
         const hasData = datasets.some(d => d.values[col] > 0);
 
         datasets.forEach((ds, di) => {
-          const raw  = ds.values[col];
+          const raw = ds.values[col];
           const barH = (raw / maxVal) * chartH * progress;
           if (barH <= 0) return;
 
@@ -321,8 +318,8 @@ export class ApiMonitoringComponent implements AfterViewInit {
           grad.addColorStop(0, ds.color);
           grad.addColorStop(1, ds.gradEnd);
           ctx.shadowColor = ds.glow;
-          ctx.shadowBlur  = 10;
-          ctx.fillStyle   = grad;
+          ctx.shadowBlur = 10;
+          ctx.fillStyle = grad;
           ctx.beginPath();
           (ctx as any).roundRect?.(bx, by, barW - gap, barH, [5, 5, 0, 0]) ||
             ctx.rect(bx, by, barW - gap, barH);
@@ -331,9 +328,9 @@ export class ApiMonitoringComponent implements AfterViewInit {
 
           // Shimmer cap
           const capGrad = ctx.createLinearGradient(bx, by, bx + barW - gap, by);
-          capGrad.addColorStop(0,   'rgba(255,255,255,0)');
+          capGrad.addColorStop(0, 'rgba(255,255,255,0)');
           capGrad.addColorStop(0.5, 'rgba(255,255,255,0.55)');
-          capGrad.addColorStop(1,   'rgba(255,255,255,0)');
+          capGrad.addColorStop(1, 'rgba(255,255,255,0)');
           ctx.fillStyle = capGrad;
           ctx.fillRect(bx, by, barW - gap, 2.5);
 
@@ -344,7 +341,7 @@ export class ApiMonitoringComponent implements AfterViewInit {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
             ctx.fillText(
-              raw >= 1000 ? (raw/1000).toFixed(1)+'k' : String(raw),
+              raw >= 1000 ? (raw / 1000).toFixed(1) + 'k' : String(raw),
               bx + (barW - gap) / 2,
               by - 3
             );
@@ -367,14 +364,14 @@ export class ApiMonitoringComponent implements AfterViewInit {
       if (!animStart) {
         const rect = canvas.parentElement!.getBoundingClientRect();
         W = rect.width; H = rect.height;
-        canvas.width  = W * dpr; canvas.height = H * dpr;
-        canvas.style.width  = W + 'px'; canvas.style.height = H + 'px';
+        canvas.width = W * dpr; canvas.height = H * dpr;
+        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         chartW = W - padL - padR; chartH = H - padT - padB;
-        slotW  = chartW / labels.length;
+        slotW = chartW / labels.length;
         groupW = slotW * 0.72;
-        barW   = groupW / numDS;
-        gap    = barW * 0.12;
+        barW = groupW / numDS;
+        gap = barW * 0.12;
         animStart = now;
       }
 

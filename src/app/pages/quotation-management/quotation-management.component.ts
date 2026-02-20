@@ -21,8 +21,8 @@ interface Quote {
       <!-- Header Area -->
       <div class="flex justify-between items-center">
         <div>
-          <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">Quotation Management</h1>
-          <p class="text-[#A3AED0] text-sm font-medium">Manage and track all generated quotations</p>
+          <h1 class="text-3xl font-black text-[#2B3674] tracking-tight">Quotation Management</h1>
+          <p class="text-[#A3AED0] text-sm font-bold uppercase tracking-widest mt-1">Manage and track all generated quotations</p>
         </div>
       </div>
 
@@ -70,7 +70,7 @@ interface Quote {
                   class="glass-input pl-10 pr-4 py-2 w-full text-xs transition-all duration-300 focus:w-full focus:shadow-[0_0_0_2px_rgba(67,24,255,0.1)]"
                 >
               </div>
-              <div class="flex items-center gap-2 bg-white/40 p-1 rounded-xl border border-white/20">
+              <div class="flex items-center gap-2 bg-white/40 p-1 rounded-2xl border border-white/20">
                 <span class="text-[10px] font-bold text-[#A3AED0] px-2 uppercase tracking-wide">Show:</span>
                 <select class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4 focus:ring-0">
                   <option>10</option>
@@ -89,10 +89,10 @@ interface Quote {
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
                 </div>
               </div>
-              <button class="p-2 bg-white/40 rounded-xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
+              <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                 <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
               </button>
-              <button class="p-2 bg-white/40 rounded-xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
+              <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                 <lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon>
               </button>
             </div>
@@ -104,13 +104,13 @@ interface Quote {
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b border-white/10 bg-white/5">
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Quote Id</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">TPP Name</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">LOB</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Created On</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Expires On</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Status</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider text-right">Action</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Quote Id</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">TPP Name</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">LOB</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Created On</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Expires On</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Status</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider text-right">Action</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5">
@@ -134,7 +134,7 @@ interface Quote {
                   <span class="text-[10px] font-bold text-[#A3AED0] bg-white/30 px-2 py-0.5 rounded-md border border-white/20">Available</span>
                 </td>
                 <td class="px-6 py-4 text-right">
-                  <button class="p-2 rounded-lg bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm opacity-80 group-hover:opacity-100">
+                  <button class="p-2 rounded-xl bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm opacity-80 group-hover:opacity-100">
                     <lucide-icon [img]="Eye" class="w-4 h-4"></lucide-icon>
                   </button>
                 </td>
@@ -158,17 +158,17 @@ interface Quote {
             Showing <span class="text-[#2B3674]">1 – 10</span> of <span class="text-[#2B3674]">1232</span>
           </span>
           <div class="flex items-center gap-2">
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-lg transition-all"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-lg transition-all"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
              
-             <div class="flex items-center mx-2 gap-1">
-               <button class="w-8 h-8 flex items-center justify-center text-xs font-bold bg-[#4318FF] text-white rounded-lg shadow-lg shadow-[#4318FF]/20 transform transition-transform hover:scale-105">1</button>
-               <button class="w-8 h-8 flex items-center justify-center text-xs font-bold text-[#A3AED0] hover:bg-white/40 rounded-lg transition-all">2</button>
-               <button class="w-8 h-8 flex items-center justify-center text-xs font-bold text-[#A3AED0] hover:bg-white/40 rounded-lg transition-all">3</button>
+             <div class="flex items-center mx-2 gap-1.5">
+               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold bg-[#4318FF] text-white rounded-xl shadow-lg shadow-[#4318FF]/20 transform transition-transform hover:scale-110">1</button>
+               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold text-[#A3AED0] hover:bg-white/40 rounded-xl transition-all">2</button>
+               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold text-[#A3AED0] hover:bg-white/40 rounded-xl transition-all">3</button>
              </div>
-
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-lg transition-all"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-lg transition-all"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
+ 
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
           </div>
         </div>
       </div>

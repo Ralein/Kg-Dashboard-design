@@ -50,7 +50,7 @@ interface NavItem {
              
           <div class="flex items-center gap-3.5 relative z-10 group cursor-pointer" 
                (click)="collapsed() ? toggleCollapse() : null">
-            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-white to-white/50 shadow-lg shadow-blue-500/10 border border-white/40 transition-transform duration-300 group-hover:scale-105 flex-shrink-0 relative overflow-hidden">
+            <div class="flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-white to-white/50 shadow-lg shadow-blue-500/10 border border-white/40 transition-transform duration-300 group-hover:scale-105 flex-shrink-0 relative overflow-hidden">
               <div class="absolute inset-0 bg-gradient-to-br from-[#4318FF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <img src="cropped-favicon.png" alt="n-sure" class="w-6 h-6 object-contain relative z-10">
             </div>
@@ -71,7 +71,7 @@ interface NavItem {
               [routerLink]="item.route"
               routerLinkActive="active-glass"
               [routerLinkActiveOptions]="{ exact: !!item.exact }"
-              class="nav-item group relative flex items-center px-4 py-3.5 rounded-xl text-[#A3AED0] transition-all duration-300 hover:bg-white/40 hover:text-[#4318FF]"
+              class="nav-item group relative flex items-center px-4 py-3.5 rounded-2xl text-[#A3AED0] transition-all duration-300 hover:bg-white/40 hover:text-[#4318FF]"
               [class.justify-center]="collapsed()"
             >
               <!-- Active Indicator (Glow Bar) -->
@@ -111,7 +111,7 @@ interface NavItem {
   `,
   styles: [`
     .active-glass {
-      @apply bg-white/60 shadow-lg shadow-blue-500/5 text-[#2B3674] font-bold;
+      @apply bg-white/80 shadow-lg shadow-blue-500/10 text-[#2B3674] font-bold;
     }
     .active-glass .indicator {
       @apply opacity-100;

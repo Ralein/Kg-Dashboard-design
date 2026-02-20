@@ -6,14 +6,14 @@ import { RouterLink } from '@angular/router';
 import { UserService, UserProfile } from '../../services/user.service';
 
 @Component({
-    selector: 'app-user-profile',
-    standalone: true,
-    imports: [CommonModule, FormsModule, LucideAngularModule, RouterLink],
-    template: `
+  selector: 'app-user-profile',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LucideAngularModule, RouterLink],
+  template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header Area -->
       <div class="flex justify-between items-center px-0">
-        <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">Edit User</h1>
+        <h1 class="text-3xl font-black text-[#2B3674] tracking-tight">Edit User</h1>
         
         <!-- Success Notification -->
         <div *ngIf="showSuccess()" class="flex items-center gap-2 bg-[#05CD99]/10 text-[#05CD99] px-4 py-2 rounded-xl animate-fade-in">
@@ -23,7 +23,7 @@ import { UserService, UserProfile } from '../../services/user.service';
       </div>
 
       <!-- Profile Content -->
-      <div class="chart-shell bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[600px] p-8">
+      <div class="premium-glass min-h-[600px] p-8 animate-fade-in-up" style="animation-delay: 100ms;">
         <div class="flex flex-col lg:flex-row gap-12">
           <!-- Left Panel: Large Profile Display -->
           <div class="lg:w-1/3 flex flex-col items-center pt-8 border-r border-gray-100 lg:pr-12">
@@ -146,11 +146,11 @@ import { UserService, UserProfile } from '../../services/user.service';
 
             <!-- Footer Actions -->
             <div class="flex justify-end gap-3 pt-4">
-              <button type="button" routerLink="/dashboard" class="px-8 py-2.5 rounded-xl border border-gray-200 text-[#2B3674] font-bold text-sm hover:bg-gray-50 transition-all flex items-center justify-center min-w-[120px]">
+              <button type="button" routerLink="/dashboard" class="px-8 py-2.5 rounded-2xl border border-gray-200 text-[#2B3674] font-bold text-sm hover:bg-gray-50 transition-all flex items-center justify-center min-w-[120px] transform hover:scale-105 active:scale-95">
                 Cancel
               </button>
-              <button type="submit" [disabled]="isUpdating()" class="px-8 py-2.5 rounded-xl bg-[#2B3674] text-white font-bold text-sm hover:bg-[#1B2559] transition-all shadow-lg shadow-[#2B3674]/20 flex items-center justify-center min-w-[120px] disabled:opacity-50 disabled:cursor-not-allowed">
-                <span *ngIf="!isUpdating()">Update</span>
+              <button type="submit" [disabled]="isUpdating()" class="px-8 py-2.5 rounded-2xl bg-[#2B3674] text-white font-bold text-sm hover:bg-[#1B2559] transition-all shadow-lg shadow-[#2B3674]/20 flex items-center justify-center min-w-[120px] disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95">
+                <span *ngIf="!isUpdating()">Update Profile</span>
                 <span *ngIf="isUpdating()" class="flex items-center gap-2">
                    <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -165,7 +165,7 @@ import { UserService, UserProfile } from '../../services/user.service';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host {
       display: block;
     }
@@ -186,37 +186,37 @@ import { UserService, UserProfile } from '../../services/user.service';
   `]
 })
 export class UserProfileComponent implements OnInit {
-    readonly Calendar = Calendar;
-    readonly CheckCircle2 = CheckCircle2;
+  readonly Calendar = Calendar;
+  readonly CheckCircle2 = CheckCircle2;
 
-    userService = inject(UserService);
+  userService = inject(UserService);
 
-    formData: UserProfile = { ...this.userService.currentUser() };
-    isUpdating = signal(false);
-    showSuccess = signal(false);
+  formData: UserProfile = { ...this.userService.currentUser() };
+  isUpdating = signal(false);
+  showSuccess = signal(false);
 
-    ngOnInit(): void {
-        // Sync formData with current user on init
-        this.formData = { ...this.userService.currentUser() };
-    }
+  ngOnInit(): void {
+    // Sync formData with current user on init
+    this.formData = { ...this.userService.currentUser() };
+  }
 
-    updateProfile(): void {
-        this.isUpdating.set(true);
+  updateProfile(): void {
+    this.isUpdating.set(true);
 
-        // Simulate API delay
-        setTimeout(() => {
-            this.userService.updateProfile(this.formData);
-            this.isUpdating.set(false);
-            this.showSuccess.set(true);
+    // Simulate API delay
+    setTimeout(() => {
+      this.userService.updateProfile(this.formData);
+      this.isUpdating.set(false);
+      this.showSuccess.set(true);
 
-            // Hide success message after 3 seconds
-            setTimeout(() => this.showSuccess.set(false), 3000);
-        }, 1000);
-    }
+      // Hide success message after 3 seconds
+      setTimeout(() => this.showSuccess.set(false), 3000);
+    }, 1000);
+  }
 
-    triggerAvatarUpload(): void {
-        // Placeholder for avatar upload
-        console.log('Avatar upload triggered');
-    }
+  triggerAvatarUpload(): void {
+    // Placeholder for avatar upload
+    console.log('Avatar upload triggered');
+  }
 }
 

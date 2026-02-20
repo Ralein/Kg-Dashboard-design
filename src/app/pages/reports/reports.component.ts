@@ -12,18 +12,18 @@ import { LucideAngularModule, Search, Calendar, RotateCcw, Send, FileSpreadsheet
       <!-- Header Area -->
       <div class="flex justify-between items-center px-0">
         <div>
-          <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">Reports</h1>
-          <p class="text-[#A3AED0] text-sm font-medium">Generate and export system performance reports</p>
+          <h1 class="text-3xl font-black text-[#2B3674] tracking-tight">Reports</h1>
+          <p class="text-[#A3AED0] text-sm font-bold uppercase tracking-widest mt-1">Generate and export system performance reports</p>
         </div>
       </div>
 
       <!-- Main Reports Container -->
-      <div class="chart-shell p-0 overflow-hidden bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[600px] flex flex-col">
+      <div class="premium-glass p-0 overflow-hidden min-h-[600px] flex flex-col animate-fade-in-up" style="animation-delay: 100ms;">
         
         <!-- Search Criteria Header -->
         <div class="p-6 border-b border-gray-100/50 bg-[#2B3674]/[0.02]">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-[#4318FF]/10 flex items-center justify-center">
+            <div class="w-8 h-8 rounded-xl bg-[#4318FF]/10 flex items-center justify-center">
               <lucide-icon [img]="FileSpreadsheet" class="w-4 h-4 text-[#4318FF]"></lucide-icon>
             </div>
             <h3 class="text-sm font-bold text-[#2B3674] uppercase tracking-wider">Report Selection & Criteria</h3>
@@ -76,11 +76,11 @@ import { LucideAngularModule, Search, Calendar, RotateCcw, Send, FileSpreadsheet
 
           <!-- Actions -->
           <div class="flex justify-end gap-3 mt-8">
-            <button class="px-6 py-2.5 rounded-xl border border-gray-200 text-[#2B3674] font-bold text-sm hover:bg-gray-50 transition-all flex items-center gap-2">
+            <button class="px-6 py-2.5 rounded-2xl border border-gray-200 text-[#2B3674] font-bold text-sm hover:bg-gray-50 transition-all flex items-center gap-2 transform hover:scale-105 active:scale-95">
               <lucide-icon [img]="RotateCcw" class="w-3.5 h-3.5"></lucide-icon>
               Reset
             </button>
-            <button class="px-10 py-2.5 rounded-xl bg-[#2B3674] text-white font-bold text-sm hover:bg-[#1B2559] transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2">
+            <button class="px-10 py-2.5 rounded-2xl bg-[#2B3674] text-white font-bold text-sm hover:bg-[#1B2559] transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
               Submit
             </button>
           </div>
@@ -92,7 +92,7 @@ import { LucideAngularModule, Search, Calendar, RotateCcw, Send, FileSpreadsheet
           <!-- Result Toolbar (Transparent) -->
           <div class="px-8 py-4 flex justify-between items-center">
              <span class="text-xs font-bold text-[#A3AED0] uppercase tracking-widest">Report Preview</span>
-             <button class="p-2.5 bg-white rounded-xl shadow-glass border border-gray-100 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 flex items-center gap-2 px-4">
+             <button class="p-2.5 bg-white/40 rounded-2xl border border-white/20 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 flex items-center gap-2 px-4 shadow-sm">
                 <lucide-icon [img]="FileSpreadsheet" class="w-4 h-4"></lucide-icon>
                 <span class="text-[10px] font-extrabold uppercase">Export Excel</span>
              </button>

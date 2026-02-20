@@ -23,12 +23,12 @@ interface AuditLog {
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header Area -->
       <div>
-        <h1 class="text-2xl font-bold text-[#2B3674] tracking-tight">Audit Logs</h1>
-        <p class="text-[#A3AED0] text-sm font-medium">Track all system activities and API transactions</p>
+        <h1 class="text-3xl font-black text-[#2B3674] tracking-tight">Audit Logs</h1>
+        <p class="text-[#A3AED0] text-sm font-bold uppercase tracking-widest mt-1">Track all system activities and API transactions</p>
       </div>
 
       <!-- Main Content Card -->
-      <div class="chart-shell p-0 overflow-hidden bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass min-h-[600px] flex flex-col">
+      <div class="premium-glass p-0 overflow-hidden min-h-[600px] flex flex-col animate-fade-in-up" style="animation-delay: 100ms;">
         
         <!-- Toolbar Row -->
         <div class="p-6 border-b border-gray-100/50">
@@ -42,7 +42,7 @@ interface AuditLog {
                 >
             </div>
             <div class="flex items-center gap-3 w-full md:w-auto">
-              <div class="flex items-center gap-2 bg-gray-50/50 p-1 rounded-lg">
+              <div class="flex items-center gap-2 bg-white/40 p-1 rounded-2xl border border-white/20">
                 <span class="text-[10px] font-bold text-[#A3AED0] px-2">Items per page:</span>
                 <select class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4">
                   <option>10</option><option>25</option><option>50</option>
@@ -50,10 +50,10 @@ interface AuditLog {
               </div>
               <span class="text-xs font-semibold text-[#A3AED0]">1 – 10 of 166459</span>
               <div class="flex gap-2">
-                 <button class="p-2 bg-white rounded-lg border border-gray-100 text-[#4318FF] hover:bg-[#4318FF] hover:text-white transition-all shadow-sm">
+                 <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                    <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
                  </button>
-                 <button class="p-2 bg-white rounded-lg border border-gray-100 text-[#4318FF] hover:bg-[#4318FF] hover:text-white transition-all shadow-sm">
+                 <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                    <lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon>
                  </button>
               </div>
@@ -66,14 +66,14 @@ interface AuditLog {
           <table class="w-full text-left">
             <thead>
               <tr class="border-b border-gray-50 bg-gray-50/30">
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Timestamp</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Service</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Action</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Method</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Group Name</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Status</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider">Duration (ms)</th>
-                <th class="px-6 py-4 text-[10px] font-extrabold text-[#A3AED0] uppercase tracking-wider text-right">Actions</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Timestamp</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Service</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Action</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Method</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Group Name</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Status</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider">Duration (ms)</th>
+                <th class="px-6 py-4 text-[11px] font-bold text-[#A3AED0] uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-50/50">
@@ -84,11 +84,11 @@ interface AuditLog {
                 <td class="px-6 py-4 whitespace-nowrap"><span class="text-xs font-bold text-[#A3AED0]">{{log.method}}</span></td>
                 <td class="px-6 py-4 whitespace-nowrap"><span class="text-xs text-[#2B3674]">{{log.groupName}}</span></td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#05CD99] text-white">{{log.status}}</span>
+                  <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-[#05CD99] text-white shadow-sm">{{log.status}}</span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap"><span class="text-xs text-[#2B3674]">{{log.duration}}</span></td>
                 <td class="px-6 py-4 text-right">
-                  <button [routerLink]="['/audit-logs', log.id]" class="p-2 rounded-lg bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform group-hover:scale-110 shadow-sm">
+                  <button [routerLink]="['/audit-logs', log.id]" class="p-2 rounded-xl bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm opacity-80 group-hover:opacity-100">
                     <lucide-icon [img]="Eye" class="w-4 h-4"></lucide-icon>
                   </button>
                 </td>
@@ -99,15 +99,15 @@ interface AuditLog {
 
         <!-- Pagination -->
         <div class="p-6 border-t border-gray-100/50 flex justify-end">
-          <div class="flex items-center gap-1">
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] transition-colors"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] transition-colors"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
-             <div class="flex items-center mx-2 overflow-hidden rounded-lg border border-gray-100">
-               <button class="w-8 h-8 flex items-center justify-center text-xs font-bold bg-[#4318FF] text-white">1</button>
-               <button class="w-8 h-8 flex items-center justify-center text-xs font-bold hover:bg-gray-50">2</button>
+          <div class="flex items-center gap-2">
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
+             <div class="flex items-center mx-2 gap-1.5">
+               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold bg-[#4318FF] text-white rounded-xl shadow-lg shadow-[#4318FF]/20 transform transition-transform hover:scale-110">1</button>
+               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold text-[#A3AED0] hover:bg-white/40 rounded-xl transition-all">2</button>
              </div>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] transition-colors"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] transition-colors"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
+             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
           </div>
         </div>
       </div>
