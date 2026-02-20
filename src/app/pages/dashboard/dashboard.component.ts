@@ -67,7 +67,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
 
       <!-- Row 1: Consent & TPP -->
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <app-chart-card title="Consent Analysis" subtitle="Radial breakdown by authorization status" [showLive]="true" delay="100ms" height="380px">
+        <app-chart-card title="Consent Analysis" subtitle="Radial breakdown by authorization status" [showLive]="true" delay="100ms" height="420px">
             @if (isLoading()) {
                 <div class="animate-pulse flex space-x-4 h-full items-center justify-center">
                     <div class="skeleton rounded-full h-40 w-40"></div>
@@ -92,7 +92,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
 
       <!-- Row 2: Quotes Deep-dive -->
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <app-chart-card title="Quote Traffic" subtitle="Monthly Generation vs Acceptance trends" delay="300ms">
+        <app-chart-card title="Quote Traffic" subtitle="Monthly Generation vs Acceptance trends" delay="300ms" height="380px">
             @if (!isLoading()) {
                 <div header-actions class="flex items-center gap-4 mr-2">
                     <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#7C5CFF]"></span><span class="text-[11px] text-[#A3AED0] font-bold">GEN</span></div>
@@ -113,7 +113,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
             }
         </app-chart-card>
 
-        <app-chart-card title="Quote Status" subtitle="Distribution of quotes across states" delay="400ms" [showFooter]="true">
+        <app-chart-card title="Quote Status" subtitle="Distribution of quotes across states" delay="400ms" [showFooter]="true" height="380px">
             @if (isLoading()) {
                 <div class="flex flex-col items-center justify-center h-full gap-4">
                     <div class="skeleton w-40 h-40 rounded-full border-[6px] border-white"></div>
@@ -139,7 +139,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
             }
         </app-chart-card>
 
-        <app-chart-card title="Quote LOB" subtitle="Volume breakdown by Business Line" delay="500ms">
+        <app-chart-card title="Quote LOB" subtitle="Volume breakdown by Business Line" delay="500ms" height="380px">
             @if (isLoading()) {
                 <div class="flex flex-col justify-center h-full gap-4 px-4">
                     <div class="skeleton w-full h-8 rounded-lg"></div>

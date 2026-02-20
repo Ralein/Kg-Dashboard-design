@@ -45,17 +45,8 @@ export class QuoteStatusChartComponent extends BaseChartComponent {
 
         this.data.forEach((d, i) => {
             const cx = cellW * i + cellW / 2;
-            const cy = pT + cellH / 2 + 14;
-            const cr = Math.min(cellW, cellH) * 0.36;
-
-            ctx.fillStyle = d.color;
-            ctx.font = '700 12px "DM Sans",sans-serif'; // Increased from 10px
-            ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            ctx.fillText(d.label.toUpperCase(), cx, 6);
-
-            ctx.fillStyle = '#A3AED0'; // Gray text
-            ctx.font = '600 11px "DM Sans",sans-serif'; // Increased from 9px
-            ctx.fillText(`n=${d.value}`, cx, 22);
+            const cy = cellH / 2 + 5; // Simplified and centered vertical position
+            const cr = Math.min(cellW, cellH) * 0.38; // Slightly larger circles since text is gone
 
             ctx.beginPath(); ctx.arc(cx, cy, cr, 0, Math.PI * 2);
             ctx.fillStyle = `${d.color}15`; ctx.fill(); // Slightly darker bg for visibility

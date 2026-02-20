@@ -18,8 +18,8 @@ export class ConsentAnalysisChartComponent extends BaseChartComponent {
         const H = this.height;
         ctx.clearRect(0, 0, W, H);
 
-        const cx = W * 0.38, cy = H / 2; // Shifted center to the left
-        const maxR = Math.min(W * 0.45, H * 0.44); // Slightly smaller R to fit side layout
+        const cx = W * 0.28, cy = H / 2; // Shifted further left to clear labels
+        const maxR = Math.min(W * 0.28, H * 0.4); // Constrained R to prevent collisions
         const minR = maxR * 0.28;
         const data = this.data;
         const step = (maxR - minR) / data.length;
@@ -69,14 +69,14 @@ export class ConsentAnalysisChartComponent extends BaseChartComponent {
             ctx.shadowColor = 'rgba(0,0,0,0.1)'; ctx.shadowBlur = 4;
             ctx.fill(); ctx.shadowBlur = 0;
 
-            // Labels (final frame only) - Now all on the right
+            // Labels (final frame only) - Side list
             if (p === 1) {
-                const rx = W * 0.68; // Labels start further right
-                const ry = H * 0.15 + i * (H * 0.75 / data.length); // Vertically spaced list
+                const rx = W * 0.58; // Moved labels left to ensure they fit in-card
+                const ry = H * 0.18 + i * (H * 0.64 / data.length); // Spaced vertically
 
-                // Indicator dot for the legend effect
+                // Indicator dot
                 ctx.beginPath();
-                ctx.arc(rx - 12, ry, 4, 0, Math.PI * 2);
+                ctx.arc(rx - 14, ry, 4.5, 0, Math.PI * 2);
                 ctx.fillStyle = seg.color;
                 ctx.fill();
 
@@ -92,11 +92,11 @@ export class ConsentAnalysisChartComponent extends BaseChartComponent {
                 ctx.fillStyle = '#A3AED0';
                 ctx.font = '500 11px "DM Sans",sans-serif';
                 ctx.textAlign = 'right';
-                ctx.fillText(String(seg.value), W - 16, ry);
+                ctx.fillText(String(seg.value), W - 8, ry);
             }
         });
 
-        // Center total - Shifting with cx
+        // Center total - Tied to cx
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.font = `800 ${Math.round(minR * 1.1)}px "DM Sans",sans-serif`;
         const tg = ctx.createLinearGradient(cx - 30, cy - 20, cx + 30, cy + 20);
