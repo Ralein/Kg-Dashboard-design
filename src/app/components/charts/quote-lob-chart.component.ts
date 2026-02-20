@@ -47,13 +47,13 @@ export class QuoteLobChartComponent extends BaseChartComponent {
             // Label
             if (p === 1) {
                 ctx.fillStyle = '#A3AED0'; // Gray Label
-                ctx.font = '600 10px "DM Sans",sans-serif';
+                ctx.font = '600 12px "DM Sans",sans-serif'; // Increased from 10px
                 ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-                ctx.fillText(d.label, x + barW / 2, y + 20);
+                ctx.fillText(d.label, x + barW / 2, y + 24);
 
                 ctx.fillStyle = d.color;
-                ctx.font = '700 12px "DM Sans",sans-serif';
-                ctx.fillText(String(d.value), x + barW / 2, y - h - 25);
+                ctx.font = '800 14px "DM Sans",sans-serif'; // Increased from 12px
+                ctx.fillText(String(d.value), x + barW / 2, y - h - 30);
             }
         });
     }

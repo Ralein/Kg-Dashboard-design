@@ -67,7 +67,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
 
       <!-- Row 1: Consent & TPP -->
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <app-chart-card title="Consent Analysis" subtitle="Radial breakdown by authorization status" [showLive]="true" delay="100ms">
+        <app-chart-card title="Consent Analysis" subtitle="Radial breakdown by authorization status" [showLive]="true" delay="100ms" height="380px">
             @if (isLoading()) {
                 <div class="animate-pulse flex space-x-4 h-full items-center justify-center">
                     <div class="skeleton rounded-full h-40 w-40"></div>
@@ -77,7 +77,7 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
             }
         </app-chart-card>
 
-        <app-chart-card title="TPP Wise Consent Requests" subtitle="Lollipop distribution by client platform" delay="200ms">
+        <app-chart-card title="TPP Wise Consent Requests" subtitle="Distribution by client platform" delay="200ms" height="420px">
             @if (isLoading()) {
                 <div class="animate-pulse space-y-4 p-4">
                     <div class="skeleton h-4 rounded w-3/4"></div>
@@ -95,8 +95,8 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
         <app-chart-card title="Quote Traffic" subtitle="Monthly Generation vs Acceptance trends" delay="300ms">
             @if (!isLoading()) {
                 <div header-actions class="flex items-center gap-4 mr-2">
-                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#7C5CFF]"></span><span class="text-[10px] text-[#A3AED0] font-bold">GEN</span></div>
-                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#05CD99]"></span><span class="text-[10px] text-[#A3AED0] font-bold">ACC</span></div>
+                    <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#7C5CFF]"></span><span class="text-[11px] text-[#A3AED0] font-bold">GEN</span></div>
+                    <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#05CD99]"></span><span class="text-[11px] text-[#A3AED0] font-bold">ACC</span></div>
                 </div>
             }
             @if (isLoading()) {
@@ -127,12 +127,12 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
                 <app-quote-status-chart [data]="quoteStatusData"></app-quote-status-chart>
             }
             @if (!isLoading()) {
-                <div footer class="flex justify-center gap-4">
+                <div footer class="flex justify-center gap-6">
                     @for (item of quoteStatusData; track item.label) {
                         <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full" [style.background]="item.color" [style.box-shadow]="'0 0 6px '+item.color"></span>
-                            <span class="text-[10px] text-[#A3AED0] font-bold uppercase">{{ item.label }}</span>
-                            <span class="text-xs text-[#2B3674] font-black">{{ item.value }}</span>
+                            <span class="w-2.5 h-2.5 rounded-full" [style.background]="item.color" [style.box-shadow]="'0 0 8px '+item.color"></span>
+                            <span class="text-[11px] text-[#A3AED0] font-bold uppercase">{{ item.label }}</span>
+                            <span class="text-sm text-[#2B3674] font-black">{{ item.value }}</span>
                         </div>
                     }
                 </div>
@@ -167,9 +167,9 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
 
         <app-chart-card title="API Success Rate" subtitle="Real-time healthy check · SLA 99.9%" [dark]="true" delay="700ms" height="360px">
             @if (!isLoading()) {
-                <div header-actions class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mr-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-[10px] font-black text-emerald-500 tracking-widest">HEALTHY</span>
+                <div header-actions class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mr-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[11px] font-black text-emerald-500 tracking-widest">HEALTHY</span>
                 </div>
             }
             @if (isLoading()) {

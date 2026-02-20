@@ -24,31 +24,31 @@ export class TppRequestsChartComponent extends BaseChartComponent {
         const H = this.height;
         ctx.clearRect(0, 0, W, H);
 
-        const legendH = 22;
-        const pL = 4, pR = 8, pT = legendH + 12, pB = 18;
+        const legendH = 26;
+        const pL = 8, pR = 12, pT = legendH + 16, pB = 26; // Increased pB
         const chartW = W - pL - pR;
         const chartH = H - pT - pB;
         const maxVal = 420;
         const rowH = chartH / this.data.length;
-        const lollySpacing = rowH * 0.26;
-        const stemOriginX = pL + 100;
+        const lollySpacing = rowH * 0.22; // Reduced multiplier to spread out rows more in the available height
+        const stemOriginX = pL + 125; // Increased padding for longer names
 
         // Legend
         this.metrics.forEach((m, i) => {
             const lx = pL + 8 + i * ((W - pL - pR - 16) / this.metrics.length);
-            ctx.beginPath(); ctx.arc(lx + 5, legendH * 0.52, 5, 0, Math.PI * 2);
+            ctx.beginPath(); ctx.arc(lx + 5, legendH * 0.52, 6, 0, Math.PI * 2);
             ctx.fillStyle = m.color;
             ctx.fill();
             ctx.fillStyle = '#A3AED0'; // Gray text
-            ctx.font = '500 10px "DM Sans",sans-serif';
+            ctx.font = '500 12px "DM Sans",sans-serif';
             ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-            ctx.fillText(m.label, lx + 14, legendH * 0.52);
+            ctx.fillText(m.label, lx + 16, legendH * 0.52);
         });
 
         // Separator
         ctx.beginPath();
-        ctx.moveTo(pL, legendH + 4); ctx.lineTo(W - pR, legendH + 4);
-        ctx.strokeStyle = 'rgba(163, 174, 208, 0.2)'; // Light gray separator
+        ctx.moveTo(pL, legendH + 6); ctx.lineTo(W - pR, legendH + 6);
+        ctx.strokeStyle = 'rgba(163, 174, 208, 0.2)';
         ctx.lineWidth = 1; ctx.stroke();
 
         // Grid
@@ -59,9 +59,9 @@ export class TppRequestsChartComponent extends BaseChartComponent {
             ctx.lineWidth = 1; ctx.setLineDash(v === 0 ? [] : [3, 7]); ctx.stroke(); ctx.setLineDash([]);
             if (v > 0) {
                 ctx.fillStyle = '#A3AED0';
-                ctx.font = '400 8px "DM Sans",sans-serif';
+                ctx.font = '500 11px "DM Sans",sans-serif';
                 ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-                ctx.fillText(String(v), x, pT + chartH + 4);
+                ctx.fillText(String(v), x, pT + chartH + 8);
             }
         });
 
@@ -70,10 +70,8 @@ export class TppRequestsChartComponent extends BaseChartComponent {
             const stemW = chartW - (stemOriginX - pL);
 
             // Row Label Badge
-            // For active rows, use green/theme color if desired, or keep simple. 
-            // In light mode, simple colored dot is nice.
             const badgeColor = row.active ? '#05CD99' : '#A3AED0';
-            ctx.beginPath(); ctx.arc(pL + 8, rowCY - 8, 3, 0, Math.PI * 2);
+            ctx.beginPath(); ctx.arc(pL + 8, rowCY - 8, 3.5, 0, Math.PI * 2);
             ctx.fillStyle = badgeColor;
             ctx.fill();
 
@@ -83,20 +81,20 @@ export class TppRequestsChartComponent extends BaseChartComponent {
 
             // Primary text: Dark Navy
             ctx.fillStyle = '#2B3674';
-            ctx.font = `${row.active ? '700' : '500'} 9.5px "DM Sans",sans-serif`;
+            ctx.font = `${row.active ? '700' : '600'} 12px "DM Sans",sans-serif`; // Increased from 9.5px
             ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-            ctx.fillText(line1, pL + 15, rowCY - (line2 ? 6 : 0));
+            ctx.fillText(line1, pL + 18, rowCY - (line2 ? 8 : 0));
 
             if (line2) {
                 ctx.fillStyle = '#A3AED0';
-                ctx.font = '500 8.5px "DM Sans",sans-serif';
-                ctx.fillText(line2, pL + 15, rowCY + 7);
+                ctx.font = '500 11px "DM Sans",sans-serif'; // Increased from 8.5px
+                ctx.fillText(line2, pL + 18, rowCY + 10);
             }
 
             // Total count
             ctx.fillStyle = '#A3AED0';
-            ctx.font = '500 9px "DM Sans",sans-serif';
-            ctx.fillText(`total: ${row.total}`, pL + 15, rowCY + (line2 ? 18 : 9));
+            ctx.font = '500 11px "DM Sans",sans-serif'; // Increased from 9px
+            ctx.fillText(`total: ${row.total}`, pL + 18, rowCY + (line2 ? 24 : 14));
 
             this.metrics.forEach((m, mi) => {
                 const val = (row as any)[m.key] as number;
@@ -115,26 +113,26 @@ export class TppRequestsChartComponent extends BaseChartComponent {
                 ctx.moveTo(stemOriginX, dotY);
                 ctx.lineTo(headX, dotY);
                 ctx.strokeStyle = m.color;
-                ctx.lineWidth = 2; // Slightly thicker for visibility
+                ctx.lineWidth = 2.5; // Slightly thicker
                 ctx.stroke();
 
                 // Dot head
                 ctx.beginPath();
-                ctx.arc(headX, dotY, 4, 0, Math.PI * 2);
+                ctx.arc(headX, dotY, 4.5, 0, Math.PI * 2);
                 ctx.fillStyle = m.color;
                 ctx.fill();
 
                 // Inner white dot for "hole" effect
                 ctx.beginPath();
-                ctx.arc(headX, dotY, 2, 0, Math.PI * 2);
+                ctx.arc(headX, dotY, 2.5, 0, Math.PI * 2);
                 ctx.fillStyle = '#ffffff';
                 ctx.fill();
 
                 if (p === 1 && val > 10) {
                     ctx.fillStyle = '#2B3674';
-                    ctx.font = '700 9px "DM Sans",sans-serif';
+                    ctx.font = '700 11px "DM Sans",sans-serif'; // Increased from 9px
                     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-                    ctx.fillText(String(val), headX + 7, dotY);
+                    ctx.fillText(String(val), headX + 9, dotY);
                 }
             });
 

@@ -68,47 +68,47 @@ export class ApiSuccessChartComponent extends BaseChartComponent {
 
         // Center text
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.font = `800 36px "DM Sans", sans-serif`;
+        ctx.font = `800 42px "DM Sans", sans-serif`; // Increased from 36px
         ctx.fillStyle = '#ffffff';
-        ctx.fillText((Math.round(sp * 942) / 10).toFixed(1) + '%', cx, cy - 8);
-        ctx.font = `500 11px "DM Sans", sans-serif`;
+        ctx.fillText((Math.round(sp * 942) / 10).toFixed(1) + '%', cx, cy - 10);
+        ctx.font = `500 13px "DM Sans", sans-serif`; // Increased from 11px
         ctx.fillStyle = 'rgba(255,255,255,0.6)';
-        ctx.fillText('SUCCESS RATE', cx, cy + 16);
+        ctx.fillText('SUCCESS RATE', cx, cy + 18);
 
         // Bottom legend — Success
-        const legendY = cy + r + 28;
-        const dotR = 5;
+        const legendY = cy + r + 32;
+        const dotR = 6;
 
         // Success dot
-        ctx.beginPath(); ctx.arc(cx - 52, legendY, dotR, 0, Math.PI * 2);
+        ctx.beginPath(); ctx.arc(cx - 60, legendY, dotR, 0, Math.PI * 2);
         ctx.fillStyle = '#42CD7E'; ctx.shadowColor = '#42CD7E'; ctx.shadowBlur = 8;
         ctx.fill(); ctx.shadowBlur = 0;
 
         // Success label
         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        ctx.font = `500 10px "DM Sans", sans-serif`;
+        ctx.font = `500 12px "DM Sans", sans-serif`; // Increased from 10px
         ctx.fillStyle = 'rgba(255,255,255,0.45)';
-        ctx.fillText('Success', cx - 44, legendY);
+        ctx.fillText('Success', cx - 50, legendY);
 
         // Success value
-        ctx.font = `700 10px "DM Sans", sans-serif`;
+        ctx.font = `700 12px "DM Sans", sans-serif`; // Increased from 10px
         ctx.fillStyle = '#ffffff';
-        ctx.fillText((targetPct * 100).toFixed(1) + '%', cx - 44, legendY + 13);
+        ctx.fillText((targetPct * 100).toFixed(1) + '%', cx - 50, legendY + 16);
 
         // Failure dot
-        ctx.beginPath(); ctx.arc(cx + 18, legendY, dotR, 0, Math.PI * 2);
+        ctx.beginPath(); ctx.arc(cx + 22, legendY, dotR, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(238,93,80,0.9)'; ctx.shadowColor = '#EE5D50'; ctx.shadowBlur = 8;
         ctx.fill(); ctx.shadowBlur = 0;
 
         // Failure label
         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        ctx.font = `500 10px "DM Sans", sans-serif`;
+        ctx.font = `500 12px "DM Sans", sans-serif`; // Increased from 10px
         ctx.fillStyle = 'rgba(255,255,255,0.45)';
-        ctx.fillText('Failure', cx + 26, legendY);
+        ctx.fillText('Failure', cx + 32, legendY);
 
         // Failure value
-        ctx.font = `700 10px "DM Sans", sans-serif`;
+        ctx.font = `700 12px "DM Sans", sans-serif`; // Increased from 10px
         ctx.fillStyle = '#ffffff';
-        ctx.fillText((failPct * 100).toFixed(1) + '%', cx + 26, legendY + 13);
+        ctx.fillText((failPct * 100).toFixed(1) + '%', cx + 32, legendY + 16);
     }
 }

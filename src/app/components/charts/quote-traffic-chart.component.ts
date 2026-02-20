@@ -21,7 +21,7 @@ export class QuoteTrafficChartComponent extends BaseChartComponent {
         const H = this.height;
         ctx.clearRect(0, 0, W, H);
 
-        const pL = 38, pR = 16, pT = 20, pB = 32;
+        const pL = 48, pR = 16, pT = 20, pB = 32; // Increased pL from 38 to 48
         const cW = W - pL - pR;
         const cH = H - pT - pB;
         const slotW = cW / (this.months.length - 1);
@@ -34,9 +34,9 @@ export class QuoteTrafficChartComponent extends BaseChartComponent {
             ctx.lineWidth = 1; ctx.setLineDash(v === 0 ? [] : [3, 8]); ctx.stroke(); ctx.setLineDash([]);
             if (v > 0) {
                 ctx.fillStyle = '#A3AED0';
-                ctx.font = '500 8px "DM Sans",sans-serif';
+                ctx.font = '500 11px "DM Sans",sans-serif'; // Increased from 8px
                 ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-                ctx.fillText(String(v), pL - 5, y);
+                ctx.fillText(String(v), pL - 8, y);
             }
         });
 
@@ -44,9 +44,9 @@ export class QuoteTrafficChartComponent extends BaseChartComponent {
         this.months.forEach((m, i) => {
             const x = pL + i * slotW;
             ctx.fillStyle = i === 1 ? '#2B3674' : '#A3AED0';
-            ctx.font = `${i === 1 ? '700' : '400'} 9px "DM Sans",sans-serif`;
+            ctx.font = `${i === 1 ? '700' : '400'} 12px "DM Sans",sans-serif`; // Increased from 9px
             ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            ctx.fillText(m, x, pT + cH + 7);
+            ctx.fillText(m, x, pT + cH + 8);
         });
 
         const revealIdx = Math.floor(p * (this.months.length - 1));
@@ -70,9 +70,9 @@ export class QuoteTrafficChartComponent extends BaseChartComponent {
             const accY = pT + cH - (this.accData[1] / this.maxVal) * cH;
             [[genY, '#7C5CFF', '480'], [accY, '#05CD99', '290']].forEach(([y, c, v]) => {
                 ctx.fillStyle = c as string;
-                ctx.font = '700 9px "DM Sans",sans-serif';
+                ctx.font = '700 12px "DM Sans",sans-serif'; // Increased from 9px
                 ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-                ctx.fillText(v as string, px, (y as number) - 6);
+                ctx.fillText(v as string, px, (y as number) - 8);
             });
         }
     }

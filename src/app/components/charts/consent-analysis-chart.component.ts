@@ -18,8 +18,8 @@ export class ConsentAnalysisChartComponent extends BaseChartComponent {
         const H = this.height;
         ctx.clearRect(0, 0, W, H);
 
-        const cx = W / 2, cy = H / 2;
-        const maxR = Math.min(W, H) * 0.44;
+        const cx = W * 0.38, cy = H / 2; // Shifted center to the left
+        const maxR = Math.min(W * 0.45, H * 0.44); // Slightly smaller R to fit side layout
         const minR = maxR * 0.28;
         const data = this.data;
         const step = (maxR - minR) / data.length;
@@ -33,12 +33,12 @@ export class ConsentAnalysisChartComponent extends BaseChartComponent {
             // Track ring
             ctx.beginPath();
             ctx.arc(cx, cy, r, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(163, 174, 208, 0.1)'; // Light gray track
+            ctx.strokeStyle = 'rgba(163, 174, 208, 0.1)';
             ctx.lineWidth = track;
             ctx.lineCap = 'round';
             ctx.stroke();
 
-            // Outer glow (reduced for light mode)
+            // Outer glow
             ctx.beginPath();
             ctx.arc(cx, cy, r, start, start + pct);
             ctx.strokeStyle = seg.color;
@@ -69,35 +69,43 @@ export class ConsentAnalysisChartComponent extends BaseChartComponent {
             ctx.shadowColor = 'rgba(0,0,0,0.1)'; ctx.shadowBlur = 4;
             ctx.fill(); ctx.shadowBlur = 0;
 
-            // Labels (final frame only)
+            // Labels (final frame only) - Now all on the right
             if (p === 1) {
-                const ry = cy - maxR + i * (maxR * 1.9 / data.length) + step * 0.3;
-                const rx = cx + maxR + 14;
+                const rx = W * 0.68; // Labels start further right
+                const ry = H * 0.15 + i * (H * 0.75 / data.length); // Vertically spaced list
+
+                // Indicator dot for the legend effect
+                ctx.beginPath();
+                ctx.arc(rx - 12, ry, 4, 0, Math.PI * 2);
+                ctx.fillStyle = seg.color;
+                ctx.fill();
 
                 ctx.fillStyle = seg.color;
-                ctx.font = '700 10px "DM Sans",sans-serif';
+                ctx.font = '700 13px "DM Sans",sans-serif';
                 ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
                 ctx.fillText(`${Math.round((seg.value / seg.total) * 100)}%`, rx, ry);
 
-                ctx.fillStyle = '#2B3674'; // Navy text
-                ctx.font = '500 9px "DM Sans",sans-serif';
-                ctx.fillText(seg.label, rx, ry + 12);
+                ctx.fillStyle = '#2B3674';
+                ctx.font = '600 11px "DM Sans",sans-serif';
+                ctx.fillText(seg.label, rx + 44, ry);
 
-                ctx.fillStyle = '#A3AED0'; // Gray text
-                ctx.fillText(String(seg.value), rx + 44, ry);
+                ctx.fillStyle = '#A3AED0';
+                ctx.font = '500 11px "DM Sans",sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(String(seg.value), W - 16, ry);
             }
         });
 
-        // Center total
+        // Center total - Shifting with cx
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.font = `800 ${Math.round(minR * 0.9)}px "DM Sans",sans-serif`;
+        ctx.font = `800 ${Math.round(minR * 1.1)}px "DM Sans",sans-serif`;
         const tg = ctx.createLinearGradient(cx - 30, cy - 20, cx + 30, cy + 20);
         tg.addColorStop(0, '#2B3674'); tg.addColorStop(1, '#4318FF');
         ctx.fillStyle = tg;
-        ctx.fillText('700', cx, cy - 8);
+        ctx.fillText('700', cx, cy - 10);
 
-        ctx.font = `500 10px "DM Sans",sans-serif`;
+        ctx.font = `500 12px "DM Sans",sans-serif`;
         ctx.fillStyle = '#A3AED0';
-        ctx.fillText('total', cx, cy + 14);
+        ctx.fillText('total', cx, cy + 18);
     }
 }

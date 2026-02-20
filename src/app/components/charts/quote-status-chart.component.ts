@@ -49,13 +49,13 @@ export class QuoteStatusChartComponent extends BaseChartComponent {
             const cr = Math.min(cellW, cellH) * 0.36;
 
             ctx.fillStyle = d.color;
-            ctx.font = '700 10px "DM Sans",sans-serif';
+            ctx.font = '700 12px "DM Sans",sans-serif'; // Increased from 10px
             ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            ctx.fillText(d.label.toUpperCase(), cx, 4);
+            ctx.fillText(d.label.toUpperCase(), cx, 6);
 
             ctx.fillStyle = '#A3AED0'; // Gray text
-            ctx.font = '500 9px "DM Sans",sans-serif';
-            ctx.fillText(`n=${d.value}`, cx, 16);
+            ctx.font = '600 11px "DM Sans",sans-serif'; // Increased from 9px
+            ctx.fillText(`n=${d.value}`, cx, 22);
 
             ctx.beginPath(); ctx.arc(cx, cy, cr, 0, Math.PI * 2);
             ctx.fillStyle = `${d.color}15`; ctx.fill(); // Slightly darker bg for visibility
