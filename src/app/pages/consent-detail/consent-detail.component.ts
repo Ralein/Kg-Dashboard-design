@@ -85,7 +85,6 @@ interface NestedItem {
                 <div class="flex items-center gap-3">
                   <h1 class="hero-title">Consent Authorization</h1>
                   <span class="hero-status-badge">
-                    <span class="pulse-ring"></span>
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
                     Authorized
                   </span>
