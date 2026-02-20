@@ -98,12 +98,8 @@ Chart.register(...registerables);
             <h3 class="text-sm font-bold text-[#2B3674] uppercase tracking-wider">By API Groups</h3>
             <lucide-icon [img]="PieChart" class="w-4 h-4 text-[#FF8F0C]"></lucide-icon>
           </div>
-          <div class="flex-1 flex items-center justify-center relative min-h-[120px]">
+          <div class="flex-1 flex items-center justify-center relative min-h-[140px]">
             <canvas #groupsDonut></canvas>
-            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span class="text-xl font-bold text-[#2B3674]">100%</span>
-              <span class="text-[8px] font-bold text-[#A3AED0] uppercase tracking-tighter">Active</span>
-            </div>
           </div>
         </div>
 
@@ -163,8 +159,8 @@ Chart.register(...registerables);
             <h3 class="text-sm font-bold text-[#2B3674] uppercase tracking-wider">API Status Chart - Monthly</h3>
             <lucide-icon [img]="BarChart3" class="w-4 h-4 text-[#4318FF]"></lucide-icon>
           </div>
-          <div class="flex-1 min-h-[300px] relative">
-            <canvas #monthlyBar style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+          <div class="flex-1 min-h-[300px]">
+            <canvas #monthlyBar></canvas>
           </div>
           <!-- Legend — UNCHANGED -->
           <div class="flex flex-wrap justify-center gap-6 pt-2">
@@ -270,182 +266,148 @@ export class ApiMonitoringComponent implements AfterViewInit {
     });
   }
 
-  // ── Donut: Rich 6-category mockup ──────────────────────────────────────────
+  // ── By API Groups: Premium Polar Area Chart ─────────────────────────────────
   private buildDonut(): void {
     new Chart(this.groupsDonutRef.nativeElement, {
-      type: 'doughnut',
+      type: 'polarArea', // Changed for "change graph"
       data: {
         labels: ['Search', 'Auth', 'Payments', 'Users', 'Orders', 'Analytics'],
         datasets: [{
           data: [35, 20, 15, 12, 10, 8],
           backgroundColor: [
-            '#4318FF', // Primary
-            '#05CD99', // Success
-            '#FF8F0C', // Warning
-            '#EE5D50', // Danger
-            '#7C5CFF', // Purple
-            '#A3AED0'  // Gray
+            'rgba(67, 24, 255, 0.7)', // Primary
+            'rgba(5, 205, 153, 0.7)', // Success
+            'rgba(255, 143, 12, 0.7)', // Warning
+            'rgba(238, 93, 80, 0.7)', // Danger
+            'rgba(124, 92, 255, 0.7)', // Purple
+            'rgba(163, 174, 208, 0.7)'  // Gray
           ],
-          borderWidth: 0,
-          hoverOffset: 10
+          borderColor: '#ffffff',
+          borderWidth: 2
         }]
       },
       options: {
-        cutout: '82%',
         responsive: true,
         maintainAspectRatio: false,
+        scales: {
+          r: {
+            grid: { color: 'rgba(163, 174, 208, 0.1)' },
+            ticks: { display: false },
+            angleLines: { color: 'rgba(163, 174, 208, 0.1)' }
+          }
+        },
         plugins: {
           legend: { display: false },
           tooltip: {
-            enabled: true,
             backgroundColor: 'rgba(255, 255, 255, 0.95)',
             titleColor: '#2B3674',
             bodyColor: '#2B3674',
             borderColor: '#E2E8F0',
             borderWidth: 1,
-            padding: 10,
-            displayColors: true,
             usePointStyle: true,
-            bodyFont: { weight: 'bold', size: 11 }
+            bodyFont: { weight: 'bold' }
           }
         },
-        animation: { duration: 1000, easing: 'easeOutQuart' }
+        animation: { duration: 1500, easing: 'easeOutElastic' }
       }
     });
   }
 
-  // ── Monthly Bar: animate once bottom-to-top, then completely static ──
+  // ── Monthly History: Stacked Area Chart using Chart.js ──
   private buildMonthlyBar(): void {
-    const canvas = this.monthlyBarRef.nativeElement;
-    const ctx = canvas.getContext('2d')!;
-    const dpr = window.devicePixelRatio || 1;
+    const ctx = this.monthlyBarRef.nativeElement.getContext('2d');
+    if (!ctx) return;
 
-    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const datasets = [
-      { label: 'Total', values: [0, 1500, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#2B3674', gradEnd: 'rgba(43,54,116,0.25)', glow: 'rgba(43,54,116,0.35)' },
-      { label: 'Successful', values: [0, 1320, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#05CD99', gradEnd: 'rgba(5,205,153,0.2)', glow: 'rgba(5,205,153,0.4)' },
-      { label: 'Failed', values: [0, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#FF8F0C', gradEnd: 'rgba(255,143,12,0.2)', glow: 'rgba(255,143,12,0.4)' },
-    ];
-    const maxVal = 1800;
-    const numDS = datasets.length;
-    const animDur = 1100;
-    const ease = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    // Gradient generators
+    const createGradient = (color: string) => {
+      const grad = ctx.createLinearGradient(0, 0, 0, 300);
+      grad.addColorStop(0, `${color}40`);
+      grad.addColorStop(1, `${color}00`);
+      return grad;
+    };
 
-    // All layout vars — filled on first rAF once DOM has settled
-    let W = 0, H = 0;
-    const padL = 48, padR = 16, padT = 32, padB = 38;
-    let chartW = 0, chartH = 0, slotW = 0, groupW = 0, barW = 0, gap = 0;
-
-    const drawFrame = (progress: number) => {
-      ctx.clearRect(0, 0, W, H);
-
-      // Grid lines
-      [0, 500, 1000, 1500].forEach(v => {
-        const y = padT + chartH - (v / maxVal) * chartH;
-        ctx.beginPath();
-        ctx.moveTo(padL, y);
-        ctx.lineTo(padL + chartW, y);
-        ctx.strokeStyle = v === 0 ? 'rgba(163,174,208,0.25)' : 'rgba(163,174,208,0.1)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash(v === 0 ? [] : [4, 6]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        if (v > 0) {
-          ctx.fillStyle = '#C5CEDF';
-          ctx.font = '500 9px "DM Sans", system-ui, sans-serif';
-          ctx.textAlign = 'right';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(v), padL - 7, y);
-        }
-      });
-
-      // Bars + labels
-      labels.forEach((month, col) => {
-        const slotX = padL + col * slotW;
-        const groupX = slotX + (slotW - groupW) / 2;
-        const hasData = datasets.some(d => d.values[col] > 0);
-
-        datasets.forEach((ds, di) => {
-          const raw = ds.values[col];
-          const barH = (raw / maxVal) * chartH * progress;
-          if (barH <= 0) return;
-
-          const bx = groupX + di * (barW + gap);
-          const by = padT + chartH - barH;
-
-          // Gradient fill
-          const grad = ctx.createLinearGradient(0, by, 0, padT + chartH);
-          grad.addColorStop(0, ds.color);
-          grad.addColorStop(1, ds.gradEnd);
-          ctx.shadowColor = ds.glow;
-          ctx.shadowBlur = 10;
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          (ctx as any).roundRect?.(bx, by, barW - gap, barH, [5, 5, 0, 0]) ||
-            ctx.rect(bx, by, barW - gap, barH);
-          ctx.fill();
-          ctx.shadowBlur = 0;
-
-          // Shimmer cap
-          const capGrad = ctx.createLinearGradient(bx, by, bx + barW - gap, by);
-          capGrad.addColorStop(0, 'rgba(255,255,255,0)');
-          capGrad.addColorStop(0.5, 'rgba(255,255,255,0.55)');
-          capGrad.addColorStop(1, 'rgba(255,255,255,0)');
-          ctx.fillStyle = capGrad;
-          ctx.fillRect(bx, by, barW - gap, 2.5);
-
-          // Value label — only at full height (final frame)
-          if (progress === 1 && raw > 0) {
-            ctx.fillStyle = ds.color;
-            ctx.font = '700 9px "DM Sans", system-ui, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-            ctx.fillText(
-              raw >= 1000 ? (raw / 1000).toFixed(1) + 'k' : String(raw),
-              bx + (barW - gap) / 2,
-              by - 3
-            );
+    new Chart(this.monthlyBarRef.nativeElement, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [
+          {
+            label: 'Total API Calls',
+            data: [1100, 1500, 1200, 1350, 1600, 1400, 1450, 1300, 1550, 1400, 1650, 1500],
+            borderColor: '#2B3674',
+            backgroundColor: createGradient('#2B3674'),
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#2B3674',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+          },
+          {
+            label: 'Successful API Calls',
+            data: [950, 1320, 1050, 1200, 1450, 1200, 1300, 1150, 1400, 1250, 1500, 1350],
+            borderColor: '#05CD99',
+            backgroundColor: createGradient('#05CD99'),
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#05CD99',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+          },
+          {
+            label: 'Failed API Calls',
+            data: [150, 180, 150, 150, 150, 200, 150, 150, 150, 150, 150, 150],
+            borderColor: '#FF8F0C',
+            backgroundColor: createGradient('#FF8F0C'),
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#FF8F0C',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
           }
-        });
-
-        // Month label
-        ctx.fillStyle = hasData ? '#8899C4' : '#D5DCF0';
-        ctx.font = `${hasData ? '700 11px' : '500 10px'} "DM Sans", system-ui, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        ctx.fillText(month, slotX + slotW / 2, padT + chartH + 10);
-      });
-    };
-
-    // Animate once — size on first frame so DOM is guaranteed laid out
-    let animStart = 0;
-    const animate = (now: number) => {
-      // First frame: measure & size the canvas, then kick off the clock
-      if (!animStart) {
-        const rect = canvas.parentElement!.getBoundingClientRect();
-        W = rect.width; H = rect.height;
-        canvas.width = W * dpr; canvas.height = H * dpr;
-        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        chartW = W - padL - padR; chartH = H - padT - padB;
-        slotW = chartW / labels.length;
-        groupW = slotW * 0.72;
-        barW = groupW / numDS;
-        gap = barW * 0.12;
-        animStart = now;
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            titleColor: '#2B3674',
+            bodyColor: '#2B3674',
+            borderColor: '#E2E8F0',
+            borderWidth: 1,
+            padding: 12,
+            titleFont: { size: 14, weight: 'bold' },
+            bodyFont: { size: 13 },
+            usePointStyle: true
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#A3AED0', font: { size: 11, weight: 'bold' } }
+          },
+          y: {
+            grid: { color: 'rgba(163, 174, 208, 0.1)' },
+            ticks: {
+              color: '#A3AED0',
+              font: { size: 11, weight: 'bold' },
+              callback: (val) => Number(val) >= 1000 ? (Number(val) / 1000).toFixed(1) + 'k' : val
+            },
+            beginAtZero: true
+          }
+        },
+        interaction: { mode: 'nearest', axis: 'x', intersect: false }
       }
-
-      const p = Math.min(ease((now - animStart) / animDur), 1);
-      drawFrame(p);
-      if (p < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        // Final explicit pass at exactly p=1 — guarantees labels render
-        drawFrame(1);
-      }
-    };
-
-    requestAnimationFrame(animate);
+    });
   }
 }
