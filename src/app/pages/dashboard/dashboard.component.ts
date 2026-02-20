@@ -45,12 +45,12 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
           <h1 class="text-3xl font-black text-[#2B3674] tracking-tight">Dashboard</h1>
           <p class="text-[#A3AED0] text-sm font-bold uppercase tracking-widest mt-1">Operational Dynamics & Metrics</p>
         </div>
-        <div class="flex items-center gap-2 premium-glass p-2 rounded-2xl shadow-sm">
-          <select class="glass-input border-none bg-transparent hover:bg-slate-50 cursor-pointer">
+        <div class="flex items-center gap-2 premium-glass p-2 rounded-3xl shadow-sm">
+          <select class="glass-input border-none bg-transparent hover:bg-slate-50 cursor-pointer rounded-xl">
             <option>FY 2026</option><option>FY 2025</option>
           </select>
           <div class="w-px h-8 bg-slate-200/60"></div>
-          <select class="glass-input border-none bg-transparent hover:bg-slate-50 cursor-pointer">
+          <select class="glass-input border-none bg-transparent hover:bg-slate-50 cursor-pointer rounded-xl">
             <option>February</option><option>January</option>
           </select>
         </div>
@@ -142,10 +142,10 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
         <app-chart-card title="Quote LOB" subtitle="Volume breakdown by Business Line" delay="500ms" height="380px">
             @if (isLoading()) {
                 <div class="flex flex-col justify-center h-full gap-4 px-4">
-                    <div class="skeleton w-full h-8 rounded-lg"></div>
-                    <div class="skeleton w-3/4 h-8 rounded-lg"></div>
-                    <div class="skeleton w-5/6 h-8 rounded-lg"></div>
-                    <div class="skeleton w-2/3 h-8 rounded-lg"></div>
+                    <div class="skeleton w-full h-8 rounded-2xl"></div>
+                    <div class="skeleton w-3/4 h-8 rounded-2xl"></div>
+                    <div class="skeleton w-5/6 h-8 rounded-2xl"></div>
+                    <div class="skeleton w-2/3 h-8 rounded-2xl"></div>
                 </div>
             } @else {
                 <app-quote-lob-chart [data]="quoteLobData"></app-quote-lob-chart>
@@ -173,15 +173,15 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
                 </div>
             }
             @if (isLoading()) {
-                 <div class="flex flex-col items-center justify-center h-full gap-6">
+                <div class="flex flex-col items-center justify-center h-full gap-6">
                     <!-- Gauge Arc Skeleton -->
                     <div class="relative w-48 h-24 overflow-hidden">
                         <div class="skeleton absolute top-0 left-0 w-48 h-48 rounded-full border-[20px] border-gray-200 border-b-transparent"></div>
                     </div>
-                    <div class="skeleton w-24 h-8 rounded"></div>
+                    <div class="skeleton w-24 h-8 rounded-xl"></div>
                      <div class="grid grid-cols-2 gap-4 w-full px-8 mt-4">
-                        <div class="skeleton h-16 rounded-2xl"></div>
-                        <div class="skeleton h-16 rounded-2xl"></div>
+                        <div class="skeleton h-16 rounded-3xl"></div>
+                        <div class="skeleton h-16 rounded-3xl"></div>
                     </div>
                 </div>
             } @else {
@@ -189,11 +189,11 @@ import { LobDistributionChartComponent } from '../../components/charts/lob-distr
             }
             @if (!isLoading()) {
                 <div footer class="grid grid-cols-2 gap-4">
-                    <div class="rounded-2xl p-4 bg-emerald-500/5 border border-emerald-500/10 text-center">
+                    <div class="rounded-3xl p-4 bg-emerald-500/5 border border-emerald-500/10 text-center">
                         <div class="text-2xl font-black text-emerald-400">94.2%</div>
                         <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-1">SUCCESS</div>
                     </div>
-                    <div class="rounded-2xl p-4 bg-red-500/5 border border-red-500/10 text-center">
+                    <div class="rounded-3xl p-4 bg-red-500/5 border border-red-500/10 text-center">
                         <div class="text-2xl font-black text-red-400">5.8%</div>
                         <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-1">FAILURE</div>
                     </div>

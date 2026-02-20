@@ -19,8 +19,8 @@ import { UserService } from '../../services/user.service';
 
       </div>
 
-      <!-- ── Right Actions ── -->
-      <div class="premium-glass px-2 py-1.5 rounded-2xl flex items-center gap-2 shadow-lg shadow-blue-500/5">
+      <!-- Right Actions -->
+      <div class="premium-glass px-2 py-1.5 rounded-3xl flex items-center gap-2 shadow-lg shadow-blue-500/5">
 
         <!-- Fullscreen toggle -->
         <button
@@ -72,7 +72,7 @@ import { UserService } from '../../services/user.service';
           <!-- Dropdown Menu -->
           <div 
             *ngIf="userDropdownOpen()"
-            class="absolute right-0 mt-4 w-56 premium-glass rounded-xl overflow-hidden animate-fade-in py-1 z-50 transform origin-top-right"
+            class="absolute right-0 mt-4 w-56 premium-glass rounded-2xl overflow-hidden animate-fade-in py-1 z-50 transform origin-top-right"
           >
             <div class="px-4 py-3 border-b border-gray-100/50">
                <p class="text-xs font-bold text-[#A3AED0] uppercase">Signed in as</p>

@@ -144,13 +144,13 @@ import { CommonModule } from '@angular/common';
       background: linear-gradient(90deg, rgba(244,247,254,0.4) 25%, rgba(244,247,254,0.8) 50%, rgba(244,247,254,0.4) 75%);
       background-size: 200% 100%;
       animation: skeletonMove 1.5s infinite linear;
-      border-radius: 6px;
+      border-radius: 12px;
     }
   `],
 
   template: `
     <div
-      class="card flex min-h-[110px] items-center rounded-[24px] px-6 py-5 gap-5"
+      class="card flex min-h-[110px] items-center rounded-[30px] px-6 py-5 gap-5"
       [style.--accent]="accentColor"
       [style.animation-delay]="animDelay"
       (mousemove)="onMouseMove($event)"
@@ -164,7 +164,7 @@ import { CommonModule } from '@angular/common';
         </div>
       } @else {
         <div
-          class="icon-wrap flex h-[60px] w-[60px] items-center justify-center rounded-2xl"
+          class="icon-wrap flex h-[60px] w-[60px] items-center justify-center rounded-[18px]"
           [ngClass]="[iconBgColor, iconColor]"
           [style.box-shadow]="iconShadow"
         >

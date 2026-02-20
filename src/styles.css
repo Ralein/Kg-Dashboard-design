@@ -30,11 +30,13 @@
     .premium-glass {
         @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl shadow-blue-500/5;
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.4) 100%);
+        border-radius: 20px;
     }
 
     .premium-glass-dark {
         @apply bg-[#0C0F2E]/80 backdrop-blur-xl border border-white/10 shadow-2xl;
         background: linear-gradient(145deg, #0C0F2E 0%, #141836 60%, #0E1428 100%);
+        border-radius: 20px;
     }
 
     .glass-card {
@@ -144,7 +146,7 @@
 ::-webkit-scrollbar-thumb {
     background: rgba(163, 174, 208, 0.5);
     /* Lighter secondary */
-    border-radius: 10px;
+    border-radius: 20px;
     backdrop-filter: blur(4px);
 }
 
