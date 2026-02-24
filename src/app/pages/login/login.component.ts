@@ -398,11 +398,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       localStorage.removeItem('nsure_username');
     }
 
-    // 👇 Replace with your AuthService call:
-    // this.authService.login(this.username, this.password).subscribe({
-    //   next: () => this.router.navigate(['/dashboard']),
-    //   error: (err) => { this.isLoading = false; this.errorMessage = err.message; }
-    // });
     setTimeout(() => {
       this.isLoading = false;
       this.router.navigate(['/dashboard']);
