@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="flex h-screen w-screen overflow-hidden" style="font-family: 'Outfit', sans-serif;">
+    <div class="flex min-h-screen w-screen" style="font-family: 'Outfit', sans-serif;">
 
       <!-- ── LEFT BRAND PANEL ── -->
-      <div class="hidden lg:flex flex-col justify-between w-[52%] relative overflow-hidden px-14 py-12"
+      <div class="hidden lg:flex flex-col justify-between w-[50%] relative overflow-hidden px-14 py-12"
            style="background: linear-gradient(145deg, #0d1b3e 0%, #1a2f5a 60%, #0a1628 100%);">
 
         <!-- Grid texture -->
@@ -27,11 +28,9 @@ import { FormsModule } from '@angular/forms';
 
         <!-- Logo -->
         <div class="relative z-10 flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl flex items-center justify-center"
-               style="background: linear-gradient(135deg, #fabd00, #f59e0b); box-shadow: 0 0 20px rgba(250,189,0,0.35);">
-            <svg class="w-5 h-5 text-[#0d1b3e]" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
-            </svg>
+          <div class="flex items-center justify-center w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md shadow-lg shadow-[#000000]/10 border border-white/20 flex-shrink-0 relative overflow-hidden">
+             <div class="absolute inset-0 bg-gradient-to-br from-[#ffffff]/10 to-transparent opacity-50 transition-opacity"></div>
+             <img src="cropped-favicon.png" alt="n-sure" class="w-6 h-6 object-contain relative z-10">
           </div>
           <span class="text-xl font-light text-white tracking-tight">n-<strong class="font-bold">sure</strong></span>
           <span class="text-[9px] font-bold tracking-[2px] text-[#fabd00] bg-[#fabd00]/10 border border-[#fabd00]/25 px-2 py-0.5 rounded-full">OFI</span>
@@ -43,7 +42,7 @@ import { FormsModule } from '@angular/forms';
           <h1 class="font-extrabold leading-[1.08] text-white/95"
               style="font-size: clamp(36px, 4vw, 52px); letter-spacing: -2px;">
             One gateway.<br/>
-            <span style="background: linear-gradient(90deg, #fabd00, #fb923c);
+            <span style="background: linear-gradient(90deg, #fabd00, #ef4444);
                          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
               Infinite
             </span><br/>
@@ -54,16 +53,16 @@ import { FormsModule } from '@angular/forms';
           </p>
         </div>
 
-        <!-- Footer -->
-        <p class="relative z-10 text-[9px] font-medium tracking-[2.5px] uppercase text-white/15">
-          Powering Open Finance · India · 2026
-        </p>
       </div>
 
       <!-- ── RIGHT AUTH PANEL ── -->
-      <div class="flex flex-1 items-center justify-center bg-white px-6">
+      <div class="flex flex-1 items-center justify-center bg-white px-6 relative overflow-hidden">
+        
+        <!-- Soft background accents -->
+        <div class="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full bg-gradient-to-b from-[#f8fafc] to-[#f1f5f9] blur-3xl opacity-60 pointer-events-none"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[35vw] h-[35vw] max-w-[400px] max-h-[400px] rounded-full bg-gradient-to-t from-[#fff7ed] to-transparent blur-3xl opacity-60 pointer-events-none"></div>
 
-        <div class="w-full max-w-[380px] flex flex-col gap-8">
+        <div class="w-full max-w-[380px] flex flex-col gap-8 relative z-10 animate-fade-in-up">
 
           <!-- Heading -->
           <div class="flex flex-col gap-1.5">
@@ -219,6 +218,8 @@ import { FormsModule } from '@angular/forms';
   `]
 })
 export class LoginComponent implements OnInit {
+  private router = inject(Router);
+
   username = '';
   password = '';
   rememberMe = false;
@@ -235,13 +236,9 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     this.errorMessage = '';
-    if (!this.username || !this.password) {
-      this.errorMessage = 'Please enter both username and password.';
-      return;
-    }
     this.isLoading = true;
     if (this.rememberMe) {
-      localStorage.setItem('nsure_username', this.username);
+      if (this.username) localStorage.setItem('nsure_username', this.username);
     } else {
       localStorage.removeItem('nsure_username');
     }
@@ -253,7 +250,7 @@ export class LoginComponent implements OnInit {
     // });
     setTimeout(() => {
       this.isLoading = false;
-      this.errorMessage = 'Invalid credentials. Please try again.';
-    }, 1800);
+      this.router.navigate(['/dashboard']);
+    }, 800);
   }
 }

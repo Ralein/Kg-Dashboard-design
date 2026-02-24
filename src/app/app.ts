@@ -22,7 +22,7 @@ import { filter, Subscription } from 'rxjs';
 
       <!-- Main Content -->
       <div
-        class="flex flex-col min-h-screen transition-all duration-300"
+        class="flex flex-col min-h-screen transition-all duration-300 relative"
         [ngClass]="{
           'pt-24': !isLoginPage(),
           'px-6 pb-6': !isLoginPage(),
@@ -30,7 +30,7 @@ import { filter, Subscription } from 'rxjs';
         }"
         [style.marginLeft]="!isLoginPage() ? (sidebarCollapsed() ? '5rem' : '17.5rem') : '0'"
       >
-        <main class="flex-1 animate-fade-in-up h-full w-full">
+        <main class="flex-1 animate-fade-in-up w-full">
           <router-outlet />
         </main>
       </div>
