@@ -83,7 +83,7 @@ interface NestedItem {
 
               <div class="flex flex-col gap-3">
                 <div class="flex items-center gap-3">
-                  <h1 class="hero-title">Consent Authorization</h1>
+                  <h1 class="hero-title">Consent Details</h1>
                   <span class="hero-status-badge">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
                     Authorized
@@ -145,12 +145,7 @@ interface NestedItem {
             </div>
           </div>
 
-          <!-- Bottom tab-bar -->
-          <div class="hero-bottom-tabs flex items-end gap-1 mt-2">
-            <div class="hero-tab hero-tab--active">Overview</div>
-            <div class="hero-tab">Data Permissions</div>
-            <div class="hero-tab">Audit Log</div>
-          </div>
+          <!-- Bottom tab-bar removed per user request -->
         </div>
       </div>
 
