@@ -6,7 +6,8 @@ import {
   ChevronLeft, ShieldCheck, ClipboardCheck, History,
   Home as HomeIcon, ChevronUp, ChevronDown, CheckCircle2,
   Lock, Calendar, User, Globe, ArrowUpRight, Shield,
-  Building2, BadgeCheck, AlertCircle, FileText, Infinity
+  Building2, BadgeCheck, AlertCircle, FileText, Infinity,
+  Heart, Car, Plane
 } from 'lucide-angular';
 
 interface NestedItem {
@@ -116,8 +117,8 @@ interface NestedItem {
                     TPP Client Test
                   </span>
                   <span class="hero-tag">
-                    <lucide-icon [img]="HomeIcon" class="w-3 h-3 text-teal-400"></lucide-icon>
-                    HOME Policy
+                    <lucide-icon [img]="getPolicyIcon()" class="w-3 h-3" [ngClass]="getPolicyColorClass()"></lucide-icon>
+                    {{selectedPolicy}} Policy
                   </span>
                 </div>
               </div>
@@ -220,9 +221,9 @@ interface NestedItem {
                   <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.15em] mb-1">Shared Policies</p>
                   <h3 class="text-sm font-bold text-white/90 tracking-wide">Policy Explorer</h3>
                 </div>
-                <div class="policy-type-badge">
-                  <lucide-icon [img]="HomeIcon" class="w-3.5 h-3.5 text-teal-300"></lucide-icon>
-                  <span>HOME</span>
+                <div class="policy-type-badge" [ngClass]="getPolicyBadgeClass()">
+                  <lucide-icon [img]="getPolicyIcon()" class="w-3.5 h-3.5"></lucide-icon>
+                  <span>{{selectedPolicy}}</span>
                 </div>
               </div>
 
@@ -231,17 +232,17 @@ interface NestedItem {
                   <div class="inner-shine absolute inset-0 opacity-0 group-hover/pc:opacity-100 transition-opacity duration-600"></div>
 
                   <div class="inner-card-header">
-                    <div class="inner-icon-wrap">
-                      <lucide-icon [img]="HomeIcon" class="w-5 h-5 text-teal-300"></lucide-icon>
+                    <div class="inner-icon-wrap" [ngClass]="getPolicyIconWrapClass()">
+                      <lucide-icon [img]="getPolicyIcon()" class="w-5 h-5"></lucide-icon>
                     </div>
                     <div class="ml-4">
                       <p class="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">Plan Type</p>
-                      <p class="text-base font-bold text-white leading-tight">Villa</p>
+                      <p class="text-base font-bold text-white leading-tight">{{currentPolicy.planType}}</p>
                     </div>
                     <div class="ml-auto">
-                      <span class="expired-badge">
-                        <lucide-icon [img]="AlertCircle" class="w-3 h-3"></lucide-icon>
-                        EXPIRED
+                      <span class="status-badge" [ngClass]="currentPolicy.status === 'ACTIVE' ? 'active-badge' : 'expired-badge'">
+                        <lucide-icon [img]="currentPolicy.status === 'ACTIVE' ? CheckCircle2 : AlertCircle" class="w-3 h-3"></lucide-icon>
+                        {{currentPolicy.status}}
                       </span>
                     </div>
                   </div>
@@ -251,16 +252,16 @@ interface NestedItem {
                   <div class="p-5 space-y-4">
                     <div>
                       <p class="detail-label">Plan Name</p>
-                      <p class="detail-value">HOME SAFE PLATINUM</p>
+                      <p class="detail-value">{{currentPolicy.planName}}</p>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                       <div>
                         <p class="detail-label">Policy Number</p>
-                        <p class="detail-value font-mono text-[11px] tracking-widest">A1317...R02</p>
+                        <p class="detail-value font-mono text-[11px] tracking-widest">{{currentPolicy.policyNumber}}</p>
                       </div>
                       <div>
                         <p class="detail-label">Cover End</p>
-                        <p class="detail-value text-red-300">29 Jul 2021</p>
+                        <p class="detail-value" [ngClass]="currentPolicy.status === 'EXPIRED' ? 'text-red-300' : 'text-emerald-300'">{{currentPolicy.coverEnd}}</p>
                       </div>
                     </div>
                   </div>
@@ -303,69 +304,59 @@ interface NestedItem {
 
             <div class="flex-1 p-5 space-y-2.5 overflow-y-auto max-h-[600px] custom-scrollbar">
 
-              <div class="top-accordion" [class.top-accordion--open]="homeOpen">
-                <button (click)="toggleHome()" class="top-accordion-trigger">
+              <div class="top-accordion" [class.top-accordion--open]="policyOpen">
+                <button (click)="policyOpen = !policyOpen" class="top-accordion-trigger">
                   <div class="flex items-center gap-3">
-                    <div class="trigger-icon-wrap" [class.trigger-icon-wrap--active]="homeOpen">
-                      <lucide-icon [img]="HomeIcon" class="w-4 h-4"></lucide-icon>
+                    <div class="trigger-icon-wrap" [class.trigger-icon-wrap--active]="policyOpen" [ngClass]="getPolicyIconWrapStaticClass()">
+                      <lucide-icon [img]="getPolicyIcon()" class="w-4 h-4"></lucide-icon>
                     </div>
                     <div>
-                      <p class="text-xs font-bold text-[#1a2660] uppercase tracking-widest">Home Policy</p>
-                      <p class="text-[10px] text-[#A3AED0] mt-0.5">{{sections.length}} data categories</p>
+                      <p class="text-xs font-bold text-[#1a2660] uppercase tracking-widest">{{selectedPolicy}} Policy</p>
+                      <p class="text-[10px] text-[#A3AED0] mt-0.5">{{currentPolicy.sections.length}} data categories</p>
                     </div>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold text-[#4318FF] bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-full">{{sections.length}} sections</span>
-                    <div class="chevron-wrap" [class.chevron-wrap--open]="homeOpen">
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" [ngClass]="getPolicyCountBadgeClass()">{{currentPolicy.sections.length}} sections</span>
+                    <div class="chevron-wrap" [class.chevron-wrap--open]="policyOpen">
                       <lucide-icon [img]="ChevronDown" class="w-4 h-4 text-[#A3AED0]"></lucide-icon>
                     </div>
                   </div>
                 </button>
 
-                <div *ngIf="homeOpen" class="top-accordion-body animate-accordion-in">
-                  <div *ngFor="let sub of sections; let i = index"
+                <div *ngIf="policyOpen" class="top-accordion-body animate-accordion-in">
+                  <div *ngFor="let sub of currentPolicy.sections; let i = index"
                     class="sub-item"
                     [class.sub-item--open]="sub.open"
                     [style.animation-delay]="(i * 35) + 'ms'">
 
                     <button (click)="sub.open = !sub.open" class="sub-trigger group/sub">
                       <div class="flex items-center gap-3">
-                        <div class="sub-dot" [class.sub-dot--open]="sub.open"></div>
-                        <span class="text-[11px] font-bold text-[#2B3674] group-hover/sub:text-[#4318FF] transition-colors duration-150 tracking-wide">
+                        <div class="sub-dot" [class.sub-dot--open]="sub.open" [ngClass]="getPolicyDotClass(sub.open)"></div>
+                        <span class="text-[11px] font-bold text-[#2B3674] transition-colors duration-150 tracking-wide"
+                          [ngClass]="sub.open ? getPolicyTextClass() : 'group-hover/sub:text-[#4318FF]'">
                           {{sub.title}}
                         </span>
                       </div>
                       <div class="flex items-center gap-2">
                         <span *ngIf="sub.items" class="item-count-badge">{{sub.items.length}}</span>
-                        <span *ngIf="sub.description" class="item-count-badge item-count-badge--amber">!</span>
                         <lucide-icon [img]="sub.open ? ChevronUp : ChevronDown"
                           class="w-3.5 h-3.5 text-[#A3AED0] transition-transform duration-200"></lucide-icon>
                       </div>
                     </button>
 
                     <div *ngIf="sub.open" class="sub-content animate-fade-in">
-                      <div class="sub-accent-bar"></div>
+                      <div class="sub-accent-bar" [ngClass]="getPolicyAccentClass()"></div>
 
                       <ng-container *ngIf="sub.items">
                         <div *ngFor="let item of sub.items; let j = index"
                           class="data-row"
                           [style.animation-delay]="(j * 25) + 'ms'">
-                          <div class="data-check">
-                            <lucide-icon [img]="CheckCircle2" class="w-3 h-3 text-emerald-500"></lucide-icon>
+                          <div class="data-check" [ngClass]="getPolicyDataCheckClass()">
+                            <lucide-icon [img]="CheckCircle2" class="w-3 h-3" [ngClass]="getPolicyCheckIconClass()"></lucide-icon>
                           </div>
                           <span class="text-[11px] font-medium text-[#2B3674] leading-relaxed">{{item}}</span>
                         </div>
                       </ng-container>
-
-                      <div *ngIf="sub.description" class="premium-note">
-                        <div class="premium-note-header">
-                          <div class="premium-note-icon">
-                            <lucide-icon [img]="ShieldCheck" class="w-3.5 h-3.5 text-amber-600"></lucide-icon>
-                          </div>
-                          <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider">Encrypted Access Required</span>
-                        </div>
-                        <p class="text-[11px] font-medium text-amber-900/80 leading-relaxed mt-3">{{sub.description}}</p>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -798,6 +789,11 @@ interface NestedItem {
       color: rgba(255,255,255,0.85);
       letter-spacing: 0.03em;
     }
+    .active-badge {
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
+      color: #6ee7b7;
+    }
     .expired-badge {
       display: inline-flex; align-items: center; gap: 4px;
       padding: 4px 10px;
@@ -806,6 +802,13 @@ interface NestedItem {
       border-radius: 6px;
       font-size: 10px; font-weight: 800;
       color: #fca5a5;
+      letter-spacing: 0.08em;
+    }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 10px; font-weight: 800;
       letter-spacing: 0.08em;
     }
 
@@ -1027,74 +1030,185 @@ export class ConsentDetailComponent {
   readonly FileText = FileText;
   readonly Infinity = Infinity;
 
-  homeOpen = true;
+  readonly Heart = Heart;
+  readonly Car = Car;
+  readonly Plane = Plane;
+
+  selectedPolicy: string = 'HOME';
+  policyOpen = true;
   idCopied = false;
 
-  sections: NestedItem[] = [
-    {
-      title: 'Policy Details',
-      open: true,
-      items: [
-        'Your Insurance Policy Number',
-        'The cover start date and end date, when applicable'
+  private route = inject(ActivatedRoute);
+
+  policyMockups: any = {
+    '1': {
+      type: 'HOME',
+      planType: 'Villa',
+      planName: 'HOME SAFE PLATINUM',
+      policyNumber: 'A1317...R02',
+      coverEnd: '29 Jul 2021',
+      status: 'EXPIRED',
+      icon: this.HomeIcon,
+      color: 'teal',
+      sections: [
+        { title: 'Policy Details', open: true, items: ['Your Insurance Policy Number', 'The cover start date and end date'] },
+        { title: 'Customer Details', open: false, items: ['Your full name', 'Address information', 'Date of Birth'] },
+        { title: 'Premium Details', open: false, items: ['Premium amount', 'Payment history'] }
       ]
     },
-    {
-      title: 'Your Basic Customer Details',
-      open: false,
-      items: [
-        'Your full name',
-        'Address information',
-        'Contact information',
-        'Date of Birth'
+    '2': {
+      type: 'MEDICAL',
+      planType: 'Individual',
+      planName: 'AFFINITY INDIVIDUAL',
+      policyNumber: '601003',
+      coverEnd: '06 Feb 2024',
+      status: 'EXPIRED',
+      icon: this.Heart,
+      color: 'rose',
+      sections: [
+        { title: 'Member Details', open: true, items: ['Full Name of Member', 'Medical Card Number', 'Date of Birth'] },
+        { title: 'Plan Coverage', open: false, items: ['In-patient Limits', 'Out-patient Co-payment', 'Dental/Optical Benefits'] },
+        { title: 'Provider Network', open: false, items: ['List of Hospitals', 'Direct Billing Status'] }
       ]
     },
-    {
-      title: 'Your Detailed Customer Details',
-      open: false,
-      items: [
-        'Your identity details',
-        'Your employment details, when held.'
+    '3': {
+      type: 'TRAVEL',
+      planType: 'Multi-Trip',
+      planName: 'GLOBE TROTTER PLUS',
+      policyNumber: 'TRV-4421-B',
+      coverEnd: '12 Sep 2026',
+      status: 'ACTIVE',
+      icon: this.Plane,
+      color: 'sky',
+      sections: [
+        { title: 'Trip Details', open: true, items: ['Destination Scope', 'Travel Dates', 'Flight PNR linkage'] },
+        { title: 'Travelers', open: false, items: ['Primary Insured', 'Accompanying Family Members'] },
+        { title: 'Emergency Contact', open: false, items: ['24/7 Helpline Number', 'Local Assistance Partners'] }
       ]
     },
-    {
-      title: 'Product Information',
-      open: false,
-      items: [
-        'Your insurance coverage details',
-        'Details of the item, property, or individual covered under the insurance policy.',
-        'Details of any insurance cover add-ons included in the policy',
-        'Details of the parties covered by the insurance policy'
-      ]
-    },
-    {
-      title: 'Claims Details',
-      open: false,
-      items: [
-        'Details of any insurance claims declared during the insurance application.',
-        'Details of any subsequent claims made during the duration of the policy.'
-      ]
-    },
-    {
-      title: 'Premium Details',
-      open: false,
-      description: 'As part of your consent, the premium details for the selected insurance policies will be securely shared with TPP Client Test. To protect this information, your premium details will be encrypted when requested. A one-time code will be sent to your mobile ending 971. You will need to provide this code to TPP Client Test when prompted, so they can display your premium details. Please note: this code will expire after 2 hours. After that, the premium details won\'t be available to view unless you request them again.'
-    },
-    {
-      title: 'Payment Details',
-      open: false,
-      items: [
-        'Your bank account details used or being used to make the insurance premiums.'
+    '4': {
+      type: 'MOTOR',
+      planType: 'Comprehensive',
+      planName: 'MOTOR SECURE GOLD',
+      policyNumber: 'M9921...X05',
+      coverEnd: '15 Dec 2024',
+      status: 'ACTIVE',
+      icon: this.Car,
+      color: 'indigo',
+      sections: [
+        { title: 'Vehicle Details', open: true, items: ['Plate Number', 'VIM / Chassis Number', 'Make/Model'] },
+        { title: 'Coverage Scope', open: false, items: ['Third Party Liability', 'Roadside Assistance', 'Own Damage Cover'] },
+        { title: 'Claims Profile', open: false, items: ['No-claims Bonus Level', 'Recent Claims History'] }
       ]
     }
-  ];
+  };
 
-  toggleHome() {
-    this.homeOpen = !this.homeOpen;
+  get currentPolicy() {
+    const id = this.route.snapshot.paramMap.get('id') || '1';
+    const data = this.policyMockups[id] || this.policyMockups['1'];
+    this.selectedPolicy = data.type;
+    return data;
+  }
+
+  getPolicyIcon() { return this.currentPolicy.icon; }
+
+  getPolicyColorClass() {
+    switch (this.currentPolicy.color) {
+      case 'rose': return 'text-rose-400';
+      case 'sky': return 'text-sky-400';
+      case 'indigo': return 'text-indigo-400';
+      default: return 'text-teal-400';
+    }
+  }
+
+  getPolicyBadgeClass() {
+    const base = 'policy-type-badge ';
+    switch (this.currentPolicy.color) {
+      case 'rose': return base + 'border-rose-200 bg-rose-50 text-rose-600';
+      case 'sky': return base + 'border-sky-200 bg-sky-50 text-sky-600';
+      case 'indigo': return base + 'border-indigo-200 bg-indigo-50 text-indigo-600';
+      default: return base;
+    }
+  }
+
+  getPolicyIconWrapClass() {
+    const base = 'inner-icon-wrap ';
+    switch (this.currentPolicy.color) {
+      case 'rose': return base + 'bg-rose-500/10 border-rose-500/20 text-rose-400';
+      case 'sky': return base + 'bg-sky-500/10 border-sky-500/20 text-sky-400';
+      case 'indigo': return base + 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400';
+      default: return base;
+    }
+  }
+
+  getPolicyIconWrapStaticClass() {
+    const base = 'trigger-icon-wrap ';
+    if (!this.policyOpen) return base;
+    switch (this.currentPolicy.color) {
+      case 'rose': return base + '!bg-rose-500 !text-white !border-transparent shadow-rose-200';
+      case 'sky': return base + '!bg-sky-500 !text-white !border-transparent shadow-sky-200';
+      case 'indigo': return base + '!bg-indigo-500 !text-white !border-transparent shadow-indigo-200';
+      default: return base + 'trigger-icon-wrap--active';
+    }
+  }
+
+  getPolicyCountBadgeClass() {
+    switch (this.currentPolicy.color) {
+      case 'rose': return 'bg-rose-50 text-rose-600 border-rose-100';
+      case 'sky': return 'bg-sky-50 text-sky-600 border-sky-100';
+      case 'indigo': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
+      default: return 'bg-indigo-50 text-[#4318FF] border-indigo-100';
+    }
+  }
+
+  getPolicyDotClass(open: boolean) {
+    if (!open) return '';
+    switch (this.currentPolicy.color) {
+      case 'rose': return '!bg-rose-500 shadow-[0_0_0_3px_rgba(244,63,94,0.15)]';
+      case 'sky': return '!bg-sky-500 shadow-[0_0_0_3px_rgba(14,165,233,0.15)]';
+      case 'indigo': return '!bg-indigo-500 shadow-[0_0_0_3px_rgba(99,102,241,0.15)]';
+      default: return 'sub-dot--open';
+    }
+  }
+
+  getPolicyTextClass() {
+    switch (this.currentPolicy.color) {
+      case 'rose': return 'text-rose-600';
+      case 'sky': return 'text-sky-600';
+      case 'indigo': return 'text-indigo-600';
+      default: return 'text-[#4318FF]';
+    }
+  }
+
+  getPolicyAccentClass() {
+    switch (this.currentPolicy.color) {
+      case 'rose': return 'bg-gradient-to-b from-rose-500 to-rose-50';
+      case 'sky': return 'bg-gradient-to-b from-sky-500 to-sky-50';
+      case 'indigo': return 'bg-gradient-to-b from-indigo-500 to-indigo-50';
+      default: return 'sub-accent-bar';
+    }
+  }
+
+  getPolicyDataCheckClass() {
+    switch (this.currentPolicy.color) {
+      case 'rose': return 'bg-rose-50 border-rose-100';
+      case 'sky': return 'bg-sky-50 border-sky-100';
+      case 'indigo': return 'bg-indigo-50 border-indigo-100';
+      default: return '';
+    }
+  }
+
+  getPolicyCheckIconClass() {
+    switch (this.currentPolicy.color) {
+      case 'rose': return 'text-rose-500';
+      case 'sky': return 'text-sky-500';
+      case 'indigo': return 'text-indigo-500';
+      default: return 'text-emerald-500';
+    }
   }
 
   getOpenCount(): number {
-    return this.sections.filter(s => s.open).length;
+    return this.currentPolicy.sections.filter((s: any) => s.open).length;
   }
 
   copyId() {
