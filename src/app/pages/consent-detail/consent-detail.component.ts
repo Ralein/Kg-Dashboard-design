@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import {
@@ -98,8 +98,8 @@ interface NestedItem {
                     6a14XXXXXXX54c5
                   </span>
                   <button (click)="copyId()" class="copy-btn-hero" title="Copy ID">
-                    <lucide-icon [img]="idCopied ? CheckCircle2 : ClipboardCheck" class="w-3.5 h-3.5"></lucide-icon>
-                    <span *ngIf="idCopied" class="copy-toast-hero">Copied!</span>
+                    <lucide-icon [img]="idCopied() ? CheckCircle2 : ClipboardCheck" class="w-3.5 h-3.5"></lucide-icon>
+                    <span *ngIf="idCopied()" class="copy-toast-hero">Copied!</span>
                   </button>
                 </div>
 
@@ -118,7 +118,7 @@ interface NestedItem {
                   </span>
                   <span class="hero-tag">
                     <lucide-icon [img]="getPolicyIcon()" class="w-3 h-3" [ngClass]="getPolicyColorClass()"></lucide-icon>
-                    {{selectedPolicy}} Policy
+                    {{selectedPolicy()}} Policy
                   </span>
                 </div>
               </div>
@@ -161,7 +161,7 @@ interface NestedItem {
             <div class="flex items-center gap-2 mt-1">
               <span class="meta-value font-mono text-[12px] tracking-wider">6a14XXXXXXX54c5</span>
               <button (click)="copyId()" class="text-[#4318FF]/60 hover:text-[#4318FF] p-1 rounded-md hover:bg-indigo-50 transition-all active:scale-90">
-                <lucide-icon [img]="idCopied ? CheckCircle2 : ClipboardCheck" class="w-3.5 h-3.5"></lucide-icon>
+                <lucide-icon [img]="idCopied() ? CheckCircle2 : ClipboardCheck" class="w-3.5 h-3.5"></lucide-icon>
               </button>
             </div>
           </div>
@@ -223,7 +223,7 @@ interface NestedItem {
                 </div>
                 <div class="policy-type-badge" [ngClass]="getPolicyBadgeClass()">
                   <lucide-icon [img]="getPolicyIcon()" class="w-3.5 h-3.5"></lucide-icon>
-                  <span>{{selectedPolicy}}</span>
+                  <span>{{selectedPolicy()}}</span>
                 </div>
               </div>
 
@@ -304,32 +304,32 @@ interface NestedItem {
 
             <div class="flex-1 p-5 space-y-2.5 overflow-y-auto max-h-[600px] custom-scrollbar">
 
-              <div class="top-accordion" [class.top-accordion--open]="policyOpen">
-                <button (click)="policyOpen = !policyOpen" class="top-accordion-trigger">
+              <div class="top-accordion" [class.top-accordion--open]="policyOpen()">
+                <button (click)="policyOpen.set(!policyOpen())" class="top-accordion-trigger">
                   <div class="flex items-center gap-3">
-                    <div class="trigger-icon-wrap" [class.trigger-icon-wrap--active]="policyOpen" [ngClass]="getPolicyIconWrapStaticClass()">
+                    <div class="trigger-icon-wrap" [class.trigger-icon-wrap--active]="policyOpen()" [ngClass]="getPolicyIconWrapStaticClass()">
                       <lucide-icon [img]="getPolicyIcon()" class="w-4 h-4"></lucide-icon>
                     </div>
                     <div>
-                      <p class="text-xs font-bold text-[#1a2660] uppercase tracking-widest">{{selectedPolicy}} Policy</p>
-                      <p class="text-[10px] text-[#A3AED0] mt-0.5">{{currentPolicy.sections.length}} data categories</p>
+                      <p class="text-xs font-bold text-[#1a2660] uppercase tracking-widest">{{selectedPolicy()}} Policy</p>
+                      <p class="text-[10px] text-[#A3AED0] mt-0.5">{{sections().length}} data categories</p>
                     </div>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" [ngClass]="getPolicyCountBadgeClass()">{{currentPolicy.sections.length}} sections</span>
-                    <div class="chevron-wrap" [class.chevron-wrap--open]="policyOpen">
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" [ngClass]="getPolicyCountBadgeClass()">{{sections().length}} sections</span>
+                    <div class="chevron-wrap" [class.chevron-wrap--open]="policyOpen()">
                       <lucide-icon [img]="ChevronDown" class="w-4 h-4 text-[#A3AED0]"></lucide-icon>
                     </div>
                   </div>
                 </button>
 
-                <div *ngIf="policyOpen" class="top-accordion-body animate-accordion-in">
-                  <div *ngFor="let sub of currentPolicy.sections; let i = index"
+                <div *ngIf="policyOpen()" class="top-accordion-body animate-accordion-in">
+                  <div *ngFor="let sub of sections(); let i = index"
                     class="sub-item"
                     [class.sub-item--open]="sub.open"
                     [style.animation-delay]="(i * 35) + 'ms'">
 
-                    <button (click)="sub.open = !sub.open" class="sub-trigger group/sub">
+                    <button (click)="toggleSection(i)" class="sub-trigger group/sub">
                       <div class="flex items-center gap-3">
                         <div class="sub-dot" [class.sub-dot--open]="sub.open" [ngClass]="getPolicyDotClass(sub.open)"></div>
                         <span class="text-[11px] font-bold text-[#2B3674] transition-colors duration-150 tracking-wide"
@@ -347,6 +347,7 @@ interface NestedItem {
                     <div *ngIf="sub.open" class="sub-content animate-fade-in">
                       <div class="sub-accent-bar" [ngClass]="getPolicyAccentClass()"></div>
 
+                      <!-- Items List -->
                       <ng-container *ngIf="sub.items">
                         <div *ngFor="let item of sub.items; let j = index"
                           class="data-row"
@@ -357,6 +358,14 @@ interface NestedItem {
                           <span class="text-[11px] font-medium text-[#2B3674] leading-relaxed">{{item}}</span>
                         </div>
                       </ng-container>
+
+                      <!-- Description Block (e.g. for Premium Details) -->
+                      <div *ngIf="sub.description" class="p-1 px-2">
+                        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-amber-50/50 border border-amber-100/50">
+                          <lucide-icon [img]="AlertCircle" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></lucide-icon>
+                          <p class="text-[11px] text-[#4F5B7D] font-medium leading-[1.6]">{{sub.description}}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1009,7 +1018,7 @@ interface NestedItem {
     }
   `]
 })
-export class ConsentDetailComponent {
+export class ConsentDetailComponent implements OnInit {
   readonly ClipboardCheck = ClipboardCheck;
   readonly History = History;
   readonly HomeIcon = HomeIcon;
@@ -1034,9 +1043,68 @@ export class ConsentDetailComponent {
   readonly Car = Car;
   readonly Plane = Plane;
 
-  selectedPolicy: string = 'HOME';
-  policyOpen = true;
-  idCopied = false;
+  selectedPolicy = signal('HOME');
+  policyOpen = signal(true);
+  idCopied = signal(false);
+
+  sections = signal<NestedItem[]>([
+    {
+      title: 'Policy Details',
+      open: true,
+      items: [
+        'Your Insurance Policy Number',
+        'The cover start date and end date, when applicable'
+      ]
+    },
+    {
+      title: 'Your Basic Customer Details',
+      open: false,
+      items: [
+        'Your full name',
+        'Address information',
+        'Contact information',
+        'Date of Birth'
+      ]
+    },
+    {
+      title: 'Your Detailed Customer Details',
+      open: false,
+      items: [
+        'Your identity details',
+        'Your employment details, when held.'
+      ]
+    },
+    {
+      title: 'Product Information',
+      open: false,
+      items: [
+        'Your insurance coverage details',
+        'Details of the item, property, or individual covered under the insurance policy.',
+        'Details of any insurance cover add-ons included in the policy',
+        'Details of the parties covered by the insurance policy'
+      ]
+    },
+    {
+      title: 'Claims Details',
+      open: false,
+      items: [
+        'Details of any insurance claims declared during the insurance application.',
+        'Details of any subsequent claims made during the duration of the policy.'
+      ]
+    },
+    {
+      title: 'Premium Details',
+      open: false,
+      description: 'As part of your consent, the premium details for the selected insurance policies will be securely shared with TPP Client Test. To protect this information, your premium details will be encrypted when requested. A one-time code will be sent to your mobile ending 971. You will need to provide this code to TPP Client Test when prompted, so they can display your premium details. Please note: this code will expire after 2 hours. After that, the premium details won\'t be available to view unless you request them again.'
+    },
+    {
+      title: 'Payment Details',
+      open: false,
+      items: [
+        'Your bank account details used or being used to make the insurance premiums.'
+      ]
+    }
+  ]);
 
   private route = inject(ActivatedRoute);
 
@@ -1105,9 +1173,13 @@ export class ConsentDetailComponent {
 
   get currentPolicy() {
     const id = this.route.snapshot.paramMap.get('id') || '1';
+    return this.policyMockups[id] || this.policyMockups['1'];
+  }
+
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id') || '1';
     const data = this.policyMockups[id] || this.policyMockups['1'];
-    this.selectedPolicy = data.type;
-    return data;
+    this.selectedPolicy.set(data.type);
   }
 
   getPolicyIcon() { return this.currentPolicy.icon; }
@@ -1143,7 +1215,7 @@ export class ConsentDetailComponent {
 
   getPolicyIconWrapStaticClass() {
     const base = 'trigger-icon-wrap ';
-    if (!this.policyOpen) return base;
+    if (!this.policyOpen()) return base;
     switch (this.currentPolicy.color) {
       case 'rose': return base + '!bg-rose-500 !text-white !border-transparent shadow-rose-200';
       case 'amber': return base + '!bg-amber-500 !text-white !border-transparent shadow-amber-200';
@@ -1208,12 +1280,20 @@ export class ConsentDetailComponent {
   }
 
   getOpenCount(): number {
-    return this.currentPolicy.sections.filter((s: any) => s.open).length;
+    return this.sections().filter(s => s.open).length;
+  }
+
+  toggleSection(index: number) {
+    this.sections.update(sections => {
+      const newSections = [...sections];
+      newSections[index] = { ...newSections[index], open: !newSections[index].open };
+      return newSections;
+    });
   }
 
   copyId() {
     navigator.clipboard.writeText('6a14XXXXXXX54c5');
-    this.idCopied = true;
-    setTimeout(() => this.idCopied = false, 2000);
+    this.idCopied.set(true);
+    setTimeout(() => this.idCopied.set(false), 2000);
   }
 }
