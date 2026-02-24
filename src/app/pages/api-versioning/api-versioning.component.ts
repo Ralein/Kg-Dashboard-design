@@ -94,6 +94,8 @@ import { Router } from '@angular/router';
           <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div class="flex items-start gap-5">
               <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#B299FF] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
+                <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                <div class="premium-shine absolute inset-0 pointer-events-none"></div>
                 <lucide-icon [img]="Settings2" class="w-8 h-8 text-white relative z-10"></lucide-icon>
               </div>
               <div class="flex flex-col gap-2">

@@ -30,13 +30,18 @@ import { Router } from '@angular/router';
              style="background: radial-gradient(circle, #3b82f6, transparent 65%);"></div>
 
         <!-- Logo -->
-        <div class="relative z-10 flex items-center gap-2.5">
-          <div class="flex items-center justify-center w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md shadow-lg shadow-[#000000]/10 border border-white/20 flex-shrink-0 relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-[#ffffff]/10 to-transparent opacity-50"></div>
-            <img src="cropped-favicon.png" alt="n-sure" class="w-6 h-6 object-contain relative z-10">
+        <div class="relative z-10 flex items-center gap-5">
+          <div class="flex items-center justify-center w-20 h-20 rounded-[28px] bg-white/10 backdrop-blur-xl shadow-2xl shadow-black/20 border border-white/20 flex-shrink-0 relative overflow-hidden group/logo">
+            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover/logo:opacity-100 transition-opacity duration-700"></div>
+            <img src="cropped-favicon.png" alt="n-sure" class="w-12 h-12 object-contain relative z-10 transition-transform duration-700 group-hover/logo:scale-110">
           </div>
-          <span class="text-xl font-light text-white tracking-tight">n-<strong class="font-bold">sure</strong></span>
-          <span class="text-[9px] font-bold tracking-[2px] text-[#fabd00] bg-[#fabd00]/10 border border-[#fabd00]/25 px-2 py-0.5 rounded-full">OFI</span>
+          <div class="flex flex-col gap-0">
+            <div class="flex items-center gap-3">
+              <span class="text-[42px] font-black text-white leading-none tracking-[-0.04em]">n-<span class="text-[#fabd00]">sure</span></span>
+              <span class="text-[10px] mt-3 font-black tracking-[2px] text-[#fabd00] bg-[#fabd00]/10 border border-[#fabd00]/25 px-2.5 py-1 rounded-full translate-y-[-2px]">OFI</span>
+            </div>
+            <span class="text-[12px] font-black tracking-[4px] text-[#fabd00] uppercase mt-1 opacity-80">Infrastructure</span>
+          </div>
         </div>
 
         <!-- Hero copy — vertically centered -->
@@ -44,31 +49,19 @@ import { Router } from '@angular/router';
           <p class="text-[10px] font-semibold tracking-[3px] uppercase text-[#fabd00]/60 animate-fade-up" style="animation-delay:0.1s">
             Open Finance Infrastructure
           </p>
-          <h1 class="font-extrabold leading-[1.08] text-white/95 animate-fade-up"
-              style="font-size: clamp(36px, 4vw, 52px); letter-spacing: -2px; animation-delay:0.2s">
-            One gateway.<br/>
-            <span style="background: linear-gradient(90deg, #fabd00, #ef4444);
+          <h1 class="font-black leading-[1] text-white animate-fade-up"
+              style="font-size: clamp(48px, 5vw, 64px); letter-spacing: -3px; animation-delay:0.2s">
+            Digital Trust.<br/>
+            <span style="background: linear-gradient(90deg, #fabd00, #ff8a00);
                          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-              Infinite
+              Unified
             </span><br/>
-            possibilities.
+            Ecosystem.
           </h1>
-          <p class="text-sm font-normal leading-relaxed text-white/35 max-w-xs animate-fade-up" style="animation-delay:0.35s">
-            Manage consents, APIs, and real-time analytics across your entire open finance ecosystem.
+          <p class="text-base font-medium leading-relaxed text-white/40 max-w-sm animate-fade-up" style="animation-delay:0.35s">
+            One gateway to manage your<br/>
+            open finance ecosystem.
           </p>
-
-          <!-- Pill badges -->
-          <div class="flex gap-2 flex-wrap animate-fade-up" style="animation-delay:0.5s">
-            @for (tag of tags; track tag.label) {
-              <span class="flex items-center gap-1.5 text-[10px] font-semibold px-3 py-1.5 rounded-full border"
-                    [style.color]="tag.color"
-                    [style.border-color]="tag.color + '35'"
-                    [style.background]="tag.color + '12'">
-                <span class="w-1.5 h-1.5 rounded-full inline-block" [style.background]="tag.color"></span>
-                {{ tag.label }}
-              </span>
-            }
-          </div>
         </div>
 
         <!-- Footer -->
@@ -86,9 +79,9 @@ import { Router } from '@angular/router';
 
         <div class="w-full max-w-[380px] flex flex-col gap-8 relative z-10 animate-slide-up">
 
-          <div class="flex flex-col gap-1.5">
-            <h2 class="text-2xl font-extrabold text-[#0d1b3e] tracking-tight">Welcome back</h2>
-            <p class="text-sm text-slate-400 font-medium">Sign in to your n-sure OFI account</p>
+          <div class="flex flex-col gap-2">
+            <h2 class="text-3xl font-black text-[#0d1b3e] tracking-tight">Portal Access</h2>
+            <p class="text-sm text-slate-400 font-bold uppercase tracking-widest">Enterprise Authentication</p>
           </div>
 
           <form class="flex flex-col gap-4" (ngSubmit)="onSubmit()">
@@ -107,9 +100,9 @@ import { Router } from '@angular/router';
                 <input type="text" [(ngModel)]="username" name="username" placeholder="Enter your username"
                   (focus)="usernameFocused = true" (blur)="usernameFocused = false"
                   autocomplete="username" required
-                  class="w-full pl-10 pr-4 py-3 text-sm font-medium text-[#0d1b3e] placeholder:text-slate-300 bg-slate-50 rounded-xl outline-none transition-all duration-200"
-                  [style.border]="usernameFocused ? '1.5px solid #1a2f5a' : '1.5px solid #e2e8f0'"
-                  [style.box-shadow]="usernameFocused ? '0 0 0 4px rgba(26,47,90,0.07)' : 'none'"/>
+                  class="w-full pl-10 pr-4 py-4 text-sm font-bold text-[#0d1b3e] placeholder:text-slate-300 bg-slate-50 rounded-2xl outline-none transition-all duration-300 border-2"
+                  [style.borderColor]="usernameFocused ? '#1a2f5a' : '#f1f5f9'"
+                  [style.boxShadow]="usernameFocused ? '0 12px 24px -8px rgba(26,47,90,0.15)' : 'none'"/>
               </div>
             </div>
 
@@ -127,9 +120,9 @@ import { Router } from '@angular/router';
                 <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password"
                   placeholder="••••••••" (focus)="passwordFocused = true" (blur)="passwordFocused = false"
                   autocomplete="current-password" required
-                  class="w-full pl-10 pr-10 py-3 text-sm font-medium text-[#0d1b3e] placeholder:text-slate-300 bg-slate-50 rounded-xl outline-none transition-all duration-200"
-                  [style.border]="passwordFocused ? '1.5px solid #1a2f5a' : '1.5px solid #e2e8f0'"
-                  [style.box-shadow]="passwordFocused ? '0 0 0 4px rgba(26,47,90,0.07)' : 'none'"/>
+                  class="w-full pl-10 pr-10 py-4 text-sm font-bold text-[#0d1b3e] placeholder:text-slate-300 bg-slate-50 rounded-2xl outline-none transition-all duration-300 border-2"
+                  [style.borderColor]="passwordFocused ? '#1a2f5a' : '#f1f5f9'"
+                  [style.boxShadow]="passwordFocused ? '0 12px 24px -8px rgba(26,47,90,0.15)' : 'none'"/>
                 <button type="button" tabindex="-1" (click)="showPassword = !showPassword"
                         class="absolute right-3.5 p-0.5 text-slate-300 hover:text-[#1a2f5a] transition-colors duration-200">
                   <svg *ngIf="!showPassword" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -246,8 +239,8 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   tags = [
     { label: 'Consent Management', color: '#fabd00' },
-    { label: 'API Gateway',        color: '#3b82f6' },
-    { label: 'Real-time Analytics',color: '#22c55e' },
+    { label: 'API Gateway', color: '#3b82f6' },
+    { label: 'Real-time Analytics', color: '#22c55e' },
   ];
 
   ngOnInit(): void {
@@ -270,7 +263,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!ctx) return;
 
     const resize = () => {
-      canvas.width  = canvas.offsetWidth;
+      canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     };
     resize();
@@ -308,7 +301,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     const COLOR = {
       gold: 'rgba(250,189,0,',
       blue: 'rgba(96,165,250,',
-      dim:  'rgba(180,200,255,',
+      dim: 'rgba(180,200,255,',
     };
 
     let t = 0;
@@ -321,8 +314,8 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       for (const n of nodes) {
         n.x += n.vx;
         n.y += n.vy;
-        if (n.x < 0 || n.x > canvas.width)  n.vx *= -1;
-        if (n.y < 0 || n.y > canvas.height)  n.vy *= -1;
+        if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+        if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
       }
 
       // ── Draw connections ──
@@ -339,9 +332,9 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
           const isBlueEdge = nodes[i].kind === 'blue' || nodes[j].kind === 'blue';
 
           let edgeColor: string;
-          if (isGoldEdge)       edgeColor = `rgba(250,189,0,${fade * 0.35})`;
-          else if (isBlueEdge)  edgeColor = `rgba(96,165,250,${fade * 0.2})`;
-          else                  edgeColor = `rgba(180,200,255,${fade * 0.08})`;
+          if (isGoldEdge) edgeColor = `rgba(250,189,0,${fade * 0.35})`;
+          else if (isBlueEdge) edgeColor = `rgba(96,165,250,${fade * 0.2})`;
+          else edgeColor = `rgba(180,200,255,${fade * 0.08})`;
 
           ctx.beginPath();
           ctx.moveTo(nodes[i].x, nodes[i].y);
@@ -366,7 +359,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       // ── Draw nodes ──
       for (const n of nodes) {
         const pulse = Math.sin(t * 1.5 + n.pulse) * 0.4 + 0.6; // 0.2 → 1.0
-        const col   = COLOR[n.kind];
+        const col = COLOR[n.kind];
 
         // Outer glow ring for gold/blue nodes
         if (n.kind !== 'dim') {
