@@ -1049,7 +1049,7 @@ export class ConsentDetailComponent {
       coverEnd: '29 Jul 2021',
       status: 'EXPIRED',
       icon: this.HomeIcon,
-      color: 'teal',
+      color: 'emerald',
       sections: [
         { title: 'Policy Details', open: true, items: ['Your Insurance Policy Number', 'The cover start date and end date'] },
         { title: 'Customer Details', open: false, items: ['Your full name', 'Address information', 'Date of Birth'] },
@@ -1079,7 +1079,7 @@ export class ConsentDetailComponent {
       coverEnd: '12 Sep 2026',
       status: 'ACTIVE',
       icon: this.Plane,
-      color: 'sky',
+      color: 'amber',
       sections: [
         { title: 'Trip Details', open: true, items: ['Destination Scope', 'Travel Dates', 'Flight PNR linkage'] },
         { title: 'Travelers', open: false, items: ['Primary Insured', 'Accompanying Family Members'] },
@@ -1115,9 +1115,9 @@ export class ConsentDetailComponent {
   getPolicyColorClass() {
     switch (this.currentPolicy.color) {
       case 'rose': return 'text-rose-400';
-      case 'sky': return 'text-sky-400';
+      case 'amber': return 'text-amber-400';
       case 'indigo': return 'text-indigo-400';
-      default: return 'text-teal-400';
+      default: return 'text-emerald-400';
     }
   }
 
@@ -1125,9 +1125,9 @@ export class ConsentDetailComponent {
     const base = 'policy-type-badge ';
     switch (this.currentPolicy.color) {
       case 'rose': return base + 'border-rose-200 bg-rose-50 text-rose-600';
-      case 'sky': return base + 'border-sky-200 bg-sky-50 text-sky-600';
+      case 'amber': return base + 'border-amber-200 bg-amber-50 text-amber-600';
       case 'indigo': return base + 'border-indigo-200 bg-indigo-50 text-indigo-600';
-      default: return base;
+      default: return base + 'border-emerald-200 bg-emerald-50 text-emerald-600';
     }
   }
 
@@ -1135,9 +1135,9 @@ export class ConsentDetailComponent {
     const base = 'inner-icon-wrap ';
     switch (this.currentPolicy.color) {
       case 'rose': return base + 'bg-rose-500/10 border-rose-500/20 text-rose-400';
-      case 'sky': return base + 'bg-sky-500/10 border-sky-500/20 text-sky-400';
+      case 'amber': return base + 'bg-amber-500/10 border-amber-500/20 text-amber-400';
       case 'indigo': return base + 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400';
-      default: return base;
+      default: return base + 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400';
     }
   }
 
@@ -1146,18 +1146,18 @@ export class ConsentDetailComponent {
     if (!this.policyOpen) return base;
     switch (this.currentPolicy.color) {
       case 'rose': return base + '!bg-rose-500 !text-white !border-transparent shadow-rose-200';
-      case 'sky': return base + '!bg-sky-500 !text-white !border-transparent shadow-sky-200';
+      case 'amber': return base + '!bg-amber-500 !text-white !border-transparent shadow-amber-200';
       case 'indigo': return base + '!bg-indigo-500 !text-white !border-transparent shadow-indigo-200';
-      default: return base + 'trigger-icon-wrap--active';
+      default: return base + '!bg-emerald-500 !text-white !border-transparent shadow-emerald-200';
     }
   }
 
   getPolicyCountBadgeClass() {
     switch (this.currentPolicy.color) {
       case 'rose': return 'bg-rose-50 text-rose-600 border-rose-100';
-      case 'sky': return 'bg-sky-50 text-sky-600 border-sky-100';
+      case 'amber': return 'bg-amber-50 text-amber-600 border-amber-100';
       case 'indigo': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
-      default: return 'bg-indigo-50 text-[#4318FF] border-indigo-100';
+      default: return 'bg-emerald-50 text-emerald-600 border-emerald-100';
     }
   }
 
@@ -1165,43 +1165,43 @@ export class ConsentDetailComponent {
     if (!open) return '';
     switch (this.currentPolicy.color) {
       case 'rose': return '!bg-rose-500 shadow-[0_0_0_3px_rgba(244,63,94,0.15)]';
-      case 'sky': return '!bg-sky-500 shadow-[0_0_0_3px_rgba(14,165,233,0.15)]';
+      case 'amber': return '!bg-amber-500 shadow-[0_0_0_3px_rgba(245,158,11,0.15)]';
       case 'indigo': return '!bg-indigo-500 shadow-[0_0_0_3px_rgba(99,102,241,0.15)]';
-      default: return 'sub-dot--open';
+      default: return '!bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.15)]';
     }
   }
 
   getPolicyTextClass() {
     switch (this.currentPolicy.color) {
       case 'rose': return 'text-rose-600';
-      case 'sky': return 'text-sky-600';
+      case 'amber': return 'text-amber-600';
       case 'indigo': return 'text-indigo-600';
-      default: return 'text-[#4318FF]';
+      default: return 'text-emerald-600';
     }
   }
 
   getPolicyAccentClass() {
     switch (this.currentPolicy.color) {
       case 'rose': return 'bg-gradient-to-b from-rose-500 to-rose-50';
-      case 'sky': return 'bg-gradient-to-b from-sky-500 to-sky-50';
+      case 'amber': return 'bg-gradient-to-b from-amber-500 to-amber-50';
       case 'indigo': return 'bg-gradient-to-b from-indigo-500 to-indigo-50';
-      default: return 'sub-accent-bar';
+      default: return 'bg-gradient-to-b from-emerald-500 to-emerald-50';
     }
   }
 
   getPolicyDataCheckClass() {
     switch (this.currentPolicy.color) {
       case 'rose': return 'bg-rose-50 border-rose-100';
-      case 'sky': return 'bg-sky-50 border-sky-100';
+      case 'amber': return 'bg-amber-50 border-amber-100';
       case 'indigo': return 'bg-indigo-50 border-indigo-100';
-      default: return '';
+      default: return 'bg-emerald-50 border-emerald-100';
     }
   }
 
   getPolicyCheckIconClass() {
     switch (this.currentPolicy.color) {
       case 'rose': return 'text-rose-500';
-      case 'sky': return 'text-sky-500';
+      case 'amber': return 'text-amber-500';
       case 'indigo': return 'text-indigo-500';
       default: return 'text-emerald-500';
     }
