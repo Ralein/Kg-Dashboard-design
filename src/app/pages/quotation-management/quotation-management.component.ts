@@ -80,16 +80,22 @@ interface Quote {
                   <option [value]="50">50</option>
                 </select>
               </div>
-              <div class="relative group">
-                <select class="glass-input pl-3 pr-8 py-2 cursor-pointer hover:bg-white/80 text-[10px] font-bold text-[#2B3674] appearance-none min-w-[120px]">
-                  <option>Available</option>
-                  <option>ApplicationPending</option>
-                  <option>Policy Issued</option>
-                  <option>Clear Filter</option>
-                </select>
-                <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-[#4318FF] transition-colors">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+              <div class="flex items-center gap-3 text-xs font-semibold text-[#A3AED0]">
+                <div class="relative group">
+                  <select [(ngModel)]="filterStatus" (ngModelChange)="currentPage = 1" class="glass-input pl-3 pr-8 py-2 cursor-pointer hover:bg-white/80 text-[10px] font-bold text-[#2B3674] appearance-none min-w-[120px]">
+                    <option value="All">All Status</option>
+                    <option value="Available">Available</option>
+                    <option value="ApplicationPending">ApplicationPending</option>
+                    <option value="Policy Issued">Policy Issued</option>
+                  </select>
+                  <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-[#4318FF] transition-colors">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                  </div>
                 </div>
+                <button *ngIf="filterStatus !== 'All' || searchQuery !== ''" (click)="clearFilters()" class="text-[10px] uppercase font-bold text-[#FF5252] hover:bg-[#FF5252]/10 px-2 py-1.5 rounded-lg transition-colors">
+                  Clear
+                </button>
+                <div class="h-4 w-px bg-white/10 mx-1"></div>
               </div>
               <button (click)="toggleFilter()" class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                 <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
@@ -209,6 +215,7 @@ export class QuotationManagementComponent {
 
   activeTab = signal('current');
   searchQuery = '';
+  filterStatus = 'All';
   currentPage = 1;
   itemsPerPage = 10;
   readonly Math = Math;
@@ -227,14 +234,24 @@ export class QuotationManagementComponent {
   ];
 
   get filteredQuotes(): Quote[] {
+    let filtered = this.quotes;
+
+    // Status Filter
+    if (this.filterStatus !== 'All') {
+      filtered = filtered.filter(q => q.status === this.filterStatus);
+    }
+
+    // Search Query
     const q = this.searchQuery.toLowerCase().trim();
-    if (!q) return this.quotes;
-    return this.quotes.filter(quote =>
-      quote.id.toLowerCase().includes(q) ||
-      quote.tppName.toLowerCase().includes(q) ||
-      quote.lob.toLowerCase().includes(q) ||
-      quote.status.toLowerCase().includes(q)
-    );
+    if (q) {
+      filtered = filtered.filter(quote =>
+        quote.id.toLowerCase().includes(q) ||
+        quote.tppName.toLowerCase().includes(q) ||
+        quote.lob.toLowerCase().includes(q) ||
+        quote.status.toLowerCase().includes(q)
+      );
+    }
+    return filtered;
   }
 
   get pagedQuotes(): Quote[] {
@@ -256,8 +273,17 @@ export class QuotationManagementComponent {
   prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
   goToPage(p: number): void { this.currentPage = p; }
 
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.filterStatus = 'All';
+    this.currentPage = 1;
+  }
+
   toggleFilter(): void {
-    console.log('Filter toggled');
+    const statuses = ['All', 'Available', 'ApplicationPending', 'Policy Issued'];
+    const currentIdx = statuses.indexOf(this.filterStatus);
+    this.filterStatus = statuses[(currentIdx + 1) % statuses.length];
+    this.currentPage = 1;
   }
 
   exportToCSV(): void {

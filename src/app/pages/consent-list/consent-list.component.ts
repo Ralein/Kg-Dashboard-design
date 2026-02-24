@@ -69,17 +69,37 @@ interface Consent {
                 <input 
                   type="text" 
                   [(ngModel)]="searchQuery"
+                  (ngModelChange)="currentPage = 1"
                   placeholder="Search Consents..." 
                   class="glass-input pl-10 pr-4 py-2 w-full text-xs transition-all duration-300 focus:w-full focus:shadow-[0_0_0_2px_rgba(67,24,255,0.1)]"
                 >
               </div>
-              <div class="flex items-center gap-2 bg-white/40 p-1 rounded-2xl border border-white/20">
-                <span class="text-[10px] font-bold text-[#A3AED0] px-2 uppercase tracking-wide">Show:</span>
-                <select [(ngModel)]="itemsPerPage" class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4 focus:ring-0">
-                  <option [value]="10">10</option>
-                  <option [value]="25">25</option>
-                  <option [value]="50">50</option>
-                </select>
+              <div class="flex items-center gap-3 text-xs font-semibold text-[#A3AED0]">
+                <div class="relative">
+                  <select [(ngModel)]="filterStatus" (ngModelChange)="currentPage = 1" class="glass-input cursor-pointer pr-8 py-2 bg-white/40 border-white/20 rounded-xl text-[#2B3674] font-bold text-[10px] appearance-none focus:ring-2 focus:ring-[#4318FF]/20 min-w-[120px]">
+                    <option value="All">All Status</option>
+                    <option value="Authorized">Authorized</option>
+                    <option value="AwaitingAuthorization">Awaiting Auth</option>
+                    <option value="Revoked">Revoked</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Suspended">Suspended</option>
+                  </select>
+                  <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#2B3674]/60">
+                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                </div>
+                <button *ngIf="filterStatus !== 'All' || searchQuery !== ''" (click)="clearFilters()" class="text-[10px] uppercase font-bold text-[#FF5252] hover:bg-[#FF5252]/10 px-2 py-1.5 rounded-lg transition-colors">
+                  Clear
+                </button>
+                <div class="h-4 w-px bg-white/10 mx-1"></div>
+                <div class="flex items-center gap-2 bg-white/40 p-1 rounded-2xl border border-white/20">
+                  <span class="text-[10px] font-bold text-[#A3AED0] px-2 uppercase tracking-wide">Show:</span>
+                  <select [(ngModel)]="itemsPerPage" (ngModelChange)="currentPage = 1" class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4 focus:ring-0">
+                    <option [value]="10">10</option>
+                    <option [value]="25">25</option>
+                    <option [value]="50">50</option>
+                  </select>
+                </div>
               </div>
               <button (click)="toggleFilter()" class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                 <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
@@ -189,6 +209,7 @@ export class ConsentListComponent implements OnInit {
 
   activeTab = 'current';
   searchQuery = '';
+  filterStatus = 'All';
   currentPage = 1;
   itemsPerPage = 10;
   loading = false;
@@ -237,14 +258,24 @@ export class ConsentListComponent implements OnInit {
   ];
 
   get filteredConsents(): Consent[] {
+    let filtered = this.consents;
+
+    // Status Filter
+    if (this.filterStatus !== 'All') {
+      filtered = filtered.filter(c => c.status === this.filterStatus);
+    }
+
+    // Search Query
     const q = this.searchQuery.toLowerCase().trim();
-    if (!q) return this.consents;
-    return this.consents.filter(c =>
-      c.consentId.toLowerCase().includes(q) ||
-      c.customerName.toLowerCase().includes(q) ||
-      c.tppName.toLowerCase().includes(q) ||
-      c.status.toLowerCase().includes(q)
-    );
+    if (q) {
+      filtered = filtered.filter(c =>
+        c.consentId.toLowerCase().includes(q) ||
+        c.customerName.toLowerCase().includes(q) ||
+        c.tppName.toLowerCase().includes(q) ||
+        c.status.toLowerCase().includes(q)
+      );
+    }
+    return filtered;
   }
 
   get pagedConsents(): Consent[] {
@@ -266,13 +297,17 @@ export class ConsentListComponent implements OnInit {
   prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
   goToPage(p: number): void { this.currentPage = p; }
 
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.filterStatus = 'All';
+    this.currentPage = 1;
+  }
+
   toggleFilter(): void {
-    // Basic status toggle for now
-    const statuses: ConsentStatus[] = ['Authorized', 'AwaitingAuthorization', 'Revoked', 'Expired', 'Suspended'];
-    const currentIdx = statuses.indexOf(this.consents[0].status);
-    const nextStatus = statuses[(currentIdx + 1) % statuses.length];
-    // This is just a UI demo of filter working
-    console.log('Filter toggled');
+    const statuses: (ConsentStatus | 'All')[] = ['All', 'Authorized', 'AwaitingAuthorization', 'Revoked', 'Expired', 'Suspended'];
+    const currentIdx = statuses.indexOf(this.filterStatus as any);
+    this.filterStatus = statuses[(currentIdx + 1) % statuses.length];
+    this.currentPage = 1;
   }
 
   exportToCSV(): void {

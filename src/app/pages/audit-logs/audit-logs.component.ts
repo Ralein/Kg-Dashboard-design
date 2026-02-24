@@ -43,9 +43,24 @@ interface AuditLog {
                   class="glass-input pl-10 pr-4 py-2 w-full text-xs"
                 >
             </div>
-            <div class="flex items-center gap-3 w-full md:w-auto">
+            <div class="flex items-center gap-3 w-full md:w-auto text-xs font-semibold text-[#A3AED0]">
+              <div class="relative">
+                <select [(ngModel)]="filterStatus" (ngModelChange)="currentPage = 1" class="glass-input cursor-pointer pr-8 py-1.5 bg-white/40 border-white/20 rounded-xl text-[#2B3674] font-bold text-xs appearance-none focus:ring-2 focus:ring-[#4318FF]/20 min-w-[120px]">
+                  <option value="All">All Status</option>
+                  <option value="200">Success (200)</option>
+                  <option value="400">Client Error (400+)</option>
+                  <option value="500">Server Error (500+)</option>
+                </select>
+                <div class="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#2B3674]/60">
+                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+              </div>
+              <button *ngIf="filterStatus !== 'All' || searchQuery !== ''" (click)="clearFilters()" class="text-[10px] uppercase font-bold text-[#FF5252] hover:bg-[#FF5252]/10 px-2 py-1.5 rounded-lg transition-colors">
+                Clear
+              </button>
+              <div class="h-4 w-px bg-gray-200 mx-1"></div>
               <div class="flex items-center gap-2 bg-white/40 p-1 rounded-2xl border border-white/20">
-                <span class="text-[10px] font-bold text-[#A3AED0] px-2">Items per page:</span>
+                <span class="text-[10px] font-bold text-[#A3AED0] px-2">Show:</span>
                 <select [(ngModel)]="itemsPerPage" (ngModelChange)="currentPage = 1" class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4 focus:ring-0">
                   <option [value]="5">5</option>
                   <option [value]="10">10</option>
@@ -147,6 +162,7 @@ export class AuditLogsComponent {
   readonly Math = Math;
 
   searchQuery = '';
+  filterStatus = 'All';
   currentPage = 1;
   itemsPerPage = 10;
 
@@ -164,14 +180,32 @@ export class AuditLogsComponent {
   ];
 
   get filteredLogs(): AuditLog[] {
+    let filtered = this.logs;
+
+    // Status Filter
+    if (this.filterStatus !== 'All') {
+      const statusNum = parseInt(this.filterStatus);
+      if (statusNum === 200) {
+        filtered = filtered.filter(l => l.status === 200);
+      } else if (statusNum === 400) {
+        filtered = filtered.filter(l => l.status >= 400 && l.status < 500);
+      } else if (statusNum === 500) {
+        filtered = filtered.filter(l => l.status >= 500);
+      }
+    }
+
+    // Search Query
     const q = this.searchQuery.toLowerCase().trim();
-    if (!q) return this.logs;
-    return this.logs.filter(l =>
-      l.timestamp.toLowerCase().includes(q) ||
-      l.service.toLowerCase().includes(q) ||
-      l.action.toLowerCase().includes(q) ||
-      l.groupName.toLowerCase().includes(q)
-    );
+    if (q) {
+      filtered = filtered.filter(l =>
+        l.timestamp.toLowerCase().includes(q) ||
+        l.service.toLowerCase().includes(q) ||
+        l.action.toLowerCase().includes(q) ||
+        l.groupName.toLowerCase().includes(q) ||
+        l.status.toString().includes(q)
+      );
+    }
+    return filtered;
   }
 
   get pagedLogs(): AuditLog[] {
@@ -193,8 +227,17 @@ export class AuditLogsComponent {
   prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
   goToPage(p: number): void { this.currentPage = p; }
 
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.filterStatus = 'All';
+    this.currentPage = 1;
+  }
+
   toggleFilter(): void {
-    console.log('Filter toggled');
+    const statuses = ['All', '200', '400', '500'];
+    const currentIdx = statuses.indexOf(this.filterStatus);
+    this.filterStatus = statuses[(currentIdx + 1) % statuses.length];
+    this.currentPage = 1;
   }
 
   exportToCSV(): void {
