@@ -19,20 +19,29 @@ export abstract class BaseChartComponent implements AfterViewInit, OnDestroy {
     @Input() duration = 1200;
     @Input() eased = true;
 
+    private resizeObserver!: ResizeObserver;
+
     ngAfterViewInit() {
         this.initCanvas();
         this.startAnimation();
-        window.addEventListener('resize', this.onResize);
+
+        // Use ResizeObserver for perfect tracking of container size changes (e.g. sidebar toggle)
+        this.resizeObserver = new ResizeObserver(() => {
+            this.onResize();
+        });
+        this.resizeObserver.observe(this.canvasRef.nativeElement.parentElement!);
     }
 
     ngOnDestroy() {
-        window.removeEventListener('resize', this.onResize);
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+        }
         if (this.animationId) cancelAnimationFrame(this.animationId);
     }
 
     protected initCanvas() {
         const canvas = this.canvasRef.nativeElement;
-        this.ctx = canvas.getContext('2d')!;
+        this.ctx = canvas.getContext('2d', { alpha: true })!;
         this.resize();
     }
 

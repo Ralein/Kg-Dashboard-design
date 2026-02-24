@@ -18,12 +18,12 @@ export class QuoteLobChartComponent extends BaseChartComponent {
         ctx.clearRect(0, 0, W, H);
 
         const data = this.data;
-        const maxVal = 500; // Approximate max
-        const barW = 35;
-        const gap = 25;
+        const maxVal = 500;
+        const barW = Math.min(W * 0.12, 45); // Responsive bar width
+        const gap = Math.min(W * 0.08, 30); // Responsive gap
         const totalW = data.length * (barW + gap) - gap;
         const startX = (W - totalW) / 2;
-        const floorY = H * 0.75;
+        const floorY = H * 0.72; // Adjusted for labels
 
         // Draw Floor Grid
         ctx.beginPath();

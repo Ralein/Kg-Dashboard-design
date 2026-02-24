@@ -40,16 +40,15 @@ export class QuoteStatusChartComponent extends BaseChartComponent {
 
         const cols = this.data.length;
         const cellW = W / cols;
-        const cellH = H * 0.82;
-        const pT = 10;
+        const cellH = H * 0.95; // More vertical space utilization
 
         this.data.forEach((d, i) => {
             const cx = cellW * i + cellW / 2;
-            const cy = cellH / 2 + 5; // Simplified and centered vertical position
-            const cr = Math.min(cellW, cellH) * 0.38; // Slightly larger circles since text is gone
+            const cy = cellH / 2; // Centered
+            const cr = Math.min(cellW, cellH) * 0.35; // Responsive radius
 
             ctx.beginPath(); ctx.arc(cx, cy, cr, 0, Math.PI * 2);
-            ctx.fillStyle = `${d.color}15`; ctx.fill(); // Slightly darker bg for visibility
+            ctx.fillStyle = `${d.color}18`; ctx.fill();
 
             if (this.clusters[i]) {
                 this.clusters[i].forEach((pt: any, j: number) => {

@@ -16,7 +16,10 @@ export class ApiSuccessChartComponent extends BaseChartComponent {
         const H = this.height;
         ctx.clearRect(0, 0, W, H);
 
-        const cx = W / 2, cy = H / 2, r = 80, trackW = 14;
+        const cx = W / 2;
+        const cy = H * 0.44; // Adjusted to let footer content breathe
+        const r = Math.min(W, H) * 0.35; // Dynamic radius based on container
+        const trackW = r * 0.18; // Proportional track width
         const startAngle = Math.PI * 0.75, fullSweep = Math.PI * 1.5;
         const targetPct = 0.942, failPct = 1 - targetPct;
         const ticks = [0, 0.25, 0.5, 0.75, 1];
