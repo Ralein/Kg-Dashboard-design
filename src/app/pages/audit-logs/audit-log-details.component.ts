@@ -6,7 +6,7 @@ import {
   ChevronLeft, Download, X, Clock, Shield,
   Activity, Code, Terminal, Copy, Check,
   ChevronDown, ChevronUp, AlertCircle, FileText,
-  User, Database, Layers, ExternalLink, Info, Lock, LayoutGrid, Search
+  User, Database, Layers, ExternalLink, Info, Lock, LayoutGrid, Search, ChevronRight, FileCode
 } from 'lucide-angular';
 
 @Component({
@@ -14,250 +14,183 @@ import {
   standalone: true,
   imports: [CommonModule, LucideAngularModule, RouterLink],
   template: `
-    <div class="flex flex-col gap-0 animate-fade-in-up">
+    <div class="flex flex-col gap-0 animate-page-in pb-8">
       
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!--  PREMIUM HERO BANNER                                            -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <div class="hero-banner relative overflow-hidden mb-6">
-
-        <!-- Deep background -->
         <div class="hero-bg absolute inset-0"></div>
+        <div class="hero-grid absolute inset-0 opacity-10"></div>
+        <div class="hero-orb hero-orb--blue absolute top-[-100px] right-[-50px]"></div>
+        <div class="hero-orb hero-orb--indigo absolute bottom-[-50px] left-[10%]"></div>
 
-        <!-- Geometric grid overlay -->
-        <div class="hero-grid absolute inset-0"></div>
-
-        <!-- Animated gradient orbs -->
-        <div class="hero-orb hero-orb--blue"></div>
-        <div class="hero-orb hero-orb--teal"></div>
-        <div class="hero-orb hero-orb--violet"></div>
-
-        <!-- Scan-line accent -->
-        <div class="hero-scanline"></div>
-
-        <!-- Content -->
-        <div class="relative z-10 px-8 pt-8 pb-0">
-
-          <!-- Breadcrumb + back -->
-          <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-2 text-white/40 text-[11px] font-semibold tracking-wider">
-              <button routerLink="/audit-logs"
-                class="flex items-center gap-1.5 hover:text-white/80 transition-colors duration-200 group">
-                <lucide-icon [img]="ChevronLeft" class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"></lucide-icon>
-                Audit Logs
-              </button>
-              <span class="text-white/20">/</span>
-              <span class="text-white/60">Detail View</span>
-            </div>
-
+        <div class="relative z-10 px-8 py-8">
+          <!-- Breadcrumb & Actions -->
+          <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-3">
-              <button (click)="exportLog()" class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/8 border border-white/15 text-white/70 text-[11px] font-bold tracking-wide hover:bg-white/15 hover:text-white hover:border-white/30 transition-all duration-200 backdrop-blur-sm">
+              <button routerLink="/audit-logs" class="p-2 bg-white/10 rounded-xl border border-white/20 text-white hover:bg-white/20 transition-all group">
+                <lucide-icon [img]="ChevronLeft" class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"></lucide-icon>
+              </button>
+              <div class="flex flex-col">
+                <div class="flex items-center gap-2 text-white/40 text-[10px] uppercase font-bold tracking-widest">
+                  <span>Administrative</span>
+                  <span class="opacity-30">/</span>
+                  <span>Audit Logs</span>
+                </div>
+                <h2 class="text-xl font-black text-white tracking-tight">Detail View</h2>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <button (click)="exportLog()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all backdrop-blur-sm">
                 <lucide-icon [img]="Download" class="w-3.5 h-3.5"></lucide-icon>
                 Export Log
               </button>
-              <button routerLink="/audit-logs" class="suspend-hero-btn flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FF5252]/10 border border-[#FF5252]/20 text-[#FF5252] text-[11px] font-bold tracking-wide hover:bg-[#FF5252] hover:text-white transition-all">
-                <lucide-icon [img]="X" class="w-3.5 h-3.5"></lucide-icon>
-              </button>
             </div>
           </div>
 
-          <!-- Main hero content -->
-          <div class="flex items-end justify-between gap-8">
-
-            <!-- Left: identity block -->
-            <div class="flex items-start gap-5 pb-8">
-              <div class="hero-avatar flex-shrink-0">
-                <div class="hero-avatar-inner">
-                  <lucide-icon [img]="Activity" class="w-7 h-7 text-white"></lucide-icon>
-                </div>
-                <div class="hero-avatar-ring"></div>
+          <!-- Hero Identity Section -->
+          <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div class="flex items-start gap-5">
+              <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#B299FF] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
+                <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                <lucide-icon [img]="Activity" class="w-8 h-8 text-white relative z-10"></lucide-icon>
               </div>
-
-              <div class="flex flex-col gap-3">
+              <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-3">
-                  <h1 class="hero-title">Audit Log Details</h1>
-                  <span class="hero-status-badge">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
-                    Success
-                  </span>
+                  <span class="text-2xl font-black text-white leading-none">Audit Log Record</span>
+                  <span class="px-2.5 py-0.5 rounded-lg bg-[#05CD99] text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-[#05CD99]/20">Success</span>
                 </div>
-
-                <div class="flex items-center gap-2">
-                  <span class="text-white/40 text-[11px] font-semibold tracking-widest uppercase">Trace ID</span>
-                  <span class="hero-id-chip">
-                    <lucide-icon [img]="Lock" class="w-3 h-3 text-indigo-400"></lucide-icon>
-                    a615d49f...99c1
-                  </span>
-                  <button (click)="copyTraceId()" class="copy-btn-hero" title="Copy ID">
-                    <lucide-icon [img]="traceCopied() ? Check : Copy" class="w-3.5 h-3.5"></lucide-icon>
-                    <span *ngIf="traceCopied()" class="copy-toast-hero">Copied!</span>
-                  </button>
-                </div>
-
-                <div class="flex items-center gap-2 flex-wrap text-white/60 text-[11px] font-bold uppercase tracking-wider">
-                  <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/10">
-                    <lucide-icon [img]="Clock" class="w-3 h-3 text-indigo-300"></lucide-icon>
-                    Feb 19, 2026, 10:26:55 AM
-                  </span>
-                  <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/10">
-                    <lucide-icon [img]="Terminal" class="w-3 h-3 text-emerald-300"></lucide-icon>
-                    POST v2.0
-                  </span>
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-2 text-white/60">
+                    <lucide-icon [img]="Clock" class="w-3.5 h-3.5"></lucide-icon>
+                    <span class="text-xs font-bold uppercase tracking-wider">Feb 19, 2026, 10:26 AM</span>
+                  </div>
+                  <div class="w-1 h-1 rounded-full bg-white/20"></div>
+                  <div class="flex items-center gap-2 text-white/60">
+                    <lucide-icon [img]="Terminal" class="w-3.5 h-3.5"></lucide-icon>
+                    <span class="text-xs font-bold uppercase tracking-wider">POST v2.0</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Right: quick stats (reused from quote details style) -->
-            <div class="hero-stats-strip flex items-stretch gap-0 mb-8">
-              <div class="hero-stat-item px-6 py-3">
-                <span class="hero-stat-label">Response Time</span>
-                <span class="hero-stat-value text-emerald-300">3.3s</span>
-              </div>
-              <div class="hero-stat-divider"></div>
-              <div class="hero-stat-item px-6 py-3">
-                <span class="hero-stat-label">Category</span>
-                <span class="hero-stat-value uppercase">API Log</span>
-              </div>
+            <!-- ID Quick Display -->
+            <div class="glass-pill p-3 px-5 flex items-center gap-4 relative">
+               <div class="flex flex-col">
+                  <span class="text-[9px] font-bold text-white/40 uppercase tracking-[0.2em]">Trace Identifier</span>
+                  <span class="text-xs font-mono font-bold text-white/90">a615d49f...99c1</span>
+               </div>
+               <button (click)="copyTraceId()" class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/20 transition-all relative overflow-hidden group/copy">
+                  <lucide-icon [img]="traceCopied() ? Check : Copy" class="w-3.5 h-3.5"></lucide-icon>
+                  <div *ngIf="traceCopied()" class="absolute inset-0 bg-emerald-500/20 animate-pulse"></div>
+               </button>
+               
+               <!-- Floating "Copied" Toast -->
+               <div *ngIf="traceCopied()" class="absolute -top-10 right-0 py-1.5 px-3 bg-white text-[#4318FF] text-[10px] font-black rounded-lg shadow-2xl border border-indigo-50 animate-bounce-in">
+                  COPIED!
+               </div>
             </div>
-            </div>
-          </div>
-
-          <!-- Hero Bottom Tabs -->
-          <div class="flex items-center gap-8 px-8 border-b border-white/10">
-            <button 
-              (click)="activeTab.set('detail')"
-              class="relative py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300"
-              [class.text-white]="activeTab() === 'detail'"
-              [class.text-white/40]="activeTab() !== 'detail'"
-            >
-              <span class="flex items-center gap-2">
-                <lucide-icon [img]="LayoutGrid" class="w-4 h-4"></lucide-icon>
-                Detail View
-              </span>
-              <div 
-                *ngIf="activeTab() === 'detail'" 
-                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
-              ></div>
-            </button>
-            
-            <button 
-              (click)="activeTab.set('explorer')"
-              class="relative py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300"
-              [class.text-white]="activeTab() === 'explorer'"
-              [class.text-white/40]="activeTab() !== 'explorer'"
-            >
-              <span class="flex items-center gap-2">
-                <lucide-icon [img]="Search" class="w-4 h-4"></lucide-icon>
-                Log Explorer
-              </span>
-              <div 
-                *ngIf="activeTab() === 'explorer'" 
-                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
-              ></div>
-            </button>
           </div>
         </div>
       </div>
-
-      <div *ngIf="activeTab() === 'detail'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- METADATA CARDS ROW                                             -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mb-8">
-        <div class="meta-card col-span-2">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        <div class="meta-card">
+          <lucide-icon [img]="Layers" class="w-4 h-4 text-[#4318FF] mb-3"></lucide-icon>
           <span class="meta-label">Service Name</span>
-          <span class="meta-value mt-1 block">Adnic service</span>
+          <span class="meta-value">Adnic service</span>
         </div>
         <div class="meta-card">
+          <lucide-icon [img]="Terminal" class="w-4 h-4 text-[#05CD99] mb-3"></lucide-icon>
           <span class="meta-label">Method</span>
-          <span class="meta-value mt-1 block">POST</span>
+          <span class="meta-value uppercase">POST</span>
         </div>
-        <div class="meta-card col-span-2">
+        <div class="meta-card">
+          <lucide-icon [img]="ExternalLink" class="w-4 h-4 text-[#FF8F0C] mb-3"></lucide-icon>
           <span class="meta-label">Endpoint Path</span>
-          <span class="meta-value truncate mt-1 block">/api/v2.0/quotes</span>
+          <span class="meta-value truncate">/api/v2.0/quotes</span>
         </div>
         <div class="meta-card">
+          <lucide-icon [img]="Clock" class="w-4 h-4 text-emerald-400 mb-3"></lucide-icon>
           <span class="meta-label">Duration</span>
-          <span class="meta-value mt-1 block text-emerald-600">3350 ms</span>
+          <span class="meta-value text-emerald-600">3350 ms</span>
         </div>
         <div class="meta-card">
+          <lucide-icon [img]="User" class="w-4 h-4 text-indigo-400 mb-3"></lucide-icon>
           <span class="meta-label">User</span>
-          <span class="meta-value mt-1 block">-</span>
+          <span class="meta-value">-</span>
         </div>
-        <div class="meta-card">
+        <div class="meta-card border-[#4318FF]/20 shadow-lg shadow-[#4318FF]/5">
+          <lucide-icon [img]="Info" class="w-4 h-4 text-[#4318FF] mb-3"></lucide-icon>
           <span class="meta-label">Status</span>
-          <span class="meta-value mt-1 block text-[#05CD99]">200 OK</span>
+          <span class="meta-value text-[#05CD99]">200 OK</span>
         </div>
       </div>
 
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- 3-PANEL DATA EXPLORER                                          -->
+      <!-- MAIN LAYOUT GRID                                               -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Panel 1: Query Params -->
-        <div class="explorer-panel animate-fade-in-up" style="animation-delay: 200ms;">
-          <div class="panel-header">
-            <h3 class="panel-title">Query Params</h3>
-          </div>
-          <div class="panel-content flex flex-col items-center justify-center min-h-[300px]">
-            <div class="empty-state">
-              <lucide-icon [img]="Layers" class="w-8 h-8 text-[#A3AED0]/20 mb-3"></lucide-icon>
-              <p class="text-xs font-bold text-[#A3AED0]">No data</p>
+        <!-- Sidebar Navigation -->
+        <div class="lg:col-span-4 flex flex-col gap-4">
+          <div class="premium-glass p-0 overflow-hidden flex flex-col h-full">
+            <div class="p-6 border-b border-gray-100/50 bg-[#F8FAFF]/50 backdrop-blur-sm">
+              <h3 class="text-xs font-black text-[#2B3674] uppercase tracking-widest">Payload Explorer</h3>
+              <p class="text-[10px] text-[#A3AED0] mt-1 font-bold">Select the transaction data to view</p>
             </div>
-          </div>
-        </div>
-
-        <!-- Panel 2: Request Body -->
-        <div class="explorer-panel animate-fade-in-up" style="animation-delay: 300ms;">
-          <div class="panel-header">
-            <h3 class="panel-title">Request Body</h3>
-            <button (click)="copyPayload('request')" class="panel-action-btn">
-              <lucide-icon [img]="Copy" class="w-3 h-3"></lucide-icon>
-              <span>Copy</span>
-            </button>
-          </div>
-          <div class="panel-content">
-            <div class="code-viewer custom-scrollbar">
-              <pre class="text-[11px] leading-relaxed">{{ requestJson }}</pre>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel 3: Response Body -->
-        <div class="explorer-panel animate-fade-in-up border-emerald-100" style="animation-delay: 400ms;">
-          <div class="panel-header border-emerald-50 bg-emerald-50/20">
-            <h3 class="panel-title text-emerald-800">Response Body</h3>
-            <div class="flex items-center gap-2">
-              <span class="text-[9px] font-black bg-emerald-500 text-white px-2 py-0.5 rounded-full">201 CREATED</span>
-              <button (click)="copyPayload('response')" class="panel-action-btn text-emerald-600 hover:bg-emerald-50 border-emerald-100">
-                <lucide-icon [img]="Copy" class="w-3 h-3"></lucide-icon>
-                <span>Copy</span>
+            <div class="p-3 flex flex-col gap-1.5">
+              <button 
+                *ngFor="let part of logParts"
+                (click)="selectedPart = part.id"
+                class="w-full text-left px-5 py-4 rounded-xl text-xs font-bold transition-all flex items-center justify-between group"
+                [class.bg-[#4318FF]]="selectedPart === part.id"
+                [class.text-white]="selectedPart === part.id"
+                [class.shadow-xl]="selectedPart === part.id"
+                [class.shadow-[#4318FF]/20]="selectedPart === part.id"
+                [class.text-[#A3AED0]]="selectedPart !== part.id"
+                [class.hover:bg-[#4318FF]/5]="selectedPart !== part.id"
+                [class.hover:text-[#4318FF]]="selectedPart !== part.id"
+              >
+                <div class="flex items-center gap-3">
+                   <lucide-icon [img]="part.icon" class="w-4 h-4" [class.text-[#4318FF]]="selectedPart !== part.id"></lucide-icon>
+                   {{part.label}}
+                </div>
+                <lucide-icon [img]="ChevronRight" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" [class.opacity-100]="selectedPart === part.id"></lucide-icon>
               </button>
             </div>
           </div>
-          <div class="panel-content">
-            <div class="code-viewer custom-scrollbar border-l-emerald-400">
-              <pre class="text-[11px] leading-relaxed">{{ responseJson }}</pre>
-            </div>
-          </div>
         </div>
 
-      </div>
+        <!-- Main Panel: Data Explorer -->
+        <div class="lg:col-span-8">
+          <div class="premium-glass p-0 overflow-hidden flex flex-col h-full min-h-[600px]">
+            <div class="p-6 px-8 bg-[#F8FAFF]/50 backdrop-blur-sm border-b border-gray-100/50 flex justify-between items-center sticky top-0 z-20">
+              <div class="flex items-center gap-4">
+                 <div class="p-2.5 bg-[#4318FF]/10 rounded-xl text-[#4318FF] border border-[#4318FF]/20 shadow-sm">
+                    <lucide-icon [img]="FileCode" class="w-5 h-5"></lucide-icon>
+                 </div>
+                 <div>
+                   <h3 class="text-sm font-black text-[#2B3674] tracking-tight">{{ getPartLabel() }}</h3>
+                   <p class="text-[10px] font-bold text-[#A3AED0] uppercase tracking-widest mt-0.5">Structured transaction payload</p>
+                 </div>
+              </div>
+              <button (click)="copySelectedPayload()" class="p-2.5 rounded-xl bg-indigo-50 text-[#4318FF] hover:bg-[#4318FF] hover:text-white transition-all border border-[#4318FF]/10 shadow-sm active:scale-95 group flex items-center gap-2">
+                <lucide-icon [img]="Copy" class="w-4 h-4 group-hover:scale-110 transition-transform"></lucide-icon>
+                <span class="text-[10px] font-black uppercase tracking-widest px-1">Copy JSON</span>
+              </button>
+            </div>
 
-      <!-- ── LOG EXPLORER TAB ── -->
-      <div *ngIf="activeTab() === 'explorer'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div class="premium-glass p-12 text-center flex flex-col items-center">
-          <div class="w-20 h-20 rounded-3xl bg-[#4318FF]/10 flex items-center justify-center mb-8 border border-[#4318FF]/20 shadow-2xl shadow-[#4318FF]/10">
-            <lucide-icon [img]="Search" class="w-10 h-10 text-[#4318FF]"></lucide-icon>
-          </div>
-          <h3 class="text-2xl font-black text-[#2B3674] tracking-tight mb-4">Deep Log Analysis</h3>
-          <p class="text-[#A3AED0] font-medium max-w-md mx-auto leading-relaxed mb-10">
-            Query across historical traces and correlate events using our advanced log explorer. Advanced filtering and pattern matching coming soon.
-          </p>
-          <div class="flex items-center gap-4">
-            <button class="bg-[#4318FF] text-white px-8 py-4 rounded-2xl font-black text-sm tracking-tight hover:bg-[#3311CC] transition-all shadow-xl shadow-[#4318FF]/20">Launch Analyzer</button>
+            <div class="p-8 flex-1 flex flex-col">
+              <div class="code-viewer flex-1 custom-scrollbar">
+                <pre class="text-[11px] leading-relaxed">{{ getSelectedJson() }}</pre>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -266,177 +199,80 @@ import {
   styles: [`
     :host { display: block; --brand-primary: #4318FF; }
 
+    /* Hero Banner */
     .hero-banner {
       border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 20px 50px rgba(67, 24, 255, 0.15), 0 0 0 1px rgba(255,255,255,0.05) inset;
     }
-    .hero-bg { background: linear-gradient(135deg, #0C0F2E 0%, #141836 100%); }
+    .hero-bg { background: linear-gradient(145deg, #0C0F2E 0%, #141836 60%, #0E1428 100%); }
     .hero-grid {
-      background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 24px 24px;
-      opacity: 0.4;
+      background-image: 
+        radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 20px 20px, 100px 100px, 100px 100px;
     }
     .hero-orb {
-      position: absolute; width: 300px; height: 300px;
-      border-radius: 50%; filter: blur(80px); opacity: 0.4;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      filter: blur(80px);
       pointer-events: none;
     }
-    .hero-orb--blue   { background: #4318FF; top: -100px; right: -50px; }
-    .hero-orb--teal   { background: #05CD99; bottom: -100px; left: 10%; }
-    .hero-orb--violet { background: #8B5CF6; top: 20%; left: 40%; }
-    
-    .hero-scanline {
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.02) 50%, transparent 100%);
-      background-size: 100% 4px;
-      pointer-events: none;
-    }
+    .hero-orb--blue { background: rgba(67, 24, 255, 0.3); }
+    .hero-orb--indigo { background: rgba(139, 92, 246, 0.2); }
 
-    .hero-avatar {
-      position: relative; width: 64px; height: 64px;
-    }
-    .hero-avatar-inner {
-      position: relative; z-index: 2;
-      width: 100%; height: 100%;
-      background: linear-gradient(135deg, #4318FF, #8B5CF6);
-      border-radius: 20px;
-      display: flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(255,255,255,0.2);
-      box-shadow: 0 8px 20px rgba(67, 24, 255, 0.3);
-    }
-    .hero-avatar-ring {
-      position: absolute; inset: -4px;
-      border-radius: 24px;
-      border: 1.5px solid rgba(255,255,255,0.1);
-      animation: orbit 10s linear infinite;
-    }
-    @keyframes orbit { from { rotate: 0deg; } to { rotate: 360deg; } }
-
-    .hero-title {
-      font-size: 24px; font-weight: 900; color: white;
-      letter-spacing: -0.02em;
-    }
-    .hero-status-badge {
-      display: flex; align-items: center; gap: 6px;
-      padding: 4px 10px; border-radius: 8px;
-      background: rgba(5, 205, 153, 0.15);
-      border: 1px solid rgba(5, 205, 153, 0.3);
-      color: #05CD99; font-size: 10px; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.05em;
-    }
-
-    .hero-id-chip {
-      display: flex; align-items: center; gap: 8px;
-      padding: 6px 12px; border-radius: 10px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.9);
-      font-family: monospace; font-size: 11px; font-weight: 600;
-    }
-    .copy-btn-hero {
-      position: relative;
-      width: 32px; height: 32px;
-      display: flex; align-items: center; justify-content: center;
+    .glass-pill {
       background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px; color: white;
-      transition: all 0.2s;
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
     }
-    .copy-btn-hero:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
-    .copy-toast-hero {
-      position: absolute; bottom: calc(100% + 8px); left: 50%;
-      translate: -50% 0; padding: 4px 8px; border-radius: 6px;
-      background: #4318FF; color: white; font-size: 9px;
-      font-weight: 800; text-transform: uppercase;
-      animation: toastIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
-    }
-    @keyframes toastIn { from { opacity: 0; scale: 0.5; translate: -50% 10px; } to { opacity: 1; scale: 1; translate: -50% 0; } }
-
-    .hero-stats-strip {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; backdrop-filter: blur(8px);
-    }
-    .hero-stat-item { display: flex; flex-direction: column; gap: 2px; }
-    .hero-stat-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.1em; }
-    .hero-stat-value { font-size: 13px; font-weight: 800; color: white; }
-    .hero-stat-divider { width: 1px; background: rgba(255,255,255,0.08); margin: 8px 0; }
 
     /* Meta Cards */
     .meta-card {
       background: white;
       border: 1px solid rgba(163, 174, 208, 0.15);
-      border-radius: 16px;
-      padding: 1rem;
-      transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
-    }
-    .meta-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(112, 144, 176, 0.1); border-color: #4318FF40; }
-    .meta-label { font-size: 10px; font-weight: 800; color: #A3AED0; text-transform: uppercase; letter-spacing: 0.08em; }
-    .meta-value { font-size: 13px; font-weight: 800; color: #2B3674; }
-
-    /* Explorer Panels */
-    .explorer-panel {
-      background: white;
-      border: 1px solid rgba(163, 174, 208, 0.15);
       border-radius: 20px;
-      overflow: hidden;
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 10px 30px rgba(112, 144, 176, 0.05);
+      transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
     }
-    .panel-header {
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid rgba(163, 174, 208, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #fafbff;
+    .meta-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px -12px rgba(112, 144, 176, 0.15);
+      border-color: var(--brand-primary);
     }
-    .panel-title {
-      font-size: 13px;
-      font-weight: 800;
-      color: #1a2660;
-      letter-spacing: -0.01em;
-    }
-    .panel-content {
-      padding: 1.5rem;
-      flex: 1;
-    }
-    .panel-action-btn {
-      display: flex;
-      align-items: center;
-      gap: 1.5;
-      padding: 4px 10px;
-      border-radius: 8px;
-      background: white;
-      border: 1px solid #e2e8f0;
+    .meta-label {
       font-size: 10px;
-      font-weight: 700;
-      color: #4318FF;
-      transition: all 0.2s;
+      font-weight: 800;
+      color: #A3AED0;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.25rem;
     }
-    .panel-action-btn:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
-      transform: translateY(-1px);
-    }
-    .panel-action-btn lucide-icon {
-      width: 12px;
-      height: 12px;
-      margin-right: 4px;
+    .meta-value {
+      font-size: 13px;
+      font-weight: 900;
+      color: #2B3674;
     }
 
-    .empty-state { text-align: center; }
+    .premium-glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      box-shadow: 0 12px 40px rgba(112, 144, 176, 0.08);
+    }
 
     .code-viewer {
       background: #0C0E1A;
       color: #E2E8F0;
-      padding: 1.25rem;
-      border-radius: 16px;
-      border-left: 3px solid #4318FF;
-      height: 400px;
-      overflow: auto;
-      box-shadow: inset 0 4px 12px rgba(0,0,0,0.2);
+      padding: 1.5rem;
+      border-radius: 20px;
+      border-left: 4px solid #4318FF;
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
     }
     .code-viewer pre {
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
@@ -445,28 +281,32 @@ import {
       word-break: break-all;
     }
 
-    .animate-fade-in-up {
-      animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Custom scrollbar */
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    /* Scrollbar */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(67,24,255,0.12);
-      border-radius: 2px;
+      background: rgba(163, 174, 208, 0.3);
+      border-radius: 10px;
     }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: rgba(67,24,255,0.25);
+
+    /* Animations */
+    .animate-page-in {
+      animation: pageIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-bounce-in {
+      animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: translateY(5px) scale(0.9) translateX(-50%); left: 50%; }
+      100% { opacity: 1; transform: translateY(0) scale(1) translateX(-50%); left: 50%; }
     }
   `]
 })
 export class AuditLogDetailsComponent implements OnInit {
-  activeTab = signal('detail');
   private route = inject(ActivatedRoute);
 
   readonly ChevronLeft = ChevronLeft;
@@ -475,24 +315,25 @@ export class AuditLogDetailsComponent implements OnInit {
   readonly Clock = Clock;
   readonly Shield = Shield;
   readonly Activity = Activity;
-  readonly Code = Code;
   readonly Terminal = Terminal;
   readonly Copy = Copy;
   readonly Check = Check;
-  readonly ChevronDown = ChevronDown;
-  readonly ChevronUp = ChevronUp;
-  readonly AlertCircle = AlertCircle;
-  readonly FileText = FileText;
-  readonly User = User;
-  readonly Database = Database;
   readonly Layers = Layers;
   readonly ExternalLink = ExternalLink;
   readonly Info = Info;
-  readonly LayoutGrid = LayoutGrid;
-  readonly Search = Search;
-  readonly Lock = Lock;
+  readonly User = User;
+  readonly ChevronRight = ChevronRight;
+  readonly FileCode = FileCode;
+  readonly Database = Database;
 
   traceCopied = signal(false);
+  selectedPart = 'requestBody';
+
+  logParts = [
+    { id: 'queryParams', label: 'Query Params', icon: Info },
+    { id: 'requestBody', label: 'Request Body', icon: Terminal },
+    { id: 'responseBody', label: 'Response Body', icon: Database }
+  ];
 
   requestJson = JSON.stringify({
     data: {
@@ -545,15 +386,24 @@ export class AuditLogDetailsComponent implements OnInit {
     // In real app, load data by route.snapshot.params['id']
   }
 
+  getPartLabel(): string {
+    return this.logParts.find(p => p.id === this.selectedPart)?.label || '';
+  }
+
+  getSelectedJson(): string {
+    if (this.selectedPart === 'requestBody') return this.requestJson;
+    if (this.selectedPart === 'responseBody') return this.responseJson;
+    return '{\\n  "error": "No query parameters found for this trace"\\n}';
+  }
+
   copyTraceId() {
     navigator.clipboard.writeText('a615d49f-12be-43d2-84ea-6defaae999c1');
     this.traceCopied.set(true);
     setTimeout(() => this.traceCopied.set(false), 2000);
   }
 
-  copyPayload(type: string) {
-    const text = type === 'request' ? this.requestJson : this.responseJson;
-    navigator.clipboard.writeText(text);
+  copySelectedPayload() {
+    navigator.clipboard.writeText(this.getSelectedJson());
   }
 
   exportLog() {

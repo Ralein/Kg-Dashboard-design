@@ -248,83 +248,6 @@ import {
         </div>
       </div>
 
-      <!-- ── SHARE QUOTE TAB ── -->
-      <div *ngIf="activeTab() === 'share'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div class="premium-glass p-12 text-center flex flex-col items-center">
-          <div class="w-20 h-20 rounded-3xl bg-[#4318FF]/10 flex items-center justify-center mb-8 border border-[#4318FF]/20 shadow-2xl shadow-[#4318FF]/10">
-            <lucide-icon [img]="Share2" class="w-10 h-10 text-[#4318FF]"></lucide-icon>
-          </div>
-          <h3 class="text-2xl font-black text-[#2B3674] tracking-tight mb-4">Integrate your quotation</h3>
-          <p class="text-[#A3AED0] font-medium max-w-md mx-auto leading-relaxed mb-10">
-            Generate highly-secure sharing links or embed this quote directly into your partner portal. All shared instances are tracked in real-time.
-          </p>
-          <div class="flex items-center gap-4">
-            <button class="bg-[#4318FF] text-white px-8 py-4 rounded-2xl font-black text-sm tracking-tight hover:bg-[#3311CC] transition-all shadow-xl shadow-[#4318FF]/20">Generate Token Link</button>
-            <button class="bg-indigo-50 text-[#4318FF] px-8 py-4 rounded-2xl font-black text-sm tracking-tight border border-[#4318FF]/10 hover:bg-indigo-100 transition-all">Internal Share</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── QUOTE CONFIG TAB ── -->
-      <div *ngIf="activeTab() === 'config'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="premium-glass p-8">
-            <h4 class="text-sm font-black text-[#2B3674] uppercase tracking-widest mb-6 border-b border-gray-100 pb-4">Standard Rules</h4>
-            <div class="space-y-4">
-              <div *ngFor="let i of [1,2,3]" class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-xl">
-                 <span class="text-xs font-bold text-[#2B3674]">Adjustment Protocol 0{{i}}</span>
-                 <div class="w-10 h-6 rounded-full bg-emerald-500 p-1 flex justify-end transition-all cursor-pointer"><div class="w-4 h-4 bg-white rounded-full shadow-sm"></div></div>
-              </div>
-            </div>
-          </div>
-          <div class="premium-glass p-8">
-            <h4 class="text-sm font-black text-[#2B3674] uppercase tracking-widest mb-6 border-b border-gray-100 pb-4">Version Control</h4>
-            <div class="p-12 text-center">
-              <lucide-icon [img]="History" class="w-8 h-8 text-[#A3AED0]/40 mx-auto mb-4"></lucide-icon>
-              <p class="text-xs font-bold text-[#A3AED0]">v2.1 current version</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── SHARE QUOTE TAB ── -->
-      <div *ngIf="activeTab() === 'share'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div class="premium-glass p-12 text-center flex flex-col items-center">
-          <div class="w-20 h-20 rounded-3xl bg-[#4318FF]/10 flex items-center justify-center mb-8 border border-[#4318FF]/20 shadow-2xl shadow-[#4318FF]/10">
-            <lucide-icon [img]="Share2" class="w-10 h-10 text-[#4318FF]"></lucide-icon>
-          </div>
-          <h3 class="text-2xl font-black text-[#2B3674] tracking-tight mb-4">Integrate your quotation</h3>
-          <p class="text-[#A3AED0] font-medium max-w-md mx-auto leading-relaxed mb-10">
-            Generate highly-secure sharing links or embed this quote directly into your partner portal. All shared instances are tracked in real-time.
-          </p>
-          <div class="flex items-center gap-4">
-            <button class="bg-[#4318FF] text-white px-8 py-4 rounded-2xl font-black text-sm tracking-tight hover:bg-[#3311CC] transition-all shadow-xl shadow-[#4318FF]/20">Generate Token Link</button>
-            <button class="bg-indigo-50 text-[#4318FF] px-8 py-4 rounded-2xl font-black text-sm tracking-tight border border-[#4318FF]/10 hover:bg-indigo-100 transition-all">Internal Share</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── QUOTE CONFIG TAB ── -->
-      <div *ngIf="activeTab() === 'config'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="premium-glass p-8">
-            <h4 class="text-sm font-black text-[#2B3674] uppercase tracking-widest mb-6 border-b border-gray-100 pb-4">Standard Rules</h4>
-            <div class="space-y-4">
-              <div *ngFor="let i of [1,2,3]" class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-xl">
-                 <span class="text-xs font-bold text-[#2B3674]">Adjustment Protocol 0{{i}}</span>
-                 <div class="w-10 h-6 rounded-full bg-emerald-500 p-1 flex justify-end transition-all cursor-pointer"><div class="w-4 h-4 bg-white rounded-full shadow-sm"></div></div>
-              </div>
-            </div>
-          </div>
-          <div class="premium-glass p-8">
-            <h4 class="text-sm font-black text-[#2B3674] uppercase tracking-widest mb-6 border-b border-gray-100 pb-4">Version Control</h4>
-            <div class="p-12 text-center">
-              <lucide-icon [img]="History" class="w-8 h-8 text-[#A3AED0]/40 mx-auto mb-4"></lucide-icon>
-              <p class="text-xs font-bold text-[#A3AED0]">v2.1 current version</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   `,
    styles: [`
@@ -430,7 +353,6 @@ import {
    `]
 })
 export class QuoteDetailsComponent implements OnInit {
-   activeTab = signal('detail');
 
    readonly ChevronLeft = ChevronLeft;
    readonly Share2 = Share2;

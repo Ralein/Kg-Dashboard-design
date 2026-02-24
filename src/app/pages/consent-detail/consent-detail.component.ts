@@ -142,40 +142,6 @@ interface NestedItem {
             </div>
           </div>
 
-          <!-- Hero Bottom Tabs -->
-          <div class="flex items-center gap-8 mt-4 border-b border-white/10">
-            <button 
-              (click)="activeTab.set('detail')"
-              class="relative py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300"
-              [class.text-white]="activeTab() === 'detail'"
-              [class.text-white/40]="activeTab() !== 'detail'"
-            >
-              <span class="flex items-center gap-2">
-                <lucide-icon [img]="Shield" class="w-4 h-4"></lucide-icon>
-                Detail View
-              </span>
-              <div 
-                *ngIf="activeTab() === 'detail'" 
-                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
-              ></div>
-            </button>
-            
-            <button 
-              (click)="activeTab.set('history')"
-              class="relative py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300"
-              [class.text-white]="activeTab() === 'history'"
-              [class.text-white/40]="activeTab() !== 'history'"
-            >
-              <span class="flex items-center gap-2">
-                <lucide-icon [img]="History" class="w-4 h-4"></lucide-icon>
-                Audit History
-              </span>
-              <div 
-                *ngIf="activeTab() === 'history'" 
-                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
-              ></div>
-            </button>
-          </div>
         </div>
       </div>
 
@@ -229,10 +195,7 @@ interface NestedItem {
         </div>
       </div>
 
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- MAIN LAYOUT GRID                                               -->
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div *ngIf="activeTab() === 'detail'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
 
         <!-- ── LEFT: Policy Card ── -->
@@ -406,21 +369,6 @@ interface NestedItem {
         </div>
       </div>
 
-      <!-- ── AUDIT HISTORY TAB ── -->
-      <div *ngIf="activeTab() === 'history'" class="animate-in fade-in slide-in-from-bottom-4 duration-500 mb-8">
-        <div class="premium-glass p-8 min-h-[400px] flex flex-col items-center justify-center text-center">
-          <div class="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mb-6">
-            <lucide-icon [img]="History" class="w-8 h-8 text-[#4318FF]"></lucide-icon>
-          </div>
-          <h3 class="text-xl font-black text-[#2B3674] tracking-tight mb-2">Audit History</h3>
-          <p class="text-sm font-medium text-[#A3AED0] max-w-sm mx-auto">
-            The audit timeline is currently being synchronized. Please check back shortly for a complete record of access attempts and data requests.
-          </p>
-          <button class="mt-8 px-6 py-2.5 rounded-xl border border-gray-200 text-[#2B3674] text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 transition-all">
-            Refresh Data
-          </button>
-        </div>
-      </div>
     </div>
   `,
   styles: [`
@@ -682,26 +630,6 @@ interface NestedItem {
     }
     .suspend-hero-btn:active { transform: translateY(0); box-shadow: none; }
 
-    .hero-bottom-tabs {
-      border-top: 1px solid rgba(255,255,255,0.07);
-      padding-top: 2px;
-    }
-    .hero-tab {
-      padding: 10px 18px;
-      font-size: 11px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.35);
-      letter-spacing: 0.04em;
-      border-bottom: 2px solid transparent;
-      cursor: pointer;
-      transition: all 0.2s;
-      user-select: none;
-    }
-    .hero-tab:hover { color: rgba(255,255,255,0.65); }
-    .hero-tab--active {
-      color: white;
-      border-bottom-color: #4318FF;
-    }
 
     /* ═══════════════════════════════════════
        META CARDS
@@ -1065,7 +993,6 @@ interface NestedItem {
   `]
 })
 export class ConsentDetailComponent implements OnInit {
-  activeTab = signal('detail');
   readonly ClipboardCheck = ClipboardCheck;
   readonly History = History;
   readonly HomeIcon = HomeIcon;
