@@ -62,7 +62,7 @@ import { Router } from '@angular/router';
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- PREMIUM HERO BANNER                                            -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="hero-banner relative overflow-hidden mb-8">
+      <div class="hero-banner relative overflow-hidden mb-6">
         <div class="hero-bg absolute inset-0"></div>
         <div class="hero-grid absolute inset-0 opacity-10"></div>
         <div class="hero-orb hero-orb--blue absolute top-[-100px] right-[-50px]"></div>
@@ -124,7 +124,7 @@ import { Router } from '@angular/router';
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- METADATA CARDS ROW                                             -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8 px-8">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
         <div class="meta-card">
           <lucide-icon [img]="Globe" class="w-4 h-4 text-[#4318FF] mb-3"></lucide-icon>
           <span class="meta-label">Domain</span>
@@ -160,7 +160,7 @@ import { Router } from '@angular/router';
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- MAIN LAYOUT GRID                                               -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Sidebar Navigation -->
         <div class="lg:col-span-3 flex flex-col gap-4">

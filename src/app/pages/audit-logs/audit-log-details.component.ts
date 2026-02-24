@@ -6,7 +6,8 @@ import {
   ChevronLeft, Download, X, Clock, Shield,
   Activity, Code, Terminal, Copy, Check,
   ChevronDown, ChevronUp, AlertCircle, FileText,
-  User, Database, Layers, ExternalLink, Info, Lock, LayoutGrid, Search, ChevronRight, FileCode
+  User, Database, Layers, ExternalLink, Info, Lock, LayoutGrid, Search, ChevronRight,
+  FileCode
 } from 'lucide-angular';
 
 @Component({
@@ -135,144 +136,255 @@ import {
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- MAIN LAYOUT GRID                                               -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- Sidebar Navigation -->
-        <div class="lg:col-span-4 flex flex-col gap-4">
-          <div class="premium-glass p-0 overflow-hidden flex flex-col h-full">
-            <div class="p-6 border-b border-gray-100/50 bg-[#F8FAFF]/50 backdrop-blur-sm">
-              <h3 class="text-xs font-black text-[#2B3674] uppercase tracking-widest">Payload Explorer</h3>
-              <p class="text-[10px] text-[#A3AED0] mt-1 font-bold">Select the transaction data to view</p>
+   <div *ngIf="activeTab() === 'detail'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- 3-PANEL DATA EXPLORER                                          -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+          
+          <!-- Panel 1: Query Params -->
+          <div class="explorer-panel animate-fade-in-up" style="animation-delay: 200ms;">
+            <div class="panel-header">
+              <h3 class="panel-title">Query Params</h3>
             </div>
-            <div class="p-3 flex flex-col gap-1.5">
-              <button 
-                *ngFor="let part of logParts"
-                (click)="selectedPart = part.id"
-                class="w-full text-left px-5 py-4 rounded-xl text-xs font-bold transition-all flex items-center justify-between group"
-                [class.bg-[#4318FF]]="selectedPart === part.id"
-                [class.text-white]="selectedPart === part.id"
-                [class.shadow-xl]="selectedPart === part.id"
-                [class.shadow-[#4318FF]/20]="selectedPart === part.id"
-                [class.text-[#A3AED0]]="selectedPart !== part.id"
-                [class.hover:bg-[#4318FF]/5]="selectedPart !== part.id"
-                [class.hover:text-[#4318FF]]="selectedPart !== part.id"
-              >
-                <div class="flex items-center gap-3">
-                   <lucide-icon [img]="part.icon" class="w-4 h-4" [class.text-[#4318FF]]="selectedPart !== part.id"></lucide-icon>
-                   {{part.label}}
-                </div>
-                <lucide-icon [img]="ChevronRight" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" [class.opacity-100]="selectedPart === part.id"></lucide-icon>
-              </button>
+            <div class="panel-content flex flex-col items-center justify-center min-h-[300px]">
+              <div class="empty-state">
+                <lucide-icon [img]="Layers" class="w-8 h-8 text-[#A3AED0]/20 mb-3"></lucide-icon>
+                <p class="text-xs font-bold text-[#A3AED0]">No data</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Main Panel: Data Explorer -->
-        <div class="lg:col-span-8">
-          <div class="premium-glass p-0 overflow-hidden flex flex-col h-full min-h-[600px]">
-            <div class="p-6 px-8 bg-[#F8FAFF]/50 backdrop-blur-sm border-b border-gray-100/50 flex justify-between items-center sticky top-0 z-20">
-              <div class="flex items-center gap-4">
-                 <div class="p-2.5 bg-[#4318FF]/10 rounded-xl text-[#4318FF] border border-[#4318FF]/20 shadow-sm">
-                    <lucide-icon [img]="FileCode" class="w-5 h-5"></lucide-icon>
-                 </div>
-                 <div>
-                   <h3 class="text-sm font-black text-[#2B3674] tracking-tight">{{ getPartLabel() }}</h3>
-                   <p class="text-[10px] font-bold text-[#A3AED0] uppercase tracking-widest mt-0.5">Structured transaction payload</p>
-                 </div>
-              </div>
-              <button (click)="copySelectedPayload()" class="p-2.5 rounded-xl bg-indigo-50 text-[#4318FF] hover:bg-[#4318FF] hover:text-white transition-all border border-[#4318FF]/10 shadow-sm active:scale-95 group flex items-center gap-2">
-                <lucide-icon [img]="Copy" class="w-4 h-4 group-hover:scale-110 transition-transform"></lucide-icon>
-                <span class="text-[10px] font-black uppercase tracking-widest px-1">Copy JSON</span>
+          <!-- Panel 2: Request Body -->
+          <div class="explorer-panel animate-fade-in-up" style="animation-delay: 300ms;">
+            <div class="panel-header">
+              <h3 class="panel-title">Request Body</h3>
+              <button (click)="copyPayload('request')" class="panel-action-btn">
+                <lucide-icon [img]="Copy" class="w-3 h-3"></lucide-icon>
+                <span>Copy</span>
               </button>
             </div>
+            <div class="panel-content">
+              <div class="code-viewer custom-scrollbar">
+                <pre class="text-[11px] leading-relaxed">{{ requestJson }}</pre>
+              </div>
+            </div>
+          </div>
 
-            <div class="p-8 flex-1 flex flex-col">
-              <div class="code-viewer flex-1 custom-scrollbar">
-                <pre class="text-[11px] leading-relaxed">{{ getSelectedJson() }}</pre>
+          <!-- Panel 3: Response Body -->
+          <div class="explorer-panel animate-fade-in-up border-emerald-100" style="animation-delay: 400ms;">
+            <div class="panel-header border-emerald-50 bg-emerald-50/20">
+              <h3 class="panel-title text-emerald-800">Response Body</h3>
+              <div class="flex items-center gap-2">
+                <span class="text-[9px] font-black bg-emerald-500 text-white px-2 py-0.5 rounded-full">201 CREATED</span>
+                <button (click)="copyPayload('response')" class="panel-action-btn text-emerald-600 hover:bg-emerald-50 border-emerald-100">
+                  <lucide-icon [img]="Copy" class="w-3 h-3"></lucide-icon>
+                  <span>Copy</span>
+                </button>
+              </div>
+            </div>
+            <div class="panel-content">
+              <div class="code-viewer custom-scrollbar border-l-emerald-400">
+                <pre class="text-[11px] leading-relaxed">{{ responseJson }}</pre>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- ── LOG EXPLORER TAB ── -->
+      <div *ngIf="activeTab() === 'explorer'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="premium-glass p-12 text-center flex flex-col items-center">
+          <div class="w-20 h-20 rounded-3xl bg-[#4318FF]/10 flex items-center justify-center mb-8 border border-[#4318FF]/20 shadow-2xl shadow-[#4318FF]/10">
+            <lucide-icon [img]="Search" class="w-10 h-10 text-[#4318FF]"></lucide-icon>
+          </div>
+          <h3 class="text-2xl font-black text-[#2B3674] tracking-tight mb-4">Deep Log Analysis</h3>
+          <p class="text-[#A3AED0] font-medium max-w-md mx-auto leading-relaxed mb-10">
+            Query across historical traces and correlate events using our advanced log explorer. Advanced filtering and pattern matching coming soon.
+          </p>
+          <div class="flex items-center gap-4">
+            <button class="bg-[#4318FF] text-white px-8 py-4 rounded-2xl font-black text-sm tracking-tight hover:bg-[#3311CC] transition-all shadow-xl shadow-[#4318FF]/20">Launch Analyzer</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   `,
   styles: [`
     :host { display: block; --brand-primary: #4318FF; }
 
-    /* Hero Banner */
     .hero-banner {
       border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(67, 24, 255, 0.15), 0 0 0 1px rgba(255,255,255,0.05) inset;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
     }
-    .hero-bg { background: linear-gradient(145deg, #0C0F2E 0%, #141836 60%, #0E1428 100%); }
+    .hero-bg { background: linear-gradient(135deg, #0C0F2E 0%, #141836 100%); }
     .hero-grid {
-      background-image: 
-        radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size: 20px 20px, 100px 100px, 100px 100px;
+      background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 24px 24px;
+      opacity: 0.4;
     }
     .hero-orb {
-      width: 300px; height: 300px;
-      border-radius: 50%;
-      filter: blur(80px);
+      position: absolute; width: 300px; height: 300px;
+      border-radius: 50%; filter: blur(80px); opacity: 0.4;
       pointer-events: none;
     }
-    .hero-orb--blue { background: rgba(67, 24, 255, 0.3); }
-    .hero-orb--indigo { background: rgba(139, 92, 246, 0.2); }
-
-    .glass-pill {
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(12px);
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+    .hero-orb--blue   { background: #4318FF; top: -100px; right: -50px; }
+    .hero-orb--teal   { background: #05CD99; bottom: -100px; left: 10%; }
+    .hero-orb--violet { background: #8B5CF6; top: 20%; left: 40%; }
+    
+    .hero-scanline {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.02) 50%, transparent 100%);
+      background-size: 100% 4px;
+      pointer-events: none;
     }
+
+    .hero-avatar {
+      position: relative; width: 64px; height: 64px;
+    }
+    .hero-avatar-inner {
+      position: relative; z-index: 2;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #4318FF, #8B5CF6);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 8px 20px rgba(67, 24, 255, 0.3);
+    }
+    .hero-avatar-ring {
+      position: absolute; inset: -4px;
+      border-radius: 24px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      animation: orbit 10s linear infinite;
+    }
+    @keyframes orbit { from { rotate: 0deg; } to { rotate: 360deg; } }
+
+    .hero-title {
+      font-size: 24px; font-weight: 900; color: white;
+      letter-spacing: -0.02em;
+    }
+    .hero-status-badge {
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 8px;
+      background: rgba(5, 205, 153, 0.15);
+      border: 1px solid rgba(5, 205, 153, 0.3);
+      color: #05CD99; font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    .hero-id-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.9);
+      font-family: monospace; font-size: 11px; font-weight: 600;
+    }
+    .copy-btn-hero {
+      position: relative;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; color: white;
+      transition: all 0.2s;
+    }
+    .copy-btn-hero:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
+    .copy-toast-hero {
+      position: absolute; bottom: calc(100% + 8px); left: 50%;
+      translate: -50% 0; padding: 4px 8px; border-radius: 6px;
+      background: #4318FF; color: white; font-size: 9px;
+      font-weight: 800; text-transform: uppercase;
+      animation: toastIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+    }
+    @keyframes toastIn { from { opacity: 0; scale: 0.5; translate: -50% 10px; } to { opacity: 1; scale: 1; translate: -50% 0; } }
+
+    .hero-stats-strip {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; backdrop-filter: blur(8px);
+    }
+    .hero-stat-item { display: flex; flex-direction: column; gap: 2px; }
+    .hero-stat-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.1em; }
+    .hero-stat-value { font-size: 13px; font-weight: 800; color: white; }
+    .hero-stat-divider { width: 1px; background: rgba(255,255,255,0.08); margin: 8px 0; }
 
     /* Meta Cards */
     .meta-card {
       background: white;
       border: 1px solid rgba(163, 174, 208, 0.15);
-      border-radius: 20px;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
+      border-radius: 16px;
+      padding: 1rem;
       transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
     }
-    .meta-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 25px 50px -12px rgba(112, 144, 176, 0.15);
-      border-color: var(--brand-primary);
+    .meta-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(112, 144, 176, 0.1); border-color: #4318FF40; }
+    .meta-label { font-size: 10px; font-weight: 800; color: #A3AED0; text-transform: uppercase; letter-spacing: 0.08em; }
+    .meta-value { font-size: 13px; font-weight: 800; color: #2B3674; }
+
+    /* Explorer Panels */
+    .explorer-panel {
+      background: white;
+      border: 1px solid rgba(163, 174, 208, 0.15);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(112, 144, 176, 0.05);
     }
-    .meta-label {
-      font-size: 10px;
-      font-weight: 800;
-      color: #A3AED0;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.25rem;
+    .panel-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid rgba(163, 174, 208, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fafbff;
     }
-    .meta-value {
+    .panel-title {
       font-size: 13px;
-      font-weight: 900;
-      color: #2B3674;
+      font-weight: 800;
+      color: #1a2660;
+      letter-spacing: -0.01em;
+    }
+    .panel-content {
+      padding: 1.5rem;
+      flex: 1;
+    }
+    .panel-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 1.5;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      font-size: 10px;
+      font-weight: 700;
+      color: #4318FF;
+      transition: all 0.2s;
+    }
+    .panel-action-btn:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+    .panel-action-btn lucide-icon {
+      width: 12px;
+      height: 12px;
+      margin-right: 4px;
     }
 
-    .premium-glass {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 24px;
-      box-shadow: 0 12px 40px rgba(112, 144, 176, 0.08);
-    }
+    .empty-state { text-align: center; }
 
     .code-viewer {
       background: #0C0E1A;
       color: #E2E8F0;
-      padding: 1.5rem;
-      border-radius: 20px;
-      border-left: 4px solid #4318FF;
-      box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
+      padding: 1.25rem;
+      border-radius: 16px;
+      border-left: 3px solid #4318FF;
+      height: 400px;
+      overflow: auto;
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.2);
     }
     .code-viewer pre {
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
@@ -281,32 +393,28 @@ import {
       word-break: break-all;
     }
 
-    /* Scrollbar */
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(163, 174, 208, 0.3);
-      border-radius: 10px;
+    .animate-fade-in-up {
+      animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Animations */
-    .animate-page-in {
-      animation: pageIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    /* Custom scrollbar */
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(67,24,255,0.12);
+      border-radius: 2px;
     }
-    @keyframes pageIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .animate-bounce-in {
-      animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-    @keyframes bounceIn {
-      0% { opacity: 0; transform: translateY(5px) scale(0.9) translateX(-50%); left: 50%; }
-      100% { opacity: 1; transform: translateY(0) scale(1) translateX(-50%); left: 50%; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(67,24,255,0.25);
     }
   `]
 })
 export class AuditLogDetailsComponent implements OnInit {
+  activeTab = signal('detail');
   private route = inject(ActivatedRoute);
 
   readonly ChevronLeft = ChevronLeft;
@@ -315,25 +423,24 @@ export class AuditLogDetailsComponent implements OnInit {
   readonly Clock = Clock;
   readonly Shield = Shield;
   readonly Activity = Activity;
+  readonly Code = Code;
   readonly Terminal = Terminal;
   readonly Copy = Copy;
   readonly Check = Check;
+  readonly ChevronDown = ChevronDown;
+  readonly ChevronUp = ChevronUp;
+  readonly AlertCircle = AlertCircle;
+  readonly FileText = FileText;
+  readonly User = User;
+  readonly Database = Database;
   readonly Layers = Layers;
   readonly ExternalLink = ExternalLink;
   readonly Info = Info;
-  readonly User = User;
-  readonly ChevronRight = ChevronRight;
-  readonly FileCode = FileCode;
-  readonly Database = Database;
+  readonly LayoutGrid = LayoutGrid;
+  readonly Search = Search;
+  readonly Lock = Lock;
 
   traceCopied = signal(false);
-  selectedPart = 'requestBody';
-
-  logParts = [
-    { id: 'queryParams', label: 'Query Params', icon: Info },
-    { id: 'requestBody', label: 'Request Body', icon: Terminal },
-    { id: 'responseBody', label: 'Response Body', icon: Database }
-  ];
 
   requestJson = JSON.stringify({
     data: {
@@ -386,24 +493,15 @@ export class AuditLogDetailsComponent implements OnInit {
     // In real app, load data by route.snapshot.params['id']
   }
 
-  getPartLabel(): string {
-    return this.logParts.find(p => p.id === this.selectedPart)?.label || '';
-  }
-
-  getSelectedJson(): string {
-    if (this.selectedPart === 'requestBody') return this.requestJson;
-    if (this.selectedPart === 'responseBody') return this.responseJson;
-    return '{\\n  "error": "No query parameters found for this trace"\\n}';
-  }
-
   copyTraceId() {
     navigator.clipboard.writeText('a615d49f-12be-43d2-84ea-6defaae999c1');
     this.traceCopied.set(true);
     setTimeout(() => this.traceCopied.set(false), 2000);
   }
 
-  copySelectedPayload() {
-    navigator.clipboard.writeText(this.getSelectedJson());
+  copyPayload(type: string) {
+    const text = type === 'request' ? this.requestJson : this.responseJson;
+    navigator.clipboard.writeText(text);
   }
 
   exportLog() {
