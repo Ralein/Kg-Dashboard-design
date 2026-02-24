@@ -1,7 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2, Eye, PlusCircle, StopCircle, Edit3, Trash2, Zap } from 'lucide-angular';
+import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2, Eye, PlusCircle, StopCircle, Edit3, Trash2, Zap, LayoutGrid, ClipboardList } from 'lucide-angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,8 +9,59 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
   template: `
-    <div class="flex flex-col gap-0 animate-page-in">
+    <div class="flex flex-col gap-0 animate-page-in relative">
       
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <!-- CREATE ENDPOINT MODAL                                          -->
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <div *ngIf="isModalOpen()" class="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+        <div class="absolute inset-0 bg-[#0C0F2E]/60 backdrop-blur-sm" (click)="closeModal()"></div>
+        
+        <div class="relative w-full max-w-lg bg-white rounded-[32px] shadow-2xl shadow-black/20 overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
+          <!-- Modal Header -->
+          <div class="px-8 py-6 bg-[#f8faff] border-b border-gray-100/50 flex items-center justify-between">
+            <h2 class="text-xl font-black text-[#2B3674] tracking-tight">Create API Endpoint</h2>
+            <button (click)="closeModal()" class="w-8 h-8 rounded-full hover:bg-gray-200/50 flex items-center justify-center text-[#A3AED0] transition-colors">
+              <lucide-icon [img]="Plus" class="w-5 h-5 rotate-45"></lucide-icon>
+            </button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="p-8 flex flex-col gap-6">
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Process Flow</label>
+              <div class="relative">
+                <select class="premium-select">
+                  <option>Insurance Data Sharing</option>
+                  <option>Insurance Quotation</option>
+                </select>
+                <lucide-icon [img]="ChevronDown" class="select-chevron"></lucide-icon>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">API Endpoint Name</label>
+              <input type="text" placeholder="e.g. /home-insurance-policies" class="premium-input-field">
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Documentation Version</label>
+              <input type="text" placeholder="e.g. v8" class="premium-input-field">
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="px-8 py-6 bg-gray-50/50 flex justify-end gap-3 border-t border-gray-100/50">
+            <button (click)="closeModal()" class="px-6 py-2.5 rounded-xl border border-gray-200 text-[#2B3674] text-xs font-black uppercase tracking-widest hover:bg-white hover:border-[#2B3674]/20 transition-all">
+              Cancel
+            </button>
+            <button (click)="createEndpoint()" class="px-8 py-2.5 rounded-xl bg-[#2B3674] text-white text-xs font-black uppercase tracking-widest hover:bg-[#4318FF] transition-all shadow-lg shadow-[#2B3674]/20">
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- PREMIUM HERO BANNER                                            -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -46,17 +97,53 @@ import { Router } from '@angular/router';
                   <span class="text-white font-black">v8.2.0</span>
                 </div>
               </div>
-              <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 text-white text-xs font-bold hover:bg-white/20 transition-all border border-white/10">
+              <button (click)="openModal()" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 text-white text-xs font-bold hover:bg-white/20 transition-all border border-white/10">
                 <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
                 <span>Create Endpoint</span>
               </button>
             </div>
           </div>
+
+          <!-- Hero Bottom Tabs -->
+          <div class="flex items-center gap-8 px-8 border-b border-white/10">
+            <button 
+              (click)="activeTab.set('endpoints')"
+              class="relative py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300"
+              [class.text-white]="activeTab() === 'endpoints'"
+              [class.text-white/40]="activeTab() !== 'endpoints'"
+            >
+              <span class="flex items-center gap-2">
+                <lucide-icon [img]="LayoutGrid" class="w-4 h-4"></lucide-icon>
+                Endpoints Management
+              </span>
+              <div 
+                *ngIf="activeTab() === 'endpoints'" 
+                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
+              ></div>
+            </button>
+            
+            <button 
+              (click)="activeTab.set('drafts')"
+              class="relative py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300"
+              [class.text-white]="activeTab() === 'drafts'"
+              [class.text-white/40]="activeTab() !== 'drafts'"
+            >
+              <span class="flex items-center gap-2">
+                <lucide-icon [img]="ClipboardList" class="w-4 h-4"></lucide-icon>
+                Draft Mappings
+              </span>
+              <div 
+                *ngIf="activeTab() === 'drafts'" 
+                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
+              ></div>
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- CONFIGURATION PANEL                                            -->
+      <div *ngIf="activeTab() === 'endpoints'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- CONFIGURATION PANEL                                            -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <div class="px-4">
         <div class="premium-glass p-0 overflow-hidden mb-8">
@@ -209,6 +296,19 @@ import { Router } from '@angular/router';
           </div>
         </div>
       </div>
+
+      <!-- ── DRAFTS TAB content ── -->
+      <div *ngIf="activeTab() === 'drafts'" class="px-8 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="premium-glass p-12 text-center">
+          <div class="w-20 h-20 rounded-full bg-[#4318FF]/5 flex items-center justify-center mx-auto mb-6">
+            <lucide-icon [img]="ClipboardList" class="w-8 h-8 text-[#4318FF]"></lucide-icon>
+          </div>
+          <h3 class="text-xl font-black text-[#2B3674] tracking-tight mb-2">Draft Mappings Explorer</h3>
+          <p class="text-sm font-medium text-[#A3AED0] max-w-sm mx-auto">
+            You currently have no draft mappings. Any unsaved transformation logic will appear here for later review and deployment.
+          </p>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
@@ -300,6 +400,14 @@ import { Router } from '@angular/router';
     .icon-orbit--2 { inset: -30px; animation-duration: 25s; reverse: true; }
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
+    .premium-input-field {
+      width: 100%; padding: 12px 16px; border-radius: 14px;
+      border: 1px solid #E2E8F0; background: #F8FAFF;
+      font-size: 13px; font-weight: 700; color: #2B3674;
+      transition: all 0.2s;
+    }
+    .premium-input-field:focus { border-color: #4318FF; background: white; outline: none; box-shadow: 0 0 0 4px rgba(67,24,255,0.08); }
+
     /* ── Action Buttons ── */
     .action-btn {
        padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800;
@@ -326,7 +434,9 @@ import { Router } from '@angular/router';
 export class ApiVersioningComponent {
   private router = inject(Router);
 
+  activeTab = signal('endpoints');
   showResults = signal(false);
+  isModalOpen = signal(false);
 
   readonly ChevronDown = ChevronDown;
   readonly CheckCircle2 = CheckCircle2;
@@ -344,6 +454,8 @@ export class ApiVersioningComponent {
   readonly Edit3 = Edit3;
   readonly Trash2 = Trash2;
   readonly Zap = Zap;
+  readonly LayoutGrid = LayoutGrid;
+  readonly ClipboardList = ClipboardList;
 
   apiEndpoints = [
     {
@@ -366,6 +478,19 @@ export class ApiVersioningComponent {
 
   viewTransformation(id: string): void {
     this.router.navigate(['/api-versioning', id, 'transformation']);
+  }
+
+  openModal(): void {
+    this.isModalOpen.set(true);
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
+  }
+
+  createEndpoint(): void {
+    this.isModalOpen.set(false);
+    this.showResults.set(true);
   }
 
   toggleFilter(): void {

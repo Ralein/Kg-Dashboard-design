@@ -61,11 +61,7 @@ interface NestedItem {
             <div class="flex items-center gap-3">
               <button class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/8 border border-white/15 text-white/70 text-[11px] font-bold tracking-wide hover:bg-white/15 hover:text-white hover:border-white/30 transition-all duration-200 backdrop-blur-sm">
                 <lucide-icon [img]="History" class="w-3.5 h-3.5"></lucide-icon>
-                Audit History
-              </button>
-              <button class="suspend-hero-btn flex items-center gap-2 px-4 py-2 rounded-lg text-[11px] font-bold tracking-wide">
-                <lucide-icon [img]="ShieldCheck" class="w-3.5 h-3.5"></lucide-icon>
-                Suspend Access
+                History
               </button>
             </div>
           </div>
@@ -146,7 +142,40 @@ interface NestedItem {
             </div>
           </div>
 
-          <!-- Bottom tab-bar removed per user request -->
+          <!-- Hero Bottom Tabs -->
+          <div class="flex items-center gap-8 mt-4 border-b border-white/10">
+            <button 
+              (click)="activeTab.set('detail')"
+              class="relative py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300"
+              [class.text-white]="activeTab() === 'detail'"
+              [class.text-white/40]="activeTab() !== 'detail'"
+            >
+              <span class="flex items-center gap-2">
+                <lucide-icon [img]="Shield" class="w-4 h-4"></lucide-icon>
+                Detail View
+              </span>
+              <div 
+                *ngIf="activeTab() === 'detail'" 
+                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
+              ></div>
+            </button>
+            
+            <button 
+              (click)="activeTab.set('history')"
+              class="relative py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300"
+              [class.text-white]="activeTab() === 'history'"
+              [class.text-white/40]="activeTab() !== 'history'"
+            >
+              <span class="flex items-center gap-2">
+                <lucide-icon [img]="History" class="w-4 h-4"></lucide-icon>
+                Audit History
+              </span>
+              <div 
+                *ngIf="activeTab() === 'history'" 
+                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
+              ></div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -203,7 +232,8 @@ interface NestedItem {
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- MAIN LAYOUT GRID                                               -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+      <div *ngIf="activeTab() === 'detail'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
 
         <!-- ── LEFT: Policy Card ── -->
         <div class="lg:col-span-5 flex flex-col gap-6">
@@ -375,10 +405,26 @@ interface NestedItem {
           </div>
         </div>
       </div>
+
+      <!-- ── AUDIT HISTORY TAB ── -->
+      <div *ngIf="activeTab() === 'history'" class="animate-in fade-in slide-in-from-bottom-4 duration-500 mb-8">
+        <div class="premium-glass p-8 min-h-[400px] flex flex-col items-center justify-center text-center">
+          <div class="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mb-6">
+            <lucide-icon [img]="History" class="w-8 h-8 text-[#4318FF]"></lucide-icon>
+          </div>
+          <h3 class="text-xl font-black text-[#2B3674] tracking-tight mb-2">Audit History</h3>
+          <p class="text-sm font-medium text-[#A3AED0] max-w-sm mx-auto">
+            The audit timeline is currently being synchronized. Please check back shortly for a complete record of access attempts and data requests.
+          </p>
+          <button class="mt-8 px-6 py-2.5 rounded-xl border border-gray-200 text-[#2B3674] text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 transition-all">
+            Refresh Data
+          </button>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
-    :host { display: block; }
+    :host { display: block; overflow-x: hidden; }
 
     :host {
       --brand: #4318FF;
@@ -1019,6 +1065,7 @@ interface NestedItem {
   `]
 })
 export class ConsentDetailComponent implements OnInit {
+  activeTab = signal('detail');
   readonly ClipboardCheck = ClipboardCheck;
   readonly History = History;
   readonly HomeIcon = HomeIcon;

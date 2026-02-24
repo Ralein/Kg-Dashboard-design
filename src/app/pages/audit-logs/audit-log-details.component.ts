@@ -6,7 +6,7 @@ import {
   ChevronLeft, Download, X, Clock, Shield,
   Activity, Code, Terminal, Copy, Check,
   ChevronDown, ChevronUp, AlertCircle, FileText,
-  User, Database, Layers, ExternalLink, Info, Lock
+  User, Database, Layers, ExternalLink, Info, Lock, LayoutGrid, Search
 } from 'lucide-angular';
 
 @Component({
@@ -119,9 +119,47 @@ import {
                 <span class="hero-stat-value uppercase">API Log</span>
               </div>
             </div>
+            </div>
+          </div>
+
+          <!-- Hero Bottom Tabs -->
+          <div class="flex items-center gap-8 px-8 border-b border-white/10">
+            <button 
+              (click)="activeTab.set('detail')"
+              class="relative py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300"
+              [class.text-white]="activeTab() === 'detail'"
+              [class.text-white/40]="activeTab() !== 'detail'"
+            >
+              <span class="flex items-center gap-2">
+                <lucide-icon [img]="LayoutGrid" class="w-4 h-4"></lucide-icon>
+                Detail View
+              </span>
+              <div 
+                *ngIf="activeTab() === 'detail'" 
+                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
+              ></div>
+            </button>
+            
+            <button 
+              (click)="activeTab.set('explorer')"
+              class="relative py-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300"
+              [class.text-white]="activeTab() === 'explorer'"
+              [class.text-white/40]="activeTab() !== 'explorer'"
+            >
+              <span class="flex items-center gap-2">
+                <lucide-icon [img]="Search" class="w-4 h-4"></lucide-icon>
+                Log Explorer
+              </span>
+              <div 
+                *ngIf="activeTab() === 'explorer'" 
+                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
+              ></div>
+            </button>
           </div>
         </div>
       </div>
+
+      <div *ngIf="activeTab() === 'detail'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- METADATA CARDS ROW                                             -->
@@ -206,6 +244,22 @@ import {
           </div>
         </div>
 
+      </div>
+
+      <!-- ── LOG EXPLORER TAB ── -->
+      <div *ngIf="activeTab() === 'explorer'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="premium-glass p-12 text-center flex flex-col items-center">
+          <div class="w-20 h-20 rounded-3xl bg-[#4318FF]/10 flex items-center justify-center mb-8 border border-[#4318FF]/20 shadow-2xl shadow-[#4318FF]/10">
+            <lucide-icon [img]="Search" class="w-10 h-10 text-[#4318FF]"></lucide-icon>
+          </div>
+          <h3 class="text-2xl font-black text-[#2B3674] tracking-tight mb-4">Deep Log Analysis</h3>
+          <p class="text-[#A3AED0] font-medium max-w-md mx-auto leading-relaxed mb-10">
+            Query across historical traces and correlate events using our advanced log explorer. Advanced filtering and pattern matching coming soon.
+          </p>
+          <div class="flex items-center gap-4">
+            <button class="bg-[#4318FF] text-white px-8 py-4 rounded-2xl font-black text-sm tracking-tight hover:bg-[#3311CC] transition-all shadow-xl shadow-[#4318FF]/20">Launch Analyzer</button>
+          </div>
+        </div>
       </div>
     </div>
   `,
@@ -412,6 +466,7 @@ import {
   `]
 })
 export class AuditLogDetailsComponent implements OnInit {
+  activeTab = signal('detail');
   private route = inject(ActivatedRoute);
 
   readonly ChevronLeft = ChevronLeft;
@@ -433,6 +488,8 @@ export class AuditLogDetailsComponent implements OnInit {
   readonly Layers = Layers;
   readonly ExternalLink = ExternalLink;
   readonly Info = Info;
+  readonly LayoutGrid = LayoutGrid;
+  readonly Search = Search;
   readonly Lock = Lock;
 
   traceCopied = signal(false);
