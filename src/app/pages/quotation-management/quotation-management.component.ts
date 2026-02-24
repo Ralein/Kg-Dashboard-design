@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { LucideAngularModule, Search, Filter, Download, Eye, ChevronRight, ChevronLeft, ChevronsRight, ChevronsLeft, ClipboardList } from 'lucide-angular';
 
 interface Quote {
@@ -15,7 +16,7 @@ interface Quote {
 @Component({
   selector: 'app-quotation-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, RouterLink],
   template: `
     <div class="flex flex-col gap-6 animate-fade-in-up">
       <!-- Header Area -->
@@ -124,25 +125,23 @@ interface Quote {
             <tbody class="divide-y divide-white/5">
               <tr *ngFor="let quote of pagedQuotes" class="hover:bg-white/40 transition-all duration-200 group relative">
                 <td class="px-6 py-4">
-                  <span class="text-xs font-bold text-[#4318FF] hover:text-[#2B3674] cursor-pointer transition-colors relative inline-block after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-[#2B3674] hover:after:w-full after:transition-all">{{quote.id}}</span>
+                  <span [routerLink]="['/quotation-management', quote.id]" 
+                        class="text-xs font-bold text-[#4318FF] hover:text-[#2B3674] cursor-pointer transition-colors relative inline-block after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-[#2B3674] hover:after:w-full after:transition-all">
+                    {{quote.id}}
+                  </span>
                 </td>
-                <td class="px-6 py-4">
-                  <span class="text-xs font-medium text-[#2B3674]">{{quote.tppName}}</span>
-                </td>
+                <td class="px-6 py-4 text-xs font-medium text-[#2B3674]">{{quote.tppName}}</td>
                 <td class="px-6 py-4">
                   <span class="px-2.5 py-1 rounded-lg bg-[#F4F7FE] text-[10px] font-extrabold text-[#2B3674] border border-white/40 shadow-sm">{{quote.lob}}</span>
                 </td>
-                <td class="px-6 py-4">
-                  <span class="text-xs text-[#A3AED0]">{{quote.createdOn}}</span>
-                </td>
-                <td class="px-6 py-4">
-                  <span class="text-xs text-[#A3AED0]">{{quote.expiresOn}}</span>
-                </td>
+                <td class="px-6 py-4 text-xs text-[#A3AED0]">{{quote.createdOn}}</td>
+                <td class="px-6 py-4 text-xs text-[#A3AED0]">{{quote.expiresOn}}</td>
                 <td class="px-6 py-4">
                   <span class="text-[10px] font-bold text-[#A3AED0] bg-white/30 px-2 py-0.5 rounded-md border border-white/20">Available</span>
                 </td>
                 <td class="px-6 py-4 text-right">
-                  <button class="p-2 rounded-xl bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm opacity-80 group-hover:opacity-100">
+                  <button [routerLink]="['/quotation-management', quote.id]"
+                          class="p-2 rounded-xl bg-[#05CD99]/10 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-sm opacity-80 group-hover:opacity-100">
                     <lucide-icon [img]="Eye" class="w-4 h-4"></lucide-icon>
                   </button>
                 </td>
