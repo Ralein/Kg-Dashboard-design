@@ -66,17 +66,28 @@ interface User {
                 <div class="h-4 w-px bg-gray-200 mx-1"></div>
                 <div class="flex items-center gap-2 bg-white/40 px-3 py-1.5 rounded-xl border border-white/20">
                   <span class="text-[10px] font-bold">Items:</span>
-                  <select class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer">
-                    <option>10</option>
-                    <option>20</option>
+                  <select [(ngModel)]="itemsPerPage" class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4 focus:ring-0">
+                    <option [value]="5">5</option>
+                    <option [value]="10">10</option>
+                    <option [value]="20">20</option>
+                    <option [value]="50">50</option>
                   </select>
                 </div>
-                   <span class="text-xs font-semibold text-[#A3AED0]">1 – 10 of 13</span>
+                <span class="text-xs font-semibold text-[#A3AED0]">
+                  {{ (currentPage - 1) * itemsPerPage + 1 }} – {{ Math.min(currentPage * itemsPerPage, filteredUsers.length) }} of {{ filteredUsers.length }}
+                </span>
                 <div class="flex gap-2">
-                   <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
+                   <button (click)="prevPage()" [disabled]="currentPage === 1" class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                   </button>
+                   <button (click)="nextPage()" [disabled]="currentPage >= Math.ceil(filteredUsers.length / itemsPerPage)" class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                   </button>
+                   <div class="h-4 w-px bg-gray-200 mx-1"></div>
+                   <button (click)="toggleAdvancedFilter()" class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                       <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
                    </button>
-                   <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
+                   <button (click)="exportToCSV()" class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                       <lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon>
                    </button>
                 </div>
@@ -101,7 +112,7 @@ interface User {
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-50/50">
-              <tr *ngFor="let user of filteredUsers" class="hover:bg-gray-50/40 transition-colors group">
+              <tr *ngFor="let user of pagedUsers" class="hover:bg-gray-50/40 transition-colors group">
                 <td class="px-6 py-4 whitespace-nowrap"><span class="text-xs font-bold text-[#2B3674]">{{user.username}}</span></td>
                 <td class="px-6 py-4 whitespace-nowrap"><span class="text-xs font-medium text-[#2B3674]">{{user.role}}</span></td>
                 <td class="px-6 py-4 whitespace-nowrap">
@@ -240,11 +251,16 @@ export class UserCreationComponent implements OnDestroy {
   readonly X = X;
   readonly CheckCircle2 = CheckCircle2;
   readonly Calendar = Calendar;
+  readonly Math = Math;
 
   private renderer = inject(Renderer2);
 
   filterStatus: 'All' | 'Active' | 'Inactive' = 'All';
   searchQuery = '';
+
+  // Pagination
+  currentPage = 1;
+  itemsPerPage = 10;
 
   isEditing = signal(false);
   editFormData: Partial<User> = {};
@@ -259,16 +275,16 @@ export class UserCreationComponent implements OnDestroy {
   private backdropListener: (() => void) | null = null;
 
   users: User[] = [
-    { username: 'usertestName',      role: 'User',  active: false, firstName: 'Test',       lastName: 'Name',    mobile: '7894561210', email: 'username@gmail.com',       createdOn: '2026-02-12' },
-    { username: 'userNameFirst',     role: 'User',  active: true,  firstName: 'Test',       lastName: 'Name',    mobile: '7894561213', email: 'userNameFirst@gmail.com',   createdOn: '2026-02-12' },
-    { username: 'usertestNameFirst', role: 'User',  active: true,  firstName: 'Test',       lastName: 'Name',    mobile: '7894561212', email: 'username2@gmail.com',       createdOn: '2026-02-12' },
-    { username: 'usertestName1',     role: 'User',  active: true,  firstName: 'Test',       lastName: 'Name',    mobile: '7894561211', email: 'username1@gmail.com',       createdOn: '2026-02-12' },
-    { username: 'testName',          role: 'Admin', active: true,  firstName: 'Test',       lastName: 'Name',    mobile: '7894561230', email: 'name@gmail.com',            createdOn: '2026-02-12' },
-    { username: 'TestUser',          role: 'Admin', active: true,  firstName: 'Test',       lastName: 'User',    mobile: '8899887766', email: 'Testuser@ggmail.com',       createdOn: '2026-02-04' },
-    { username: 'TestAdmin',         role: 'User',  active: true,  firstName: 'Test',       lastName: 'Admin',   mobile: '9988776655', email: 'TestAdmin@ggmail.com',      createdOn: '2026-02-04' },
-    { username: 'Jay',               role: 'Admin', active: true,  firstName: 'Jayaramani', lastName: 'Ashokraj',mobile: '1234567890', email: 'jayaraman.a@kgisl.com',    createdOn: '2025-11-04' },
-    { username: 'Nithyaa',           role: 'User',  active: true,  firstName: 'Nithyaai',   lastName: 'M',       mobile: '8765432311', email: 'nithyaa@kgisl.com',         createdOn: '2025-08-01' },
-    { username: 'Suvitha',           role: 'Admin', active: true,  firstName: 'Suvitha',    lastName: 'R',       mobile: '8765676456', email: 'suvitha@kgisl.com',         createdOn: '2025-07-10' },
+    { username: 'usertestName', role: 'User', active: false, firstName: 'Test', lastName: 'Name', mobile: '7894561210', email: 'username@gmail.com', createdOn: '2026-02-12' },
+    { username: 'userNameFirst', role: 'User', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561213', email: 'userNameFirst@gmail.com', createdOn: '2026-02-12' },
+    { username: 'usertestNameFirst', role: 'User', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561212', email: 'username2@gmail.com', createdOn: '2026-02-12' },
+    { username: 'usertestName1', role: 'User', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561211', email: 'username1@gmail.com', createdOn: '2026-02-12' },
+    { username: 'testName', role: 'Admin', active: true, firstName: 'Test', lastName: 'Name', mobile: '7894561230', email: 'name@gmail.com', createdOn: '2026-02-12' },
+    { username: 'TestUser', role: 'Admin', active: true, firstName: 'Test', lastName: 'User', mobile: '8899887766', email: 'Testuser@ggmail.com', createdOn: '2026-02-04' },
+    { username: 'TestAdmin', role: 'User', active: true, firstName: 'Test', lastName: 'Admin', mobile: '9988776655', email: 'TestAdmin@ggmail.com', createdOn: '2026-02-04' },
+    { username: 'Jay', role: 'Admin', active: true, firstName: 'Jayaramani', lastName: 'Ashokraj', mobile: '1234567890', email: 'jayaraman.a@kgisl.com', createdOn: '2025-11-04' },
+    { username: 'Nithyaa', role: 'User', active: true, firstName: 'Nithyaai', lastName: 'M', mobile: '8765432311', email: 'nithyaa@kgisl.com', createdOn: '2025-08-01' },
+    { username: 'Suvitha', role: 'Admin', active: true, firstName: 'Suvitha', lastName: 'R', mobile: '8765676456', email: 'suvitha@kgisl.com', createdOn: '2025-07-10' },
   ];
 
   get filteredUsers(): User[] {
@@ -286,7 +302,59 @@ export class UserCreationComponent implements OnDestroy {
     return filtered;
   }
 
-  clearFilters(): void { this.filterStatus = 'All'; this.searchQuery = ''; }
+  get pagedUsers(): User[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredUsers.slice(start, start + this.itemsPerPage);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < Math.ceil(this.filteredUsers.length / this.itemsPerPage)) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  toggleAdvancedFilter(): void {
+    // For now, just toggling status as a simple example of advanced filter
+    // or we could scroll to the filter section
+    this.filterStatus = this.filterStatus === 'All' ? 'Active' : (this.filterStatus === 'Active' ? 'Inactive' : 'All');
+  }
+
+  exportToCSV(): void {
+    const headers = ['Username', 'Role', 'Status', 'First Name', 'Last Name', 'Mobile', 'Email', 'Created On'];
+    const rows = this.filteredUsers.map(u => [
+      u.username,
+      u.role,
+      u.active ? 'Active' : 'Inactive',
+      u.firstName,
+      u.lastName,
+      u.mobile,
+      u.email,
+      u.createdOn
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(r => r.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `users_export_${new Date().getTime()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  clearFilters(): void { this.filterStatus = 'All'; this.searchQuery = ''; this.currentPage = 1; }
 
   openEditMode(user: User): void { this.isEditing.set(true); this.editFormData = { ...user }; }
   cancelEdit(): void { this.isEditing.set(false); this.editFormData = {}; }
@@ -330,11 +398,11 @@ export class UserCreationComponent implements OnDestroy {
   private mountModalOnBody(): void {
     this.unmountModal();
 
-    const isActivate  = !this.userToToggle?.active;
-    const username    = this.userToToggle?.username ?? '';
-    const accent      = isActivate ? '#05CD99' : '#FF5252';
+    const isActivate = !this.userToToggle?.active;
+    const username = this.userToToggle?.username ?? '';
+    const accent = isActivate ? '#05CD99' : '#FF5252';
     const accentLight = isActivate ? 'rgba(5,205,153,0.12)' : 'rgba(255,82,82,0.12)';
-    const accentShadow= isActivate ? 'rgba(5,205,153,0.35)' : 'rgba(255,82,82,0.35)';
+    const accentShadow = isActivate ? 'rgba(5,205,153,0.35)' : 'rgba(255,82,82,0.35)';
     const actionLabel = isActivate ? 'activate' : 'inactivate';
 
     const overlay = document.createElement('div');
@@ -403,8 +471,8 @@ export class UserCreationComponent implements OnDestroy {
     document.body.appendChild(overlay);
     this.modalEl = overlay;
 
-    overlay.querySelector('#uc-xbtn')!.addEventListener('click',  () => this.cancelBlock());
-    overlay.querySelector('#uc-cbtn')!.addEventListener('click',  () => this.cancelBlock());
+    overlay.querySelector('#uc-xbtn')!.addEventListener('click', () => this.cancelBlock());
+    overlay.querySelector('#uc-cbtn')!.addEventListener('click', () => this.cancelBlock());
     overlay.querySelector('#uc-okbtn')!.addEventListener('click', () => this.toggleUserStatus());
 
     // Close on backdrop click

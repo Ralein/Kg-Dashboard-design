@@ -66,16 +66,18 @@ interface Quote {
                 <lucide-icon [img]="Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] group-hover:text-[#4318FF] transition-colors"></lucide-icon>
                 <input 
                   type="text" 
+                  [(ngModel)]="searchQuery"
+                  (ngModelChange)="currentPage = 1"
                   placeholder="Search Quote ID, TPP Name..." 
                   class="glass-input pl-10 pr-4 py-2 w-full text-xs transition-all duration-300 focus:w-full focus:shadow-[0_0_0_2px_rgba(67,24,255,0.1)]"
                 >
               </div>
               <div class="flex items-center gap-2 bg-white/40 p-1 rounded-2xl border border-white/20">
                 <span class="text-[10px] font-bold text-[#A3AED0] px-2 uppercase tracking-wide">Show:</span>
-                <select class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4 focus:ring-0">
-                  <option>10</option>
-                  <option>20</option>
-                  <option>50</option>
+                <select [(ngModel)]="itemsPerPage" (ngModelChange)="currentPage = 1" class="bg-transparent border-none text-xs font-bold text-[#2B3674] outline-none cursor-pointer pr-4 focus:ring-0">
+                  <option [value]="10">10</option>
+                  <option [value]="20">20</option>
+                  <option [value]="50">50</option>
                 </select>
               </div>
               <div class="relative group">
@@ -89,10 +91,10 @@ interface Quote {
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
                 </div>
               </div>
-              <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
+              <button (click)="toggleFilter()" class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                 <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
               </button>
-              <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
+              <button (click)="exportToCSV()" class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                 <lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon>
               </button>
             </div>
@@ -114,7 +116,7 @@ interface Quote {
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5">
-              <tr *ngFor="let quote of quotes" class="hover:bg-white/40 transition-all duration-200 group relative">
+              <tr *ngFor="let quote of pagedQuotes" class="hover:bg-white/40 transition-all duration-200 group relative">
                 <td class="px-6 py-4">
                   <span class="text-xs font-bold text-[#4318FF] hover:text-[#2B3674] cursor-pointer transition-colors relative inline-block after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-[#2B3674] hover:after:w-full after:transition-all">{{quote.id}}</span>
                 </td>
@@ -143,7 +145,7 @@ interface Quote {
           </table>
           
           <!-- Empty State -->
-          <div *ngIf="quotes.length === 0" class="flex flex-col items-center justify-center py-20 opacity-50">
+          <div *ngIf="filteredQuotes.length === 0" class="flex flex-col items-center justify-center py-20 opacity-50">
             <div class="p-4 bg-white/20 rounded-full mb-4">
                 <lucide-icon [img]="Search" class="w-8 h-8 text-[#A3AED0]"></lucide-icon>
             </div>
@@ -155,20 +157,28 @@ interface Quote {
         <!-- Pagination -->
         <div class="p-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 bg-white/5">
           <span class="text-xs font-bold text-[#A3AED0]">
-            Showing <span class="text-[#2B3674]">1 – 10</span> of <span class="text-[#2B3674]">1232</span>
+            Showing <span class="text-[#2B3674]">{{ (currentPage - 1) * itemsPerPage + 1 }} – {{ Math.min(currentPage * itemsPerPage, filteredQuotes.length) }}</span> of <span class="text-[#2B3674]">{{filteredQuotes.length}}</span>
           </span>
           <div class="flex items-center gap-2">
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
+             <button (click)="goToPage(1)" [disabled]="currentPage === 1" class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all disabled:opacity-30"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
+             <button (click)="prevPage()" [disabled]="currentPage === 1" class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all disabled:opacity-30"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
              
              <div class="flex items-center mx-2 gap-1.5">
-               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold bg-[#4318FF] text-white rounded-xl shadow-lg shadow-[#4318FF]/20 transform transition-transform hover:scale-110">1</button>
-               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold text-[#A3AED0] hover:bg-white/40 rounded-xl transition-all">2</button>
-               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold text-[#A3AED0] hover:bg-white/40 rounded-xl transition-all">3</button>
+               <button *ngFor="let p of getPages()" 
+                       (click)="goToPage(p)"
+                       class="w-9 h-9 flex items-center justify-center text-xs font-bold rounded-xl transition-all transform hover:scale-110"
+                       [class.bg-[#4318FF]]="p === currentPage"
+                       [class.text-white]="p === currentPage"
+                       [class.shadow-lg]="p === currentPage"
+                       [class.shadow-[#4318FF]/20]="p === currentPage"
+                       [class.text-[#A3AED0]]="p !== currentPage"
+                       [class.hover:bg-white/40]="p !== currentPage">
+                 {{p}}
+               </button>
              </div>
  
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
+             <button (click)="nextPage()" [disabled]="currentPage >= totalPages" class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all disabled:opacity-30"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
+             <button (click)="goToPage(totalPages)" [disabled]="currentPage >= totalPages" class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all disabled:opacity-30"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
           </div>
         </div>
       </div>
@@ -198,6 +208,10 @@ export class QuotationManagementComponent {
   readonly ClipboardList = ClipboardList;
 
   activeTab = signal('current');
+  searchQuery = '';
+  currentPage = 1;
+  itemsPerPage = 10;
+  readonly Math = Math;
 
   quotes: Quote[] = [
     { id: '90050000009730', tppName: 'ADNIC', lob: 'TRAVEL', createdOn: '2026-02-19 05:07:20', expiresOn: '2026-03-05 23:59:59', status: 'Available' },
@@ -211,4 +225,60 @@ export class QuotationManagementComponent {
     { id: '90030000002517', tppName: '–', lob: 'HOME', createdOn: '2026-02-19 04:55:37', expiresOn: '2026-03-05 23:59:59', status: 'Available' },
     { id: '90030000002516', tppName: '–', lob: 'HOME', createdOn: '2026-02-19 04:55:27', expiresOn: '2026-03-05 23:59:59', status: 'Available' },
   ];
+
+  get filteredQuotes(): Quote[] {
+    const q = this.searchQuery.toLowerCase().trim();
+    if (!q) return this.quotes;
+    return this.quotes.filter(quote =>
+      quote.id.toLowerCase().includes(q) ||
+      quote.tppName.toLowerCase().includes(q) ||
+      quote.lob.toLowerCase().includes(q) ||
+      quote.status.toLowerCase().includes(q)
+    );
+  }
+
+  get pagedQuotes(): Quote[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredQuotes.slice(start, start + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredQuotes.length / this.itemsPerPage);
+  }
+
+  getPages(): number[] {
+    const pages = [];
+    for (let i = 1; i <= this.totalPages; i++) pages.push(i);
+    return pages;
+  }
+
+  nextPage(): void { if (this.currentPage < this.totalPages) this.currentPage++; }
+  prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
+  goToPage(p: number): void { this.currentPage = p; }
+
+  toggleFilter(): void {
+    console.log('Filter toggled');
+  }
+
+  exportToCSV(): void {
+    const headers = ['Quote ID', 'TPP Name', 'LOB', 'Created On', 'Expires On', 'Status'];
+    const rows = this.filteredQuotes.map(q => [
+      q.id,
+      q.tppName,
+      q.lob,
+      q.createdOn,
+      q.expiresOn,
+      q.status
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `quotes_${new Date().getTime()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }

@@ -92,7 +92,7 @@ import { LucideAngularModule, Search, Calendar, RotateCcw, Send, FileSpreadsheet
           <!-- Result Toolbar (Transparent) -->
           <div class="px-8 py-4 flex justify-between items-center">
              <span class="text-xs font-bold text-[#A3AED0] uppercase tracking-widest">Report Preview</span>
-             <button class="p-2.5 bg-white/40 rounded-2xl border border-white/20 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 flex items-center gap-2 px-4 shadow-sm">
+             <button (click)="exportToExcel()" class="p-2.5 bg-white/40 rounded-2xl border border-white/20 text-[#05CD99] hover:bg-[#05CD99] hover:text-white transition-all transform hover:scale-110 active:scale-95 flex items-center gap-2 px-4 shadow-sm">
                 <lucide-icon [img]="FileSpreadsheet" class="w-4 h-4"></lucide-icon>
                 <span class="text-[10px] font-extrabold uppercase">Export Excel</span>
              </button>
@@ -134,4 +134,10 @@ export class ReportsComponent {
   readonly Search = Search;
   readonly FileSpreadsheet = FileSpreadsheet;
   readonly ChevronRight = ChevronRight;
+
+  exportToExcel(): void {
+    // Demo implementation since there's no data yet
+    alert('Exporting report to Excel...');
+    console.log('Exporting report...');
+  }
 }

@@ -119,8 +119,8 @@ import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Downloa
                 </div>
              </div>
               <div class="flex items-center gap-2">
-                 <button class="p-2.5 bg-white/40 rounded-2xl border border-white/20 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/80 transition-all shadow-sm transform hover:scale-110 active:scale-95" title="Filter"><lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon></button>
-                 <button class="p-2.5 bg-white/40 rounded-2xl border border-white/20 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/80 transition-all shadow-sm transform hover:scale-110 active:scale-95" title="Download"><lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon></button>
+                 <button (click)="toggleFilter()" class="p-2.5 bg-white/40 rounded-2xl border border-white/20 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/80 transition-all shadow-sm transform hover:scale-110 active:scale-95" title="Filter"><lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon></button>
+                 <button (click)="exportData()" class="p-2.5 bg-white/40 rounded-2xl border border-white/20 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/80 transition-all shadow-sm transform hover:scale-110 active:scale-95" title="Download"><lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon></button>
                  <button class="p-2.5 bg-white/40 rounded-2xl border border-white/20 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/80 transition-all shadow-sm transform hover:scale-110 active:scale-95" title="Documentation"><lucide-icon [img]="Globe" class="w-4 h-4"></lucide-icon></button>
                  <button class="p-2.5 bg-white/40 rounded-2xl border border-white/20 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/80 transition-all shadow-sm transform hover:scale-110 active:scale-95" title="Export JSON"><lucide-icon [img]="FileJson" class="w-4 h-4"></lucide-icon></button>
               </div>
@@ -168,4 +168,13 @@ export class ApiVersioningComponent {
   readonly Globe = Globe;
   readonly FileJson = FileJson;
   readonly Maximize2 = Maximize2;
+
+  toggleFilter(): void {
+    console.log('Filter toggled');
+  }
+
+  exportData(): void {
+    alert('Exporting API mapping data...');
+    console.log('Exporting data...');
+  }
 }

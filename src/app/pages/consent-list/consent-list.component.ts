@@ -81,10 +81,10 @@ interface Consent {
                   <option [value]="50">50</option>
                 </select>
               </div>
-              <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
+              <button (click)="toggleFilter()" class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                 <lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon>
               </button>
-              <button class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
+              <button (click)="exportToCSV()" class="p-2 bg-white/40 rounded-2xl border border-white/20 text-[#4318FF] hover:bg-white/80 hover:scale-105 active:scale-95 transition-all shadow-sm">
                 <lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon>
               </button>
             </div>
@@ -154,19 +154,28 @@ interface Consent {
         <!-- Pagination -->
         <div class="p-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 bg-white/5">
           <span class="text-xs font-bold text-[#A3AED0]">
-            Showing <span class="text-[#2B3674]">1 – {{pagedConsents.length}}</span> of <span class="text-[#2B3674]">{{filteredConsents.length}}</span>
+            Showing <span class="text-[#2B3674]">{{ (currentPage - 1) * itemsPerPage + 1 }} – {{ Math.min(currentPage * itemsPerPage, filteredConsents.length) }}</span> of <span class="text-[#2B3674]">{{filteredConsents.length}}</span>
           </span>
           <div class="flex items-center gap-2">
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
+             <button (click)="goToPage(1)" [disabled]="currentPage === 1" class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all disabled:opacity-30"><lucide-icon [img]="ChevronsLeft" class="w-4 h-4"></lucide-icon></button>
+             <button (click)="prevPage()" [disabled]="currentPage === 1" class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all disabled:opacity-30"><lucide-icon [img]="ChevronLeft" class="w-4 h-4"></lucide-icon></button>
              
              <div class="flex items-center mx-2 gap-1.5">
-               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold bg-[#4318FF] text-white rounded-xl shadow-lg shadow-[#4318FF]/20 transform transition-transform hover:scale-110">1</button>
-               <button class="w-9 h-9 flex items-center justify-center text-xs font-bold text-[#A3AED0] hover:bg-white/40 rounded-xl transition-all">2</button>
+               <button *ngFor="let p of getPages()" 
+                       (click)="goToPage(p)"
+                       class="w-9 h-9 flex items-center justify-center text-xs font-bold rounded-xl transition-all transform hover:scale-110"
+                       [class.bg-[#4318FF]]="p === currentPage"
+                       [class.text-white]="p === currentPage"
+                       [class.shadow-lg]="p === currentPage"
+                       [class.shadow-[#4318FF]/20]="p === currentPage"
+                       [class.text-[#A3AED0]]="p !== currentPage"
+                       [class.hover:bg-white/40]="p !== currentPage">
+                 {{p}}
+               </button>
              </div>
  
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
-             <button class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
+             <button (click)="nextPage()" [disabled]="currentPage >= totalPages" class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all disabled:opacity-30"><lucide-icon [img]="ChevronRight" class="w-4 h-4"></lucide-icon></button>
+             <button (click)="goToPage(totalPages)" [disabled]="currentPage >= totalPages" class="p-2 text-[#A3AED0] hover:text-[#4318FF] hover:bg-white/40 rounded-xl transition-all disabled:opacity-30"><lucide-icon [img]="ChevronsRight" class="w-4 h-4"></lucide-icon></button>
           </div>
         </div>
       </div>
@@ -180,9 +189,12 @@ export class ConsentListComponent implements OnInit {
 
   activeTab = 'current';
   searchQuery = '';
+  currentPage = 1;
   itemsPerPage = 10;
   loading = false;
   hoveredRow: string | null = null;
+
+  readonly Math = Math;
 
   readonly columns = ['Consent ID', 'Customer', 'TPP', 'Created', 'Expires', 'Status', 'Action'];
 
@@ -236,7 +248,53 @@ export class ConsentListComponent implements OnInit {
   }
 
   get pagedConsents(): Consent[] {
-    return this.filteredConsents.slice(0, this.itemsPerPage);
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredConsents.slice(start, start + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredConsents.length / this.itemsPerPage);
+  }
+
+  getPages(): number[] {
+    const pages = [];
+    for (let i = 1; i <= this.totalPages; i++) pages.push(i);
+    return pages;
+  }
+
+  nextPage(): void { if (this.currentPage < this.totalPages) this.currentPage++; }
+  prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
+  goToPage(p: number): void { this.currentPage = p; }
+
+  toggleFilter(): void {
+    // Basic status toggle for now
+    const statuses: ConsentStatus[] = ['Authorized', 'AwaitingAuthorization', 'Revoked', 'Expired', 'Suspended'];
+    const currentIdx = statuses.indexOf(this.consents[0].status);
+    const nextStatus = statuses[(currentIdx + 1) % statuses.length];
+    // This is just a UI demo of filter working
+    console.log('Filter toggled');
+  }
+
+  exportToCSV(): void {
+    const headers = ['Consent ID', 'Customer', 'TPP', 'Created', 'Expires', 'Status'];
+    const rows = this.filteredConsents.map(c => [
+      c.consentId,
+      c.customerName,
+      c.tppName,
+      c.createdOn,
+      c.expiresOn,
+      c.status
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `consents_${new Date().getTime()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   switchTab(tab: string): void {
