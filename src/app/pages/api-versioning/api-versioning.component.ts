@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2 } from 'lucide-angular';
+import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2, Eye, PlusCircle, StopCircle, Edit3, Trash2, Zap } from 'lucide-angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-api-versioning',
@@ -113,7 +114,7 @@ import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Downloa
             </div>
 
             <div class="flex justify-end mt-8">
-              <button class="premium-submit-btn">
+              <button (click)="submitMappings()" class="premium-submit-btn">
                 <lucide-icon [img]="CheckCircle2" class="w-4 h-4"></lucide-icon>
                 <span>Submit Mappings</span>
               </button>
@@ -132,7 +133,7 @@ import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Downloa
                   <input type="text" placeholder="Filter version mappings..." class="search-input">
                 </div>
                 <div class="h-6 w-px bg-gray-200"></div>
-                <span class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest">0 results matched</span>
+                <span class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest">{{ showResults() ? '2 results matched' : '0 results matched' }}</span>
              </div>
              <div class="flex items-center gap-2">
                 <button (click)="toggleFilter()" class="toolbar-btn" title="Filter"><lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon></button>
@@ -142,7 +143,58 @@ import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Downloa
              </div>
           </div>
 
-          <div class="flex-1 flex flex-col items-center justify-center p-16">
+          <!-- Results List -->
+          <div *ngIf="showResults()" class="flex-1 overflow-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+             <table class="w-full text-left border-collapse">
+                <thead>
+                   <tr class="bg-gray-50/50 border-b border-gray-100">
+                      <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">API Name</th>
+                      <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">Doc Version</th>
+                      <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">API Version</th>
+                      <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">Release Date</th>
+                      <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">Status</th>
+                      <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">Actions</th>
+                   </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                   <tr *ngFor="let api of apiEndpoints" class="hover:bg-[#4318FF]/[0.02] transition-all group">
+                      <td class="px-6 py-5">
+                         <div class="flex flex-col">
+                            <span class="text-sm font-black text-[#2B3674] tracking-tight">{{ api.name }}</span>
+                            <span class="text-[10px] font-bold text-[#A3AED0] uppercase tracking-widest mt-0.5">{{ api.lob }} / {{ api.process }}</span>
+                         </div>
+                      </td>
+                      <td class="px-6 py-5">
+                         <span class="px-2 py-1 rounded-md bg-gray-100 text-[#2B3674] text-[10px] font-black uppercase tracking-widest">{{ api.docVersion }}</span>
+                      </td>
+                      <td class="px-6 py-5 text-xs font-bold text-[#2B3674]">{{ api.apiVersion }}</td>
+                      <td class="px-6 py-5 text-xs font-bold text-[#A3AED0]">{{ api.releaseDate }}</td>
+                      <td class="px-6 py-5">
+                         <span [class]="'px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ' + api.statusClass">
+                            {{ api.status }}
+                         </span>
+                      </td>
+                      <td class="px-6 py-5">
+                         <div class="flex items-center gap-2">
+                            <button (click)="viewTransformation(api.id)" class="action-btn action-btn--view" title="View Transformation">
+                               <lucide-icon [img]="Eye" class="w-3.5 h-3.5"></lucide-icon>
+                               <span>View</span>
+                            </button>
+                            <button class="action-btn action-btn--secondary" title="Create Version">
+                               <lucide-icon [img]="PlusCircle" class="w-3.5 h-3.5"></lucide-icon>
+                            </button>
+                            <button class="action-btn action-btn--danger" title="Deprecate">
+                               <lucide-icon [img]="StopCircle" class="w-3.5 h-3.5"></lucide-icon>
+                            </button>
+                         </div>
+                      </td>
+                   </tr>
+                </tbody>
+             </table>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!showResults()" class="flex-1 flex flex-col items-center justify-center p-16">
              <div class="empty-3d-icon mb-6">
                 <div class="icon-inner">
                    <lucide-icon [img]="Settings2" class="w-10 h-10 text-[#A3AED0]"></lucide-icon>
@@ -248,6 +300,21 @@ import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Downloa
     .icon-orbit--2 { inset: -30px; animation-duration: 25s; reverse: true; }
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
+    /* ── Action Buttons ── */
+    .action-btn {
+       padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800;
+       display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+       border: 1px solid transparent;
+    }
+    .action-btn--view { background: #f0f7ff; color: #4318FF; border-color: rgba(67,24,255,0.1); }
+    .action-btn--view:hover { background: #4318FF; color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(67,24,255,0.2); }
+    
+    .action-btn--secondary { background: #f8faff; color: #A3AED0; border-color: #E2E8F0; }
+    .action-btn--secondary:hover { background: white; color: #2B3674; border-color: #2B3674; }
+    
+    .action-btn--danger { background: #fff5f5; color: #E31A1A; border-color: rgba(227,26,26,0.1); }
+    .action-btn--danger:hover { background: #E31A1A; color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(227,26,26,0.2); }
+
     /* ── Page Entrance ── */
     .animate-page-in { animation: pageIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     @keyframes pageIn {
@@ -257,6 +324,10 @@ import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Downloa
   `]
 })
 export class ApiVersioningComponent {
+  private router = inject(Router);
+
+  showResults = signal(false);
+
   readonly ChevronDown = ChevronDown;
   readonly CheckCircle2 = CheckCircle2;
   readonly Search = Search;
@@ -267,6 +338,35 @@ export class ApiVersioningComponent {
   readonly Globe = Globe;
   readonly FileJson = FileJson;
   readonly Maximize2 = Maximize2;
+  readonly Eye = Eye;
+  readonly PlusCircle = PlusCircle;
+  readonly StopCircle = StopCircle;
+  readonly Edit3 = Edit3;
+  readonly Trash2 = Trash2;
+  readonly Zap = Zap;
+
+  apiEndpoints = [
+    {
+      id: 'ep-1', name: '/home-insurance-policies/{InsurancePolicyId}',
+      lob: 'HOME', process: 'Insurance Data Sharing',
+      docVersion: 'v8', apiVersion: 'v2.0', releaseDate: '04/02/2026',
+      status: 'Configured', statusClass: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    },
+    {
+      id: 'ep-2', name: '/home-insurance-policies',
+      lob: 'HOME', process: 'Insurance Quotation',
+      docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '02/12/2025',
+      status: 'In Progress', statusClass: 'bg-amber-50 text-amber-600 border-amber-100',
+    }
+  ];
+
+  submitMappings(): void {
+    this.showResults.set(true);
+  }
+
+  viewTransformation(id: string): void {
+    this.router.navigate(['/api-versioning', id, 'transformation']);
+  }
 
   toggleFilter(): void {
     console.log('Filter toggled');
