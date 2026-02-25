@@ -182,7 +182,7 @@ export class FieldMappingComponent {
     readonly ChevronDown = ChevronDown;
 
     filteredMappingRules() {
-        return this.mappingRules().filter(f =>
+        return this.mappingRules().filter((f: any) =>
             f.name.toLowerCase().includes(this.mappingSearchQuery.toLowerCase())
         );
     }
@@ -190,11 +190,11 @@ export class FieldMappingComponent {
     filteredLfiGroups() {
         if (!this.sidebarSearchQuery) return this.lfiFieldGroups();
         const query = this.sidebarSearchQuery.toLowerCase();
-        return this.lfiFieldGroups().map(group => ({
+        return this.lfiFieldGroups().map((group: any) => ({
             ...group,
             expanded: true,
-            fields: group.fields.filter(f => f.toLowerCase().includes(query))
-        })).filter(group => group.fields.length > 0);
+            fields: group.fields.filter((f: string) => f.toLowerCase().includes(query))
+        })).filter((group: any) => group.fields.length > 0);
     }
 
     onDragStart(event: DragEvent, field: string) {
