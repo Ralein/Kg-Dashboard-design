@@ -35,6 +35,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/api-versioning/data-transformation/data-transformation.component').then(m => m.DataTransformationComponent)
     },
     {
+        path: 'api-versioning/:id/transformation/edit',
+        loadComponent: () => import('./pages/api-versioning/data-transformation/data-transformation.component').then(m => m.DataTransformationComponent)
+    },
+    {
         path: 'api-monitoring',
         loadComponent: () => import('./pages/api-monitoring/api-monitoring.component').then(m => m.ApiMonitoringComponent)
     },
