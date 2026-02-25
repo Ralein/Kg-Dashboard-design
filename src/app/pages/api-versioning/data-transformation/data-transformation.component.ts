@@ -199,6 +199,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
       <app-api-config 
         *ngIf="activeTab() === 'api'"
         [jsonContent]="jsonContent"
+        (contentChange)="jsonContent = $event"
       ></app-api-config>
 
       <app-data-mapping 
@@ -407,16 +408,32 @@ export class DataTransformationComponent implements OnDestroy, OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.recordId.set(id);
-      // Simulate fetching details for ep-0, ep-1, etc.
-      if (id === 'ep-0' || id === 'ep-1' || id === 'ep-2') {
+
+      // Expanded logic to handle new mockup IDs
+      if (id.includes('ep-med')) {
+        this.selectedLob.set('MEDICAL');
+        this.selectedProcessFlow.set(id === 'ep-med-1' ? 'Insurance Quotation' : 'Insurance Data Sharing');
+        this.docVersion.set('v8');
+        this.selectedEndpoint.set(id === 'ep-med-1' ? '/health-insurance-quotes' : '/medical-insurance-policies/{InsurancePolicyId}');
+      } else if (id.includes('ep-trav')) {
+        this.selectedLob.set('TRAVEL');
+        this.selectedProcessFlow.set(id.includes('quotes') || id === 'ep-trav-1' || id === 'ep-trav-3' ? 'Insurance Quotation' : 'Insurance Data Sharing');
+        this.docVersion.set(id === 'ep-trav-3' ? 'v7' : 'v8');
+        this.selectedEndpoint.set(id.includes('policies') || id === 'ep-trav-2' ? '/travel-insurance-policies' : '/travel-insurance-quotes');
+      } else if (id.includes('motor') || id === 'ep-3' || id === 'ep-4' || id === 'ep-5' || id === 'ep-6') {
+        this.selectedLob.set('MOTOR');
+        this.selectedProcessFlow.set(id === 'ep-5' ? 'Insurance Quotation' : 'Insurance Data Sharing');
+        this.docVersion.set(id === 'ep-6' ? 'v7' : 'v8');
+        this.selectedEndpoint.set(id === 'ep-5' ? '/motor-insurance-quotes' : '/motor-insurance-policies/{InsurancePolicyId}');
+      } else if (id.startsWith('ep-') && (id === 'ep-0' || id === 'ep-1' || id === 'ep-2' || id === 'ep-7')) {
         this.selectedLob.set('HOME');
         this.selectedProcessFlow.set('Insurance Data Sharing');
-        this.docVersion.set('v8');
+        this.docVersion.set(id === 'ep-7' ? 'v7' : 'v8');
         this.selectedEndpoint.set('/home-insurance-policies/{InsurancePolicyId}');
-      } else if (id === 'ep-3' || id === 'ep-4') {
+      } else {
+        // Fallback for new ad-hoc creations
         this.selectedLob.set('MOTOR');
         this.selectedProcessFlow.set('Insurance Data Sharing');
-        this.docVersion.set('v8');
         this.selectedEndpoint.set('/motor-insurance-policies/{InsurancePolicyId}');
       }
     }
