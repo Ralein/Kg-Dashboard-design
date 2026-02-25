@@ -1,4 +1,4 @@
-import { Component, signal, OnDestroy, Renderer2, inject } from '@angular/core';
+import { Component, signal, computed, OnDestroy, Renderer2, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2, Eye, PlusCircle, StopCircle, Edit3, Trash2, Zap, LayoutGrid, ChevronRight, Database, Layers, Clock, Info, Printer, Save, ExternalLink, PlayCircle, EyeOff, XCircle } from 'lucide-angular';
@@ -123,11 +123,16 @@ import { Router } from '@angular/router';
                   <div class="flex flex-col gap-2 group">
                     <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Line of Business</label>
                     <div class="relative">
-                      <select class="premium-select">
-                        <option>MOTOR</option>
-                        <option>MEDICAL</option>
-                        <option>TRAVEL</option>
-                        <option>HOME</option>
+                      <select 
+                        [ngModel]="selectedLob()" 
+                        (ngModelChange)="onLobChange($event)"
+                        class="premium-select"
+                      >
+                        <option value="" disabled selected>Select LOB</option>
+                        <option value="MOTOR">MOTOR</option>
+                        <option value="MEDICAL">MEDICAL</option>
+                        <option value="TRAVEL">TRAVEL</option>
+                        <option value="HOME">HOME</option>
                       </select>
                       <lucide-icon [img]="ChevronDown" class="select-chevron"></lucide-icon>
                     </div>
@@ -137,9 +142,15 @@ import { Router } from '@angular/router';
                   <div class="flex flex-col gap-2 group">
                     <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Process Flow</label>
                     <div class="relative">
-                      <select class="premium-select">
-                        <option>Insurance Data Sharing</option>
-                        <option>Insurance Quotation</option>
+                      <select 
+                        [ngModel]="selectedProcessFlow()" 
+                        (ngModelChange)="onProcessFlowChange($event)"
+                        class="premium-select disabled:opacity-50 disabled:cursor-not-allowed"
+                        [disabled]="!selectedLob()"
+                      >
+                        <option value="" disabled selected>Select Process Flow</option>
+                        <option value="Insurance Data Sharing">Insurance Data Sharing</option>
+                        <option value="Insurance Quotation">Insurance Quotation</option>
                       </select>
                       <lucide-icon [img]="ChevronDown" class="select-chevron"></lucide-icon>
                     </div>
@@ -149,21 +160,33 @@ import { Router } from '@angular/router';
                   <div class="flex flex-col gap-2 group">
                     <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">API Version</label>
                     <div class="relative">
-                      <select class="premium-select">
-                        <option>v7 (Legacy)</option>
-                        <option selected>v8 (Current)</option>
+                      <select 
+                        [ngModel]="apiVersionSelected()" 
+                        (ngModelChange)="apiVersionSelected.set($event)"
+                        class="premium-select disabled:opacity-50 disabled:cursor-not-allowed"
+                        [disabled]="!selectedProcessFlow()"
+                      >
+                        <option value="" disabled selected>Documentation Versi...</option>
+                        <option value="v7">v7 (Legacy)</option>
+                        <option value="v8">v8 (Current)</option>
                       </select>
                       <lucide-icon [img]="ChevronDown" class="select-chevron"></lucide-icon>
                     </div>
                   </div>
 
-                  <!-- Select API -->
+                  <!-- Target Endpoint -->
                   <div class="flex flex-col gap-2 group">
                     <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Target Endpoint</label>
                     <div class="relative">
-                      <select class="premium-select">
-                        <option>/home-insurance-policies</option>
-                        <option>/home-insurance-policies/{{ '{' }}InsurancePolicyId{{ '}' }}</option>
+                      <select 
+                        [ngModel]="selectedEndpoint()" 
+                        (ngModelChange)="selectedEndpoint.set($event)"
+                        class="premium-select disabled:opacity-50 disabled:cursor-not-allowed"
+                        [disabled]="!selectedProcessFlow()"
+                      >
+                        <option value="" disabled selected>Select Endpoint</option>
+                        <option *ngFor="let ep of availableEndpoints()" [value]="ep">{{ ep }}</option>
+                        <option *ngIf="availableEndpoints().length === 0" disabled>Waiting for input...</option>
                       </select>
                       <lucide-icon [img]="ChevronDown" class="select-chevron"></lucide-icon>
                     </div>
@@ -192,7 +215,7 @@ import { Router } from '@angular/router';
                       <input type="text" placeholder="Filter version mappings..." class="search-input">
                     </div>
                     <div class="h-6 w-px bg-gray-200"></div>
-                    <span class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest">{{ showResults() ? (apiEndpoints.length + ' results matched') : '0 results matched' }}</span>
+                    <span class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest">{{ showResults() ? (filteredEndpoints().length + ' results matched') : '0 results matched' }}</span>
                  </div>
                  <div class="flex items-center gap-2">
                     <button (click)="toggleFilter()" class="toolbar-btn" title="Filter"><lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon></button>
@@ -218,7 +241,7 @@ import { Router } from '@angular/router';
                         </tr>
                      </thead>
                      <tbody class="divide-y divide-gray-100">
-                        <tr *ngFor="let api of apiEndpoints" class="hover:bg-[#4318FF]/[0.02] transition-all group">
+                        <tr *ngFor="let api of filteredEndpoints()" class="hover:bg-[#4318FF]/[0.02] transition-all group">
                            <td class="px-6 py-5">
                               <div class="flex flex-col">
                                  <span class="text-sm font-black text-[#4318FF] hover:underline cursor-pointer group/link">{{ api.name }}</span>
@@ -456,6 +479,52 @@ export class ApiVersioningComponent implements OnDestroy {
   activeTab = signal('endpoints');
   showResults = signal(false);
 
+  // Dynamic Configuration Signals
+  selectedLob = signal('');
+  selectedProcessFlow = signal('');
+  apiVersionSelected = signal('');
+  selectedEndpoint = signal('');
+
+  onLobChange(val: string) {
+    this.selectedLob.set(val);
+    this.selectedProcessFlow.set('');
+    this.apiVersionSelected.set('');
+    this.selectedEndpoint.set('');
+  }
+
+  onProcessFlowChange(val: string) {
+    this.selectedProcessFlow.set(val);
+    this.apiVersionSelected.set('');
+    this.selectedEndpoint.set('');
+  }
+
+  availableEndpoints = computed(() => {
+    const lob = this.selectedLob().toLowerCase();
+    const flow = this.selectedProcessFlow();
+
+    if (!lob || !flow) return [];
+
+    if (flow === 'Insurance Quotation') {
+      if (lob === 'medical') return ['/health-insurance-quotes'];
+      return [`/${lob}-insurance-quotes`];
+    }
+
+    if (flow === 'Insurance Data Sharing') {
+      return [
+        `/${lob}-insurance-policies/{InsurancePolicyId}`,
+        `/${lob}-insurance-policies`
+      ];
+    }
+
+    return [];
+  });
+
+  get apiEndpoint(): string {
+    const eps = this.availableEndpoints();
+    if (eps.length === 0) return 'Waiting for input...';
+    return eps[0];
+  }
+
   // Modal tracking
   private modalEl: HTMLElement | null = null;
   private backdropListener: (() => void) | null = null;
@@ -492,7 +561,7 @@ export class ApiVersioningComponent implements OnDestroy {
   readonly EyeOff = EyeOff;
   readonly XCircle = XCircle;
 
-  apiEndpoints = [
+  allEndpoints = [
     {
       id: 'ep-0', name: '/home-insurance-policies/{InsurancePolicyId}',
       lob: 'HOME', process: 'Insurance Data Sharing',
@@ -513,8 +582,40 @@ export class ApiVersioningComponent implements OnDestroy {
       docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '02/12/2025', deprecationDate: '-',
       configStatus: 'In Progress', configStatusClass: 'bg-amber-100 text-amber-600',
       status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
+    },
+    {
+      id: 'ep-3', name: '/motor-insurance-policies/{InsurancePolicyId}',
+      lob: 'MOTOR', process: 'Insurance Data Sharing',
+      docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '20/02/2026', deprecationDate: '-',
+      configStatus: 'Configured', configStatusClass: 'bg-[#05CD99]/10 text-[#05CD99]',
+      status: 'Live', statusClass: 'bg-emerald-50 border-emerald-100',
+    },
+    {
+      id: 'ep-4', name: '/motor-insurance-policies',
+      lob: 'MOTOR', process: 'Insurance Data Sharing',
+      docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '21/02/2026', deprecationDate: '-',
+      configStatus: 'Yet to Configure', configStatusClass: 'bg-gray-100 text-gray-600',
+      status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
+    },
+    {
+      id: 'ep-5', name: '/motor-insurance-quotes',
+      lob: 'MOTOR', process: 'Insurance Quotation',
+      docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '22/02/2026', deprecationDate: '-',
+      configStatus: 'In Progress', configStatusClass: 'bg-amber-100 text-amber-600',
+      status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
     }
   ];
+
+  filteredEndpoints = computed(() => {
+    const lob = this.selectedLob();
+    const flow = this.selectedProcessFlow();
+
+    if (!lob || !flow) return [];
+
+    return this.allEndpoints.filter(ep =>
+      ep.lob === lob && ep.process === flow
+    );
+  });
 
   submitMappings(): void {
     this.showResults.set(true);
@@ -574,7 +675,7 @@ export class ApiVersioningComponent implements OnDestroy {
 
   confirmDelete(): void {
     this.unmountModal();
-    this.apiEndpoints = this.apiEndpoints.filter(a => a.id !== this.selectedApi.id);
+    this.allEndpoints = this.allEndpoints.filter(a => a.id !== this.selectedApi.id);
     this.showToast('Version deleted successfully');
   }
 

@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, inject } from '@angular/core';
+import { Component, signal, computed, OnDestroy, Renderer2, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -28,144 +28,146 @@ import { FieldMappingComponent } from './components/field-mapping.component';
     FieldMappingComponent
   ],
   template: `
-    <div class="flex flex-col gap-0 animate-page-in">
-      
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- PREMIUM HERO BANNER                                            -->
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="hero-banner relative overflow-hidden mb-8">
-        <div class="hero-bg absolute inset-0"></div>
-        <div class="hero-grid absolute inset-0"></div>
-        <div class="hero-orb hero-orb--blue"></div>
-        <div class="hero-orb hero-orb--indigo"></div>
-        
-        <div class="relative z-10 px-8 pt-8 pb-0">
-          <div class="flex items-center gap-2 text-white/40 text-[11px] font-bold uppercase tracking-widest mb-6">
-            <button routerLink="/api-versioning" class="hover:text-white transition-colors">API Versioning</button>
-            <span class="opacity-30">/</span>
-            <span class="text-white/80">Data Transformation</span>
-          </div>
+  <div class="flex flex-col gap-0 animate-page-in">
 
-          <div class="flex items-end justify-between pb-8">
-            <div class="flex items-center gap-5">
-              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#8B5CF6] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
-                <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-                <div class="premium-shine absolute inset-0 pointer-events-none"></div>
-                <lucide-icon [img]="Share2" class="w-8 h-8 text-white relative z-10"></lucide-icon>
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- PREMIUM HERO BANNER                                            -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="hero-banner relative overflow-hidden mb-8">
+      <div class="hero-bg absolute inset-0"></div>
+      <div class="hero-grid absolute inset-0"></div>
+      <div class="hero-orb hero-orb--blue"></div>
+      <div class="hero-orb hero-orb--indigo"></div>
+
+      <div class="relative z-10 px-8 pt-8 pb-0">
+        <div class="flex items-center gap-2 text-white/40 text-[11px] font-bold uppercase tracking-widest mb-6">
+          <button routerLink="/api-versioning" class="hover:text-white transition-colors">API Versioning</button>
+          <span class="opacity-30">/</span>
+          <span class="text-white/80">Data Transformation</span>
+        </div>
+
+        <div class="flex items-end justify-between pb-8">
+          <div class="flex items-center gap-5">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#8B5CF6] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
+              <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+              <div class="premium-shine absolute inset-0 pointer-events-none"></div>
+              <lucide-icon [img]="Share2" class="w-8 h-8 text-white relative z-10"></lucide-icon>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <div class="flex items-center gap-3">
+                <h1 class="text-3xl font-black text-white tracking-tight">Data Transformation</h1>
+                <span class="px-2.5 py-0.5 rounded-lg bg-[#05CD99]/20 border border-[#05CD99]/30 text-[#05CD99] text-[10px] font-black uppercase tracking-widest">v2.0 Configured</span>
               </div>
-              <div class="flex flex-col gap-1.5">
-                <div class="flex items-center gap-3">
-                  <h1 class="text-3xl font-black text-white tracking-tight">Data Transformation</h1>
-                  <span class="px-2.5 py-0.5 rounded-lg bg-[#05CD99]/20 border border-[#05CD99]/30 text-[#05CD99] text-[10px] font-black uppercase tracking-widest">v2.0 Configured</span>
-                </div>
-                <div class="flex items-center gap-4 text-white/50 text-xs font-bold uppercase tracking-wider">
-                  <span class="flex items-center gap-1.5 uppercase">
-                    <lucide-icon [img]="Layout" class="w-3.5 h-3.5 text-indigo-400"></lucide-icon> 
-                    {{ selectedLob() }} / {{ selectedProcessFlow() }}
-                  </span>
-                  <div class="w-1 h-1 rounded-full bg-white/20"></div>
-                  <span class="flex items-center gap-1.5 text-white/80 lowercase">
-                    {{ apiEndpoint }}
-                  </span>
-                </div>
+              <div class="flex items-center gap-4 text-white/50 text-xs font-bold uppercase tracking-wider">
+                <span class="flex items-center gap-1.5 uppercase">
+                  <lucide-icon [img]="Layout" class="w-3.5 h-3.5 text-indigo-400"></lucide-icon>
+                  {{ selectedLob() || 'Select LOB' }} / {{ selectedProcessFlow() || 'Select Flow' }}
+                </span>
+                <div class="w-1 h-1 rounded-full bg-white/20"></div>
+                <span class="flex items-center gap-1.5 text-white/80 lowercase">
+                  {{ selectedEndpoint() || 'Waiting for input...' }}
+                </span>
               </div>
             </div>
-          </div>
-
-          <!-- Tabs Navigation -->
-          <div class="flex items-center gap-8 mt-4 border-b border-white/10">
-            <button 
-              *ngFor="let tab of tabs"
-              (click)="onTabClick(tab.id)"
-              class="relative py-4 text-xs font-black uppercase tracking-widest transition-all duration-300"
-              [class.text-white]="activeTab() === tab.id"
-              [class.text-white/40]="activeTab() !== tab.id"
-            >
-              <span class="flex items-center gap-2">
-                <lucide-icon [img]="tab.icon" class="w-4 h-4"></lucide-icon>
-                {{ tab.label }}
-              </span>
-              <div 
-                *ngIf="activeTab() === tab.id" 
-                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full"
-              ></div>
-            </button>
           </div>
         </div>
+
+        <!-- Tabs Navigation -->
+        <div class="flex items-center gap-8 mt-4 border-b border-white/10">
+          <button *ngFor="let tab of tabs" 
+            (click)="onTabClick(tab.id)"
+            class="relative py-4 text-xs font-black uppercase tracking-widest transition-all duration-300"
+            [class.text-white]="activeTab() === tab.id"
+            [class.text-white/40]="activeTab() !== tab.id">
+            <span class="flex items-center gap-2">
+              <lucide-icon [img]="tab.icon" class="w-4 h-4"></lucide-icon>
+              {{ tab.label }}
+            </span>
+            <div *ngIf="activeTab() === tab.id" 
+              class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full">
+            </div>
+          </button>
+        </div>
       </div>
+    </div>
 
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- CONFIGURATION BAR                                              -->
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="px-8 mb-6">
-        <div class="premium-glass p-5 grid grid-cols-1 md:grid-cols-4 gap-6 bg-white/60">
-          <div class="flex flex-col gap-2">
-            <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Line of Business</label>
-            <div class="relative">
-              <select 
-                [ngModel]="selectedLob()" 
-                (ngModelChange)="onLobChange($event)"
-                class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none"
-              >
-                <option value="" disabled selected>Select LOB</option>
-                <option value="HOME">HOME</option>
-                <option value="MOTOR">MOTOR</option>
-                <option value="TRAVEL">TRAVEL</option>
-                <option value="MEDICAL">MEDICAL</option>
-              </select>
-              <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
-            </div>
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- CONFIGURATION BAR                                              -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="px-8 mb-6">
+      <div class="premium-glass p-5 grid grid-cols-1 md:grid-cols-4 gap-6 bg-white/60">
+        <div class="flex flex-col gap-2">
+          <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Line of Business</label>
+          <div class="relative">
+            <select 
+              [ngModel]="selectedLob()" 
+              (ngModelChange)="onLobChange($event)"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none"
+            >
+              <option value="" disabled selected>Select LOB</option>
+              <option value="HOME">HOME</option>
+              <option value="MOTOR">MOTOR</option>
+              <option value="TRAVEL">TRAVEL</option>
+              <option value="MEDICAL">MEDICAL</option>
+            </select>
+            <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
           </div>
+        </div>
 
-          <div class="flex flex-col gap-2">
-            <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Process Flow</label>
-            <div class="relative">
-              <select 
-                [ngModel]="selectedProcessFlow()" 
-                (ngModelChange)="onProcessFlowChange($event)"
-                class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
-                [disabled]="!selectedLob()"
-              >
-                <option value="" disabled selected>Select Process Flow</option>
-                <option value="Insurance Data Sharing">Insurance Data Sharing</option>
-                <option value="Insurance Quotation">Insurance Quotation</option>
-              </select>
-              <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
-            </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Process Flow</label>
+          <div class="relative">
+            <select 
+              [ngModel]="selectedProcessFlow()" 
+              (ngModelChange)="onProcessFlowChange($event)"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
+              [disabled]="!selectedLob()"
+            >
+              <option value="" disabled selected>Select Process Flow</option>
+              <option value="Insurance Data Sharing">Insurance Data Sharing</option>
+              <option value="Insurance Quotation">Insurance Quotation</option>
+            </select>
+            <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
           </div>
+        </div>
 
-          <div class="flex flex-col gap-2">
-            <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">API Version</label>
-            <div class="relative">
-              <select 
-                [ngModel]="docVersion()" 
-                (ngModelChange)="docVersion.set($event)"
-                class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
-                [disabled]="!selectedProcessFlow()"
-              >
-                <option value="" disabled selected>Documentation Versi...</option>
-                <option value="v8">v8 (Current)</option>
-                <option value="v7">v7</option>
-                <option value="v6">v6</option>
-              </select>
-              <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
-            </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">API Version</label>
+          <div class="relative">
+            <select 
+              [ngModel]="docVersion()" 
+              (ngModelChange)="docVersion.set($event)"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
+              [disabled]="!selectedProcessFlow()"
+            >
+              <option value="" disabled selected>Documentation Version</option>
+              <option value="v8">v8 (Current)</option>
+              <option value="v7">v7</option>
+              <option value="v6">v6</option>
+            </select>
+            <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
           </div>
+        </div>
 
-          <div class="flex flex-col gap-2">
-            <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Target Endpoint</label>
-            <div class="relative">
-              <div class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] flex items-center overflow-hidden whitespace-nowrap lowercase pr-10 min-h-[46px]"
-                   [class.text-[#A3AED0]]="apiEndpoint === 'Waiting for input...'">
-                {{ apiEndpoint }}
-              </div>
-              <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none opacity-50"></lucide-icon>
-            </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Target Endpoint</label>
+          <div class="relative">
+            <select 
+              [ngModel]="selectedEndpoint()" 
+              (ngModelChange)="selectedEndpoint.set($event)"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
+              [disabled]="!selectedProcessFlow()"
+            >
+              <option value="" disabled selected>Select Endpoint</option>
+              <option *ngFor="let ep of availableEndpoints()" [value]="ep">{{ ep }}</option>
+              <option *ngIf="availableEndpoints().length === 0" disabled>Waiting for input...</option>
+            </select>
+            <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
           </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex justify-end gap-3 mt-4">
+        <div class="flex justify-end gap-3 mt-4 md:col-span-4">
           <button class="bg-[#05CD99] hover:bg-[#04b88a] text-white px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#05CD99]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
              <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
              <span>CREATE API ENDPOINT</span>
@@ -176,40 +178,41 @@ import { FieldMappingComponent } from './components/field-mapping.component';
           </button>
         </div>
       </div>
-
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- TAB CONTENT AREA (ORCHESTRATED)                                -->
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="px-8 pb-12">
-        <app-object-config *ngIf="activeTab() === 'object'"></app-object-config>
-        
-        <app-api-config 
-          *ngIf="activeTab() === 'api'" 
-          [jsonContent]="jsonContent"
-        ></app-api-config>
-        
-        <app-data-mapping 
-          *ngIf="activeTab() === 'mapping'"
-          [entities]="entities"
-          [mappingData]="mappingData"
-          [activeEntity]="activeEntity"
-        ></app-data-mapping>
-        
-        <app-field-mapping 
-          *ngIf="activeTab() === 'field'"
-          [mappingRules]="mappingRules"
-          [lfiFieldGroups]="lfiFieldGroups"
-        ></app-field-mapping>
-      </div>
     </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TAB CONTENT AREA (ORCHESTRATED)                                -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="px-8 pb-12">
+      <app-object-config *ngIf="activeTab() === 'object'"></app-object-config>
+      
+      <app-api-config 
+        *ngIf="activeTab() === 'api'"
+        [jsonContent]="jsonContent"
+      ></app-api-config>
+
+      <app-data-mapping 
+        *ngIf="activeTab() === 'mapping'"
+        [entities]="entities"
+        [mappingData]="mappingData"
+        [activeEntity]="activeEntity"
+      ></app-data-mapping>
+
+      <app-field-mapping 
+        *ngIf="activeTab() === 'field'"
+        [mappingRules]="mappingRules"
+        [lfiFieldGroups]="lfiFieldGroups"
+      ></app-field-mapping>
+    </div>
+  </div>
   `,
   styles: [`
     :host { display: block; }
-    .hero-banner { border-radius: 0 0 32px 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+    .hero-banner { border-radius: 0 0 32px 32px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); }
     .hero-bg { background: linear-gradient(135deg, #0C0F2E 0%, #171C40 100%); }
-    .hero-grid {
-      background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 24px 24px; opacity: 0.5;
+    .hero-grid { 
+      background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px); 
+      background-size: 24px 24px; opacity: 0.5; 
     }
     .hero-orb {
       position: absolute; width: 400px; height: 400px;
@@ -223,10 +226,18 @@ import { FieldMappingComponent } from './components/field-mapping.component';
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .premium-glass {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
   `]
 })
-export class DataTransformationComponent implements OnInit {
+export class DataTransformationComponent implements OnDestroy, OnInit {
   private router = inject(Router);
+  private renderer = inject(Renderer2);
 
   activeTab = signal('object');
   activeEntity = signal('ItemType');
@@ -236,31 +247,40 @@ export class DataTransformationComponent implements OnInit {
   selectedProcessFlow = signal('');
   docVersion = signal('');
   apiVersion = signal('v1.0');
+  selectedEndpoint = signal('');
+
+  availableEndpoints = computed(() => {
+    const lob = this.selectedLob().toLowerCase();
+    const flow = this.selectedProcessFlow();
+
+    if (!lob || !flow) return [];
+
+    if (flow === 'Insurance Quotation') {
+      if (lob === 'medical') return ['/health-insurance-quotes'];
+      return [`/${lob}-insurance-quotes`];
+    }
+
+    if (flow === 'Insurance Data Sharing') {
+      return [
+        `/${lob}-insurance-policies/{InsurancePolicyId}`,
+        `/${lob}-insurance-policies`
+      ];
+    }
+
+    return [];
+  });
 
   onLobChange(val: string) {
     this.selectedLob.set(val);
     this.selectedProcessFlow.set('');
     this.docVersion.set('');
+    this.selectedEndpoint.set('');
   }
 
   onProcessFlowChange(val: string) {
     this.selectedProcessFlow.set(val);
     this.docVersion.set('');
-  }
-
-  get apiEndpoint(): string {
-    const lob = this.selectedLob().toLowerCase();
-    const flow = this.selectedProcessFlow();
-
-    if (!lob || !flow) return 'Waiting for input...';
-
-    if (flow === 'Insurance Quotation') {
-      if (lob === 'medical') return '/health-insurance-quotes';
-      return `/${lob}-insurance-quotes`;
-    }
-
-    // Default or Data Sharing flow
-    return `/${lob}-insurance-policies/{InsurancePolicyId}`;
+    this.selectedEndpoint.set('');
   }
 
   tabs = [
@@ -338,6 +358,10 @@ export class DataTransformationComponent implements OnInit {
     if (this.router.url.endsWith('/edit')) {
       this.activeTab.set('field');
     }
+  }
+
+  ngOnDestroy() {
+    // Cleanup if needed
   }
 
   onTabClick(tabId: string) {
