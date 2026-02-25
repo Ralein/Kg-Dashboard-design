@@ -72,8 +72,10 @@ interface NestedItem {
             <!-- Left: identity block -->
             <div class="flex items-start gap-5 pb-8">
               <div class="hero-avatar flex-shrink-0">
-                <div class="hero-avatar-inner">
-                  <lucide-icon [img]="FileText" class="w-7 h-7 text-white"></lucide-icon>
+                <div class="hero-avatar-inner group overflow-hidden relative">
+                  <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                  <div class="premium-shine absolute inset-0 pointer-events-none"></div>
+                  <lucide-icon [img]="FileText" class="w-7 h-7 text-white relative z-10"></lucide-icon>
                 </div>
                 <div class="hero-avatar-ring"></div>
               </div>

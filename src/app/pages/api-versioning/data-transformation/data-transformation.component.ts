@@ -2,16 +2,16 @@ import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
-    LucideAngularModule, ChevronLeft, ChevronDown, CheckCircle2,
-    Settings2, Database, Layout, Share2, UploadCloud, FileJson,
-    Search, Filter, ArrowRight
+  LucideAngularModule, ChevronLeft, ChevronDown, CheckCircle2,
+  Settings2, Database, Layout, Share2, UploadCloud, FileJson,
+  Search, Filter, ArrowRight
 } from 'lucide-angular';
 
 @Component({
-    selector: 'app-data-transformation',
-    standalone: true,
-    imports: [CommonModule, RouterLink, LucideAngularModule],
-    template: `
+  selector: 'app-data-transformation',
+  standalone: true,
+  imports: [CommonModule, RouterLink, LucideAngularModule],
+  template: `
     <div class="flex flex-col gap-0 animate-page-in">
       
       <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -33,8 +33,10 @@ import {
 
           <div class="flex items-end justify-between pb-8">
             <div class="flex items-center gap-5">
-              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#8B5CF6] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40">
-                <lucide-icon [img]="Share2" class="w-8 h-8 text-white"></lucide-icon>
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#8B5CF6] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
+                <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                <div class="premium-shine absolute inset-0 pointer-events-none"></div>
+                <lucide-icon [img]="Share2" class="w-8 h-8 text-white relative z-10"></lucide-icon>
               </div>
               <div class="flex flex-col gap-1.5">
                 <div class="flex items-center gap-3">
@@ -193,7 +195,7 @@ import {
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host { display: block; }
     
     .hero-banner { border-radius: 0 0 32px 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
@@ -228,67 +230,67 @@ import {
   `]
 })
 export class DataTransformationComponent {
-    activeTab = signal('object');
-    activeEntity = signal('ItemType');
+  activeTab = signal('object');
+  activeEntity = signal('ItemType');
 
-    tabs = [
-        { id: 'object', label: 'Object Configuration', icon: Database },
-        { id: 'api', label: 'API Configuration', icon: Settings2 },
-        { id: 'mapping', label: 'Data Mapping', icon: Share2 },
-        { id: 'field', label: 'API Field Mapping', icon: Layout }
-    ];
+  tabs = [
+    { id: 'object', label: 'Object Configuration', icon: Database },
+    { id: 'api', label: 'API Configuration', icon: Settings2 },
+    { id: 'mapping', label: 'Data Mapping', icon: Share2 },
+    { id: 'field', label: 'API Field Mapping', icon: Layout }
+  ];
 
-    entities = [
-        'ItemType', 'UsageByApplicant', 'Gender', 'PrimaryLanguage',
-        'Salutation', 'IssuingEmirate', 'PropertyCondition', 'TotalContentsValue'
-    ];
+  entities = [
+    'ItemType', 'UsageByApplicant', 'Gender', 'PrimaryLanguage',
+    'Salutation', 'IssuingEmirate', 'PropertyCondition', 'TotalContentsValue'
+  ];
 
-    jsonContent = JSON.stringify({
+  jsonContent = JSON.stringify({
+    "type": "object",
+    "required": ["data"],
+    "properties": {
+      "data": {
         "type": "object",
-        "required": ["data"],
-        "properties": {
-            "data": {
-                "type": "object",
-                "required": [
-                    "InsurancePolicyId",
-                    "PolicyHolder",
-                    "Identity",
-                    "Product",
-                    "Claims",
-                    "Premium"
-                ],
-                "properties": {
-                    "InsurancePolicyId": { "type": "string" },
-                    "PolicyHolder": { "$ref": "#/definitions/Holder" }
-                }
-            }
-        }
-    }, null, 2);
-
-    mappingData: Record<string, any[]> = {
-        'ItemType': [
-            { standard: 'SportsEquipment', ref: '', isDefault: false },
-            { standard: 'Jewellery', ref: '', isDefault: false },
-            { standard: 'Art', ref: '', isDefault: false },
-            { standard: 'StampCoinOrMedalCollections', ref: '', isDefault: false },
-            { standard: 'RugsOrCarpets', ref: '', isDefault: false },
-            { standard: 'Electronics', ref: '', isDefault: false },
-            { standard: 'Watches', ref: '', isDefault: false },
-            { standard: 'Luggage', ref: '', isDefault: false }
+        "required": [
+          "InsurancePolicyId",
+          "PolicyHolder",
+          "Identity",
+          "Product",
+          "Claims",
+          "Premium"
         ],
-        'Gender': [
-            { standard: 'Male', ref: 'M', isDefault: true },
-            { standard: 'Female', ref: 'F', isDefault: false },
-            { standard: 'Unspecified', ref: 'U', isDefault: false }
-        ]
-    };
+        "properties": {
+          "InsurancePolicyId": { "type": "string" },
+          "PolicyHolder": { "$ref": "#/definitions/Holder" }
+        }
+      }
+    }
+  }, null, 2);
 
-    readonly Database = Database;
-    readonly Settings2 = Settings2;
-    readonly Share2 = Share2;
-    readonly Layout = Layout;
-    readonly UploadCloud = UploadCloud;
-    readonly FileJson = FileJson;
-    readonly CheckCircle2 = CheckCircle2;
-    readonly ArrowRight = ArrowRight;
+  mappingData: Record<string, any[]> = {
+    'ItemType': [
+      { standard: 'SportsEquipment', ref: '', isDefault: false },
+      { standard: 'Jewellery', ref: '', isDefault: false },
+      { standard: 'Art', ref: '', isDefault: false },
+      { standard: 'StampCoinOrMedalCollections', ref: '', isDefault: false },
+      { standard: 'RugsOrCarpets', ref: '', isDefault: false },
+      { standard: 'Electronics', ref: '', isDefault: false },
+      { standard: 'Watches', ref: '', isDefault: false },
+      { standard: 'Luggage', ref: '', isDefault: false }
+    ],
+    'Gender': [
+      { standard: 'Male', ref: 'M', isDefault: true },
+      { standard: 'Female', ref: 'F', isDefault: false },
+      { standard: 'Unspecified', ref: 'U', isDefault: false }
+    ]
+  };
+
+  readonly Database = Database;
+  readonly Settings2 = Settings2;
+  readonly Share2 = Share2;
+  readonly Layout = Layout;
+  readonly UploadCloud = UploadCloud;
+  readonly FileJson = FileJson;
+  readonly CheckCircle2 = CheckCircle2;
+  readonly ArrowRight = ArrowRight;
 }
