@@ -1,9 +1,10 @@
-import { Component, Input, signal, WritableSignal } from '@angular/core';
+import { Component, Input, signal, WritableSignal, OnDestroy, Renderer2, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
     LucideAngularModule, Search, Trash2, ArrowRight, X, Play,
-    Save as SaveIcon, ChevronUp, ChevronDown
+    Save as SaveIcon, ChevronUp, ChevronDown,
+    ChevronRight
 } from 'lucide-angular';
 
 @Component({
@@ -71,7 +72,7 @@ import {
                   <td class="px-4 py-4 bg-[#F8FAFF] border-y border-r border-indigo-50/50 rounded-r-2xl text-right">
                     <div class="flex items-center justify-end gap-3">
                       <button class="text-[9px] font-black uppercase text-indigo-400 tracking-widest hover:text-[#4318FF]">Direct</button>
-                      <button class="px-3 py-1.5 rounded-lg bg-[#05CD99] text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-[#05CD99]/20 hover:scale-105 transition-all">Add Rule</button>
+                      <button (click)="openRuleModal(field)" class="px-3 py-1.5 rounded-lg bg-[#05CD99] text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-[#05CD99]/20 hover:scale-105 transition-all">Add Rule</button>
                       <button class="text-red-300 hover:text-red-500 transition-colors">
                         <lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon>
                       </button>
@@ -126,7 +127,7 @@ import {
                 <lucide-icon [img]="group.expanded ? ChevronUp : ChevronDown" class="w-3.5 h-3.5 text-[#A3AED0]"></lucide-icon>
               </button>
               
-              <div *ngIf="group.expanded" class="flex flex-col gap-1 p-2 animate-in slide-in-from-top-2 duration-300">
+              <div *ngIf="group.expanded" class="flex flex-col gap-1 p-2 animate-in slide-in-from-top-2 duration-300 max-h-[220px] overflow-y-auto custom-scrollbar">
                 <div 
                   *ngFor="let field of group.fields" 
                   draggable="true"
@@ -139,7 +140,6 @@ import {
             </div>
           </div>
         </div>
-      </div>
     </div>
   `,
     styles: [`
@@ -172,6 +172,17 @@ export class FieldMappingComponent {
     @Input() sidebarSearchQuery: string = '';
     @Input() activeDragOver: string | null = null;
 
+    private renderer = inject(Renderer2);
+
+    // Modal state
+    private modalEl: HTMLElement | null = null;
+    private backdropListener: (() => void) | null = null;
+
+    isRuleModalOpen = signal(false);
+    selectedFieldForBonus = signal<any>(null);
+    selectedFunction = '';
+    condition = '';
+
     readonly Search = Search;
     readonly Trash2 = Trash2;
     readonly ArrowRight = ArrowRight;
@@ -180,6 +191,7 @@ export class FieldMappingComponent {
     readonly SaveIcon = SaveIcon;
     readonly ChevronUp = ChevronUp;
     readonly ChevronDown = ChevronDown;
+    readonly ChevronRight = ChevronRight;
 
     filteredMappingRules() {
         return this.mappingRules().filter((f: any) =>
@@ -196,6 +208,8 @@ export class FieldMappingComponent {
             fields: group.fields.filter((f: string) => f.toLowerCase().includes(query))
         })).filter((group: any) => group.fields.length > 0);
     }
+
+    // ─── Drag & Drop Handlers ────────────────────────────────────────────────
 
     onDragStart(event: DragEvent, field: string) {
         event.dataTransfer?.setData('text/plain', field);
@@ -235,6 +249,157 @@ export class FieldMappingComponent {
 
     clearAllMappings() {
         this.mappingRules.update(rules => rules.map(r => ({ ...r, mappedTo: null })));
+    }
+
+    // ─── Rule Modal Handlers ─────────────────────────────────────────────────
+
+    openRuleModal(field: any) {
+        this.selectedFieldForBonus.set(field);
+        this.isRuleModalOpen.set(true);
+        this.mountRuleModal();
+    }
+
+    closeRuleModal() {
+        this.isRuleModalOpen.set(false);
+        this.selectedFunction = '';
+        this.condition = '';
+        this.unmountRuleModal();
+    }
+
+    private mountRuleModal() {
+        this.unmountRuleModal();
+
+        const fieldName = this.selectedFieldForBonus()?.name || '';
+
+        const overlay = document.createElement('div');
+        overlay.setAttribute('id', 'rule-portal-overlay');
+        overlay.innerHTML = `
+          <style>
+            #rule-portal-overlay {
+              position: fixed; inset: 0; z-index: 99999;
+              display: flex; align-items: center; justify-content: center; padding: 1rem;
+              background: rgba(11, 14, 40, 0.68);
+              backdrop-filter: blur(4px);
+              animation: ruleFade .2s ease-out;
+            }
+            #rule-portal-box {
+              background: #fff; border-radius: 28px;
+              box-shadow: 0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08);
+              width: 100%; max-width: 440px; overflow: hidden;
+              animation: ruleSlide .3s cubic-bezier(0.16,1,0.3,1);
+            }
+            @keyframes ruleFade  { from{opacity:0} to{opacity:1} }
+            @keyframes ruleSlide { from{opacity:0;transform:translateY(18px) scale(.96)} to{opacity:1;transform:none} }
+
+            #rule-ph { padding:24px 28px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; }
+            #rule-ph h3 { margin:0; font-size:16px; font-weight:900; color:#2B3674; letter-spacing:-.3px; }
+            #rule-xbtn { background:none; border:none; cursor:pointer; padding:8px; border-radius:50%; color:#94a3b8; line-height:0; transition:all .2s; }
+            #rule-xbtn:hover { background:#fff; color:#FF5252; transform:rotate(90deg); }
+
+            #rule-pb { padding:32px 28px; display:flex; flex-direction:column; gap:20px; }
+            .rule-label { font-size:10px; font-weight:900; color:#2B3674; text-transform:uppercase; tracking:0.1em; margin-left:4px; }
+            
+            #rule-pb p { margin:0 0 8px 0; font-size:13px; font-weight:500; color:#A3AED0; line-height:1.5; }
+            
+            .rule-select-wrapper { position:relative; }
+            .rule-select { 
+              width:100%; background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; 
+              padding:12px 16px; font-size:13px; font-weight:700; color:#2B3674; transition:all .2s;
+              appearance:none; outline:none;
+            }
+            .rule-select:focus { border-color:#4318FF; background:#fff; }
+            .rule-icon-down { position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; color:#A3AED0; }
+
+            .rule-input {
+              width:100%; background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; 
+              padding:12px 16px; font-size:13px; font-weight:700; color:#2B3674; transition:all .2s;
+              outline:none;
+            }
+            .rule-input:focus { border-color:#4318FF; background:#fff; }
+
+            #rule-pf { padding:24px 28px; background:#f8fafc; display:flex; justify-content:flex-end; gap:12px; border-top:1px solid #f1f5f9; }
+            .rule-btn { padding:12px 24px; border-radius:16px; font-weight:800; font-size:12px; cursor:pointer; transition:all .2s; text-transform:uppercase; letter-spacing:0.05em; }
+            #rule-cbtn { border:1.5px solid #e2e8f0; background:#fff; color:#2B3674; }
+            #rule-cbtn:hover { background:#fef2f2; border-color:#fee2e2; color:#FF5252; }
+            #rule-okbtn { border:none; background:#2B3674; color:#fff; box-shadow:0 10px 20px rgba(43,54,116,0.2); }
+            #rule-okbtn:hover { background:#1B2559; transform:translateY(-1px); box-shadow:0 12px 24px rgba(43,54,116,0.3); }
+          </style>
+
+          <div id="rule-portal-box">
+            <div id="rule-ph">
+              <h3>Add Rule</h3>
+              <button id="rule-xbtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                  <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div id="rule-pb">
+              <p>Select the operation to be performed on <strong>${fieldName}</strong>.</p>
+              
+              <div class="rule-group">
+                <div class="rule-label">Add Function</div>
+                <div class="rule-select-wrapper">
+                  <select id="rule-func-select" class="rule-select">
+                    <option value="" disabled ${!this.selectedFunction ? 'selected' : ''}>Add Function</option>
+                    <option value="uppercase" ${this.selectedFunction === 'uppercase' ? 'selected' : ''}>UPPERCASE</option>
+                    <option value="lowercase" ${this.selectedFunction === 'lowercase' ? 'selected' : ''}>LOWERCASE</option>
+                    <option value="date-format" ${this.selectedFunction === 'date-format' ? 'selected' : ''}>DATE_FORMAT</option>
+                    <option value="concat" ${this.selectedFunction === 'concat' ? 'selected' : ''}>CONCAT</option>
+                  </select>
+                  <div class="rule-icon-down">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rule-group">
+                <div class="rule-label">Condition</div>
+                <input id="rule-cond-input" type="text" class="rule-input" placeholder="e.g. Status = 'Approved'" value="${this.condition}">
+              </div>
+            </div>
+            <div id="rule-pf">
+              <button class="rule-btn" id="rule-cbtn">Cancel</button>
+              <button class="rule-btn" id="rule-okbtn">Update Rule</button>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(overlay);
+        this.modalEl = overlay;
+
+        const select = overlay.querySelector('#rule-func-select') as HTMLSelectElement;
+        const input = overlay.querySelector('#rule-cond-input') as HTMLInputElement;
+
+        select.addEventListener('change', (e) => this.selectedFunction = (e.target as HTMLSelectElement).value);
+        input.addEventListener('input', (e) => this.condition = (e.target as HTMLInputElement).value);
+
+        overlay.querySelector('#rule-xbtn')!.addEventListener('click', () => this.closeRuleModal());
+        overlay.querySelector('#rule-cbtn')!.addEventListener('click', () => this.closeRuleModal());
+        overlay.querySelector('#rule-okbtn')!.addEventListener('click', () => this.updateRule());
+
+        this.backdropListener = this.renderer.listen(overlay, 'click', (e: MouseEvent) => {
+            if (e.target === overlay) this.closeRuleModal();
+        });
+    }
+
+    private unmountRuleModal() {
+        this.modalEl?.remove();
+        this.modalEl = null;
+        this.backdropListener?.();
+        this.backdropListener = null;
+    }
+
+    ngOnDestroy() {
+        this.unmountRuleModal();
+    }
+
+    updateRule() {
+        console.log('Updating rule for field:', this.selectedFieldForBonus()?.name, {
+            function: this.selectedFunction,
+            condition: this.condition
+        });
+        this.closeRuleModal();
     }
 
     testMappings() { console.log('Testing mappings:', this.mappingRules()); }
