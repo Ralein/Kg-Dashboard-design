@@ -1,7 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2, Eye, PlusCircle, StopCircle, Edit3, Trash2, Zap, LayoutGrid, ChevronRight, Database, Layers, Clock, Info } from 'lucide-angular';
+import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2, Eye, PlusCircle, StopCircle, Edit3, Trash2, Zap, LayoutGrid, ChevronRight, Database, Layers, Clock, Info, Printer, Save, ExternalLink, PlayCircle, EyeOff, XCircle } from 'lucide-angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -11,6 +11,62 @@ import { Router } from '@angular/router';
   template: `
     <div class="flex flex-col gap-0 animate-page-in relative pb-8">
       
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <!-- TOAST NOTIFICATION                                             -->
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <div *ngIf="toastMessage()" class="fixed top-4 right-4 z-[200] animate-in slide-in-from-right-8 fade-in duration-300">
+        <div class="flex items-center gap-3 px-6 py-4 bg-[#0d1b3e] text-white rounded-2xl shadow-2xl border border-white/10">
+          <lucide-icon [img]="CheckCircle2" class="w-5 h-5 text-emerald-400"></lucide-icon>
+          <span class="text-xs font-bold">{{ toastMessage() }}</span>
+          <button (click)="toastMessage.set('')" class="ml-4 text-white/40 hover:text-white transition-colors">
+            <lucide-icon [img]="Plus" class="w-4 h-4 rotate-45"></lucide-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <!-- CREATE NEW VERSION MODAL                                       -->
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <div *ngIf="isCreateVersionModalOpen()" class="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+        <div class="absolute inset-0 bg-[#0C0F2E]/40 backdrop-blur-[2px]" (click)="isCreateVersionModalOpen.set(false)"></div>
+        <div class="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+          <div class="px-6 py-4 bg-[#f8faff] border-b border-gray-100 flex items-center justify-between">
+            <h2 class="text-lg font-black text-[#2B3674]">Create New Version</h2>
+          </div>
+          <div class="p-6">
+            <p class="text-sm font-medium text-gray-500 leading-relaxed">
+              A new version will be created for API. <br/> Click OK to proceed.
+            </p>
+          </div>
+          <div class="px-6 py-4 bg-gray-50/50 flex justify-end gap-2 border-t border-gray-100">
+            <button (click)="isCreateVersionModalOpen.set(false)" class="px-4 py-2 rounded-lg border border-gray-200 text-xs font-bold text-[#2B3674] hover:bg-white transition-all">Cancel</button>
+            <button (click)="confirmCreateVersion()" class="px-6 py-2 rounded-lg bg-[#2B3674] text-white text-xs font-bold hover:bg-[#4318FF] transition-all shadow-lg shadow-[#2B3674]/20">OK</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <!-- CONFIRM DELETION MODAL                                         -->
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <div *ngIf="isDeleteModalOpen()" class="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+        <div class="absolute inset-0 bg-[#0C0F2E]/40 backdrop-blur-[2px]" (click)="isDeleteModalOpen.set(false)"></div>
+        <div class="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+          <div class="px-6 py-4 bg-red-50/50 border-b border-red-100 flex items-center justify-between">
+            <h2 class="text-lg font-black text-red-600">Confirm Deletion</h2>
+          </div>
+          <div class="p-6">
+            <p class="text-sm font-medium text-gray-500 leading-relaxed mb-1">
+              Are you sure you want to delete version of API ?
+            </p>
+            <p class="text-xs font-bold text-red-500">This action cannot be undone.</p>
+          </div>
+          <div class="px-6 py-4 bg-gray-50/50 flex justify-end gap-2 border-t border-gray-100">
+            <button (click)="isDeleteModalOpen.set(false)" class="px-4 py-2 rounded-lg border border-gray-200 text-xs font-bold text-[#2B3674] hover:bg-white transition-all">Cancel</button>
+            <button (click)="confirmDelete()" class="px-6 py-2 rounded-lg bg-[#FF5B5B] text-white text-xs font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/20">Delete</button>
+          </div>
+        </div>
+      </div>
+
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- CREATE ENDPOINT MODAL                                          -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -251,10 +307,14 @@ import { Router } from '@angular/router';
                   </div>
                 </div>
 
-                <div class="flex justify-end mt-8">
+                <div class="flex justify-end mt-8 gap-4">
+                  <button (click)="openModal()" class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#05CD99] text-white text-xs font-black uppercase tracking-widest hover:bg-[#04B484] transition-all shadow-lg shadow-[#05CD99]/20">
+                    <lucide-icon [img]="Save" class="w-4 h-4"></lucide-icon>
+                    <span>Create API Endpoint</span>
+                  </button>
                   <button (click)="submitMappings()" class="premium-submit-btn">
                     <lucide-icon [img]="CheckCircle2" class="w-4 h-4"></lucide-icon>
-                    <span>Submit Mappings</span>
+                    <span>Submit</span>
                   </button>
                 </div>
               </div>
@@ -269,53 +329,93 @@ import { Router } from '@angular/router';
                       <input type="text" placeholder="Filter version mappings..." class="search-input">
                     </div>
                     <div class="h-6 w-px bg-gray-200"></div>
-                    <span class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest">{{ showResults() ? '2 results matched' : '0 results matched' }}</span>
+                    <span class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest">{{ showResults() ? (apiEndpoints.length + ' results matched') : '0 results matched' }}</span>
                  </div>
                  <div class="flex items-center gap-2">
                     <button (click)="toggleFilter()" class="toolbar-btn" title="Filter"><lucide-icon [img]="Filter" class="w-4 h-4"></lucide-icon></button>
+                    <button class="toolbar-btn" title="Print"><lucide-icon [img]="Printer" class="w-4 h-4"></lucide-icon></button>
+                    <button class="toolbar-btn" title="Save"><lucide-icon [img]="Save" class="w-4 h-4"></lucide-icon></button>
                     <button (click)="exportData()" class="toolbar-btn" title="Export CSV"><lucide-icon [img]="Download" class="w-4 h-4"></lucide-icon></button>
-                    <button class="toolbar-btn" title="Documentation"><lucide-icon [img]="Globe" class="w-4 h-4"></lucide-icon></button>
-                    <button class="toolbar-btn" title="Export JSON"><lucide-icon [img]="FileJson" class="w-4 h-4"></lucide-icon></button>
+                    <button class="toolbar-btn" title="Expand"><lucide-icon [img]="Maximize2" class="w-4 h-4"></lucide-icon></button>
                  </div>
               </div>
 
               <div *ngIf="showResults()" class="flex-1 overflow-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
                  <table class="w-full text-left">
                     <thead>
-                       <tr class="bg-gray-50/50 border-b border-gray-100">
+                        <tr class="bg-gray-50/50 border-b border-gray-100">
                           <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">API Name</th>
                           <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">Doc Version</th>
                           <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">API Version</th>
+                          <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">Release Date</th>
+                          <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">Deprecation Date</th>
+                          <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">Configuration Status</th>
                           <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">Status</th>
                           <th class="px-6 py-4 text-[10px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">Actions</th>
-                       </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                       <tr *ngFor="let api of apiEndpoints" class="hover:bg-[#4318FF]/[0.02] transition-all group">
-                          <td class="px-6 py-5">
-                             <div class="flex flex-col">
-                                <span class="text-sm font-black text-[#2B3674] tracking-tight">{{ api.name }}</span>
-                                <span class="text-[10px] font-bold text-[#A3AED0] mt-0.5">{{ api.lob }} / {{ api.process }}</span>
-                             </div>
-                          </td>
-                          <td class="px-6 py-5">
-                             <span class="px-2 py-1 rounded-md bg-gray-100 text-[#2B3674] text-[10px] font-black">{{ api.docVersion }}</span>
-                          </td>
-                          <td class="px-6 py-5 text-xs font-bold text-[#2B3674]">{{ api.apiVersion }}</td>
-                          <td class="px-6 py-5">
-                             <span [class]="'px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ' + api.statusClass">
-                                {{ api.status }}
-                             </span>
-                          </td>
-                          <td class="px-6 py-5">
-                             <div class="flex items-center gap-2">
-                                <button (click)="viewTransformation(api.id)" class="action-btn action-btn--view" title="View Transformation">
-                                   <lucide-icon [img]="Eye" class="w-3.5 h-3.5"></lucide-icon>
-                                   <span>View</span>
-                                </button>
-                                <button class="action-btn action-btn--secondary"><lucide-icon [img]="Edit3" class="w-3.5 h-3.5"></lucide-icon></button>
-                             </div>
-                          </td>
+                        </tr>
+                     </thead>
+                     <tbody class="divide-y divide-gray-100">
+                        <tr *ngFor="let api of apiEndpoints" class="hover:bg-[#4318FF]/[0.02] transition-all group">
+                           <td class="px-6 py-5">
+                              <div class="flex flex-col">
+                                 <span class="text-sm font-black text-[#4318FF] hover:underline cursor-pointer group/link">{{ api.name }}</span>
+                                 <span class="text-[10px] font-bold text-[#A3AED0] mt-0.5 group-hover:text-[#2B3674] transition-colors">{{ api.lob }} / {{ api.process }}</span>
+                              </div>
+                           </td>
+                           <td class="px-6 py-5">
+                              <span class="text-xs font-bold text-[#2B3674]">{{ api.docVersion || '-' }}</span>
+                           </td>
+                           <td class="px-6 py-5">
+                              <span class="text-xs font-bold text-[#2B3674]">{{ api.apiVersion || '-' }}</span>
+                           </td>
+                           <td class="px-6 py-5 text-xs font-bold text-[#A3AED0]">{{ api.releaseDate || '-' }}</td>
+                           <td class="px-6 py-5 text-xs font-bold text-[#A3AED0]">{{ api.deprecationDate || '-' }}</td>
+                           <td class="px-6 py-5">
+                              <span [class]="'px-3 py-1 rounded-lg text-[10px] font-bold ' + api.configStatusClass">
+                                 {{ api.configStatus }}
+                              </span>
+                           </td>
+                           <td class="px-6 py-5">
+                              <div class="flex items-center gap-2">
+                                 <span [class]="'w-1.5 h-1.5 rounded-full ' + (api.status === 'Live' ? 'bg-emerald-400' : 'bg-blue-400')"></span>
+                                 <span [class]="'px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-[#2B3674] border ' + api.statusClass">
+                                    {{ api.status }}
+                                 </span>
+                              </div>
+                           </td>
+                           <td class="px-6 py-5">
+                              <div class="flex items-center gap-2">
+                                 <ng-container *ngIf="api.configStatus === 'Configured'">
+                                   <button (click)="viewTransformation(api.id)" class="action-btn action-btn--view" title="View Transformation">
+                                     <lucide-icon [img]="Eye" class="w-3.5 h-3.5"></lucide-icon>
+                                     <span>View</span>
+                                   </button>
+                                   <button (click)="createVersion(api)" class="action-btn action-btn--secondary" title="Create Version">
+                                     <lucide-icon [img]="PlusCircle" class="w-3.5 h-3.5"></lucide-icon>
+                                     <span>Create Version</span>
+                                   </button>
+                                   <button class="px-3 py-2 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 transition-all flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" title="Deprecate">
+                                     <lucide-icon [img]="XCircle" class="w-3.5 h-3.5"></lucide-icon>
+                                     <span>Deprecate</span>
+                                   </button>
+                                 </ng-container>
+                                 
+                                 <ng-container *ngIf="api.configStatus !== 'Configured'">
+                                   <button (click)="viewTransformation(api.id)" class="action-btn action-btn--secondary" title="Edit">
+                                     <lucide-icon [img]="Edit3" class="w-3.5 h-3.5"></lucide-icon>
+                                     <span>Edit</span>
+                                   </button>
+                                   <button (click)="deleteVersion(api)" class="px-3 py-2 rounded-lg border border-red-100 text-red-500 hover:bg-red-50 transition-all flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" title="Delete">
+                                     <lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon>
+                                     <span>Delete</span>
+                                   </button>
+                                   <button class="px-3 py-2 rounded-lg border border-emerald-100 text-emerald-500 hover:bg-emerald-50 transition-all flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" title="Go Live">
+                                     <lucide-icon [img]="Zap" class="w-3.5 h-3.5"></lucide-icon>
+                                     <span>Go Live</span>
+                                   </button>
+                                 </ng-container>
+                              </div>
+                           </td>
                        </tr>
                     </tbody>
                  </table>
@@ -444,13 +544,22 @@ import { Router } from '@angular/router';
 
     /* Action Buttons */
     .action-btn {
-       padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800;
+       padding: 5px 12px; border-radius: 8px; font-size: 10px; font-weight: 800;
        display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+       text-transform: uppercase; letter-spacing: 0.05em;
     }
-    .action-btn--view { background: #f0f7ff; color: #4318FF; border: 1px solid rgba(67,24,255,0.1); }
-    .action-btn--view:hover { background: #4318FF; color: white; }
-    .action-btn--secondary { background: #f8faff; color: #A3AED0; border: 1px solid #E2E8F0; }
-    .action-btn--secondary:hover { border-color: #2B3674; color: #2B3674; }
+    .action-btn--view { 
+      background: white; color: #4318FF; border: 1px solid rgba(67,24,255,0.2); 
+    }
+    .action-btn--view:hover { 
+      background: #4318FF; color: white; border-color: #4318FF;
+    }
+    .action-btn--secondary { 
+      background: white; color: #2B3674; border: 1px solid #E2E8F0; 
+    }
+    .action-btn--secondary:hover { 
+      border-color: #2B3674; background: #F8FAFF;
+    }
 
     /* Empty State */
     .empty-3d-icon { position: relative; width: 80px; height: 80px; }
@@ -483,6 +592,10 @@ export class ApiVersioningComponent {
   activeTab = signal('endpoints');
   showResults = signal(false);
   isModalOpen = signal(false);
+  isCreateVersionModalOpen = signal(false);
+  isDeleteModalOpen = signal(false);
+  toastMessage = signal('');
+  selectedApi: any = null;
 
   readonly ChevronDown = ChevronDown;
   readonly CheckCircle2 = CheckCircle2;
@@ -506,19 +619,34 @@ export class ApiVersioningComponent {
   readonly Layers = Layers;
   readonly Clock = Clock;
   readonly Info = Info;
+  readonly Printer = Printer;
+  readonly Save = Save;
+  readonly ExternalLink = ExternalLink;
+  readonly PlayCircle = PlayCircle;
+  readonly EyeOff = EyeOff;
+  readonly XCircle = XCircle;
 
   apiEndpoints = [
     {
-      id: 'ep-1', name: '/home-insurance-policies/{InsurancePolicyId}',
+      id: 'ep-0', name: '/home-insurance-policies/{InsurancePolicyId}',
       lob: 'HOME', process: 'Insurance Data Sharing',
-      docVersion: 'v8', apiVersion: 'v2.0', releaseDate: '04/02/2026',
-      status: 'Configured', statusClass: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+      docVersion: 'v8', apiVersion: 'v3.0', releaseDate: '25/02/2026', deprecationDate: '-',
+      configStatus: 'Yet to Configure', configStatusClass: 'bg-gray-100 text-gray-600',
+      status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
     },
     {
-      id: 'ep-2', name: '/home-insurance-policies',
-      lob: 'HOME', process: 'Insurance Quotation',
-      docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '02/12/2025',
-      status: 'In Progress', statusClass: 'bg-amber-50 text-amber-600 border-amber-100',
+      id: 'ep-1', name: '/home-insurance-policies/{InsurancePolicyId}',
+      lob: 'HOME', process: 'Insurance Data Sharing',
+      docVersion: 'v8', apiVersion: 'v2.0', releaseDate: '04/02/2026', deprecationDate: '-',
+      configStatus: 'Configured', configStatusClass: 'bg-[#05CD99]/10 text-[#05CD99]',
+      status: 'Live', statusClass: 'bg-emerald-50 border-emerald-100',
+    },
+    {
+      id: 'ep-2', name: '/home-insurance-policies/{InsurancePolicyId}',
+      lob: 'HOME', process: 'Insurance Data Sharing',
+      docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '02/12/2025', deprecationDate: '-',
+      configStatus: 'In Progress', configStatusClass: 'bg-amber-100 text-amber-600',
+      status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
     }
   ];
 
@@ -541,6 +669,33 @@ export class ApiVersioningComponent {
   createEndpoint(): void {
     this.isModalOpen.set(false);
     this.showResults.set(true);
+    this.showToast('API Endpoint created successfully');
+  }
+
+  createVersion(api: any): void {
+    this.selectedApi = api;
+    this.isCreateVersionModalOpen.set(true);
+  }
+
+  confirmCreateVersion(): void {
+    this.isCreateVersionModalOpen.set(false);
+    this.showToast('Version v3.0 created successfully');
+  }
+
+  deleteVersion(api: any): void {
+    this.selectedApi = api;
+    this.isDeleteModalOpen.set(true);
+  }
+
+  confirmDelete(): void {
+    this.isDeleteModalOpen.set(false);
+    this.apiEndpoints = this.apiEndpoints.filter(a => a.id !== this.selectedApi.id);
+    this.showToast('Version deleted successfully');
+  }
+
+  showToast(message: string): void {
+    this.toastMessage.set(message);
+    setTimeout(() => this.toastMessage.set(''), 3000);
   }
 
   toggleFilter(): void {

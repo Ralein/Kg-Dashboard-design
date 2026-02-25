@@ -242,7 +242,11 @@ export class DataTransformationComponent {
 
   entities = [
     'ItemType', 'UsageByApplicant', 'Gender', 'PrimaryLanguage',
-    'Salutation', 'IssuingEmirate', 'PropertyCondition', 'TotalContentsValue'
+    'Salutation', 'IssuingEmirate', 'PropertyCondition', 'TotalContentsValue',
+    'TotalPersonalBelongingsValue','PaymentStatus','CountrySubDivision','Status',
+    'PolicyPurchaseChannelType','Construction','ConstructionType','PaymentFrequency',
+    'ThirdPartyRecoveryStatus','RoofType','MaritalStatus','ExteriorWalls','FoundationType',
+    'VisaType','PolicyStatus','TypeOfProperty','AddressType','OwnershipStatus','PaymentMode'
   ];
 
   jsonContent = JSON.stringify({
