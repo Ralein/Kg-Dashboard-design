@@ -534,10 +534,24 @@ export class ApiVersioningComponent implements OnDestroy {
 
   allEndpoints = signal([
     {
+      id: 'ep-med-3', name: '/medical-insurance-policies',
+      lob: 'MEDICAL', process: 'Insurance Data Sharing',
+      docVersion: 'v8', apiVersion: 'v1.2', releaseDate: '18/02/2026', deprecationDate: '-',
+      configStatus: 'Yet to Configure', configStatusClass: 'bg-gray-100 text-gray-600',
+      status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
+    },
+    {
       id: 'ep-0', name: '/home-insurance-policies/{InsurancePolicyId}',
       lob: 'HOME', process: 'Insurance Data Sharing',
       docVersion: 'v8', apiVersion: 'v3.0', releaseDate: '25/02/2026', deprecationDate: '-',
       configStatus: 'Yet to Configure', configStatusClass: 'bg-gray-100 text-gray-600',
+      status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
+    },
+    {
+      id: 'ep-motor-new', name: '/motor-insurance-policies/{InsurancePolicyId}',
+      lob: 'MOTOR', process: 'Insurance Data Sharing',
+      docVersion: 'v8', apiVersion: 'v2.0', releaseDate: '24/02/2026', deprecationDate: '-',
+      configStatus: 'In Progress', configStatusClass: 'bg-amber-100 text-amber-600',
       status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
     },
     {
@@ -574,6 +588,41 @@ export class ApiVersioningComponent implements OnDestroy {
       docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '22/02/2026', deprecationDate: '-',
       configStatus: 'In Progress', configStatusClass: 'bg-amber-100 text-amber-600',
       status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
+    },
+    {
+      id: 'ep-med-1', name: '/health-insurance-quotes',
+      lob: 'MEDICAL', process: 'Insurance Quotation',
+      docVersion: 'v8', apiVersion: 'v2.1', releaseDate: '20/02/2026', deprecationDate: '-',
+      configStatus: 'Configured', configStatusClass: 'bg-[#05CD99]/10 text-[#05CD99]',
+      status: 'Live', statusClass: 'bg-emerald-50 border-emerald-100',
+    },
+    {
+      id: 'ep-med-2', name: '/medical-insurance-policies/{InsurancePolicyId}',
+      lob: 'MEDICAL', process: 'Insurance Data Sharing',
+      docVersion: 'v8', apiVersion: 'v1.5', releaseDate: '15/02/2026', deprecationDate: '-',
+      configStatus: 'In Progress', configStatusClass: 'bg-amber-100 text-amber-600',
+      status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
+    },
+    {
+      id: 'ep-trav-1', name: '/travel-insurance-quotes',
+      lob: 'TRAVEL', process: 'Insurance Quotation',
+      docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '10/02/2026', deprecationDate: '-',
+      configStatus: 'Yet to Configure', configStatusClass: 'bg-gray-100 text-gray-600',
+      status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
+    },
+    {
+      id: 'ep-trav-2', name: '/travel-insurance-policies',
+      lob: 'TRAVEL', process: 'Insurance Data Sharing',
+      docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '12/02/2026', deprecationDate: '-',
+      configStatus: 'Configured', configStatusClass: 'bg-[#05CD99]/10 text-[#05CD99]',
+      status: 'Live', statusClass: 'bg-emerald-50 border-emerald-100',
+    },
+    {
+      id: 'ep-trav-3', name: '/travel-insurance-quotes',
+      lob: 'TRAVEL', process: 'Insurance Quotation',
+      docVersion: 'v7', apiVersion: 'v2.4', releaseDate: '05/05/2025', deprecationDate: '05/05/2026',
+      configStatus: 'Configured', configStatusClass: 'bg-[#05CD99]/10 text-[#05CD99]',
+      status: 'Live', statusClass: 'bg-emerald-50 border-emerald-100',
     },
     {
       id: 'ep-6', name: '/motor-insurance-policies/{InsurancePolicyId}',
