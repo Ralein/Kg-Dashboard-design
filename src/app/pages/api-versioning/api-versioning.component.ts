@@ -1,7 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2, Eye, PlusCircle, StopCircle, Edit3, Trash2, Zap, LayoutGrid, ClipboardList, ChevronRight, Database, Layers, Clock, Info } from 'lucide-angular';
+import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2, Eye, PlusCircle, StopCircle, Edit3, Trash2, Zap, LayoutGrid, ChevronRight, Database, Layers, Clock, Info } from 'lucide-angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -189,24 +189,6 @@ import { Router } from '@angular/router';
                 </div>
                 <lucide-icon [img]="ChevronRight" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" [class.opacity-100]="activeTab() === 'endpoints'"></lucide-icon>
               </button>
-
-              <button 
-                (click)="activeTab.set('drafts')"
-                class="w-full text-left px-5 py-4 rounded-xl text-xs font-bold transition-all flex items-center justify-between group"
-                [class.bg-[#4318FF]]="activeTab() === 'drafts'"
-                [class.text-white]="activeTab() === 'drafts'"
-                [class.shadow-xl]="activeTab() === 'drafts'"
-                [class.shadow-[#4318FF]/20]="activeTab() === 'drafts'"
-                [class.text-[#A3AED0]]="activeTab() !== 'drafts'"
-                [class.hover:bg-[#4318FF]/5]="activeTab() !== 'drafts'"
-                [class.hover:text-[#4318FF]]="activeTab() !== 'drafts'"
-              >
-                <div class="flex items-center gap-3">
-                   <lucide-icon [img]="ClipboardList" class="w-4 h-4" [class.text-[#4318FF]]="activeTab() !== 'drafts'"></lucide-icon>
-                   Draft Explorer
-                </div>
-                <lucide-icon [img]="ChevronRight" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" [class.opacity-100]="activeTab() === 'drafts'"></lucide-icon>
-              </button>
             </div>
           </div>
         </div>
@@ -352,19 +334,6 @@ import { Router } from '@angular/router';
                    Select your Line of Business and Process Flow above to begin auditing version mappings.
                  </p>
               </div>
-            </div>
-          </div>
-
-          <div *ngIf="activeTab() === 'drafts'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div class="premium-glass p-20 text-center flex flex-col items-center">
-              <div class="w-20 h-20 rounded-3xl bg-[#4318FF]/10 flex items-center justify-center mb-8 border border-[#4318FF]/20 shadow-2xl shadow-[#4318FF]/10">
-                <lucide-icon [img]="ClipboardList" class="w-10 h-10 text-[#4318FF]"></lucide-icon>
-              </div>
-              <h3 class="text-2xl font-black text-[#2B3674] tracking-tight mb-4">Draft Mappings Explorer</h3>
-              <p class="text-[#A3AED0] font-medium max-w-md mx-auto leading-relaxed mb-10">
-                You currently have no draft mappings. Any unsaved transformation logic will appear here for later review and deployment.
-              </p>
-              <button class="bg-[#2B3674] text-white px-8 py-4 rounded-2xl font-black text-sm tracking-tight hover:bg-[#1B2559] transition-all shadow-xl shadow-[#2B3674]/20">Sync Drafts</button>
             </div>
           </div>
         </div>
@@ -532,7 +501,6 @@ export class ApiVersioningComponent {
   readonly Trash2 = Trash2;
   readonly Zap = Zap;
   readonly LayoutGrid = LayoutGrid;
-  readonly ClipboardList = ClipboardList;
   readonly ChevronRight = ChevronRight;
   readonly Database = Database;
   readonly Layers = Layers;
