@@ -100,7 +100,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- CONFIGURATION BAR                                              -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <div class="px-8 mb-6">
+    <div class="mb-6">
       <div class="premium-glass p-5 grid grid-cols-1 md:grid-cols-4 gap-6 bg-white/60">
         <div class="flex flex-col gap-2">
           <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Line of Business</label>
@@ -150,7 +150,6 @@ import { FieldMappingComponent } from './components/field-mapping.component';
               <option value="" disabled selected>Documentation Version</option>
               <option value="v8">v8 (Current)</option>
               <option value="v7">v7</option>
-              <option value="v6">v6</option>
             </select>
             <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
           </div>
@@ -194,7 +193,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- TAB CONTENT AREA (ORCHESTRATED)                                -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <div class="px-8 pb-12">
+    <div class= "pb-12">
       <app-object-config *ngIf="activeTab() === 'object'"></app-object-config>
       
       <app-api-config 
