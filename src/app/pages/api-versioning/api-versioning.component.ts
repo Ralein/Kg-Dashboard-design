@@ -83,35 +83,6 @@ import { Router } from '@angular/router';
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Sidebar Navigation -->
-        <div class="lg:col-span-3 flex flex-col gap-4">
-          <div class="premium-glass p-0 overflow-hidden flex flex-col h-full">
-            <div class="p-6 border-b border-gray-100/50 bg-[#F8FAFF]/50 backdrop-blur-sm">
-              <h3 class="text-xs font-black text-[#2B3674] uppercase tracking-widest">Version Control</h3>
-              <p class="text-[10px] text-[#A3AED0] mt-1 font-bold">Manage your API lifecycle</p>
-            </div>
-            <div class="p-3 flex flex-col gap-1.5">
-              <button 
-                (click)="activeTab.set('endpoints')"
-                class="w-full text-left px-5 py-4 rounded-xl text-xs font-bold transition-all flex items-center justify-between group"
-                [class.bg-[#4318FF]]="activeTab() === 'endpoints'"
-                [class.text-white]="activeTab() === 'endpoints'"
-                [class.shadow-xl]="activeTab() === 'endpoints'"
-                [class.shadow-[#4318FF]/20]="activeTab() === 'endpoints'"
-                [class.text-[#A3AED0]]="activeTab() !== 'endpoints'"
-                [class.hover:bg-[#4318FF]/5]="activeTab() !== 'endpoints'"
-                [class.hover:text-[#4318FF]]="activeTab() !== 'endpoints'"
-              >
-                <div class="flex items-center gap-3">
-                   <lucide-icon [img]="LayoutGrid" class="w-4 h-4" [class.text-[#4318FF]]="activeTab() !== 'endpoints'"></lucide-icon>
-                   Endpoints List
-                </div>
-                <lucide-icon [img]="ChevronRight" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" [class.opacity-100]="activeTab() === 'endpoints'"></lucide-icon>
-              </button>
-            </div>
-          </div>
-        </div>
-
         <!-- Main Panel: Content Area -->
         <div class="lg:col-span-9">
           <div *ngIf="activeTab() === 'endpoints'" class="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">

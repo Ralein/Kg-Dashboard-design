@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import {
   LucideAngularModule, ChevronLeft, ChevronDown, CheckCircle2,
   Settings2, Database, Layout, Share2, UploadCloud, FileJson,
-  Search, Filter, ArrowRight, X, Trash2, Plus, Play, Save as SaveIcon, Info, ChevronUp, ChevronRight,
+  Search, Filter, ArrowRight, X, Trash2, Plus, Play, Save as SaveIcon, Info, ChevronUp, ChevronRight, Globe,
   LucideIconData
 } from 'lucide-angular';
 
@@ -33,7 +33,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- PREMIUM HERO BANNER                                            -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <div class="hero-banner relative overflow-hidden mb-8">
+    <div class="hero-banner relative overflow-hidden mb-6">
       <div class="hero-bg absolute inset-0"></div>
       <div class="hero-grid absolute inset-0"></div>
       <div class="hero-orb hero-orb--blue"></div>
@@ -56,16 +56,22 @@ import { FieldMappingComponent } from './components/field-mapping.component';
             <div class="flex flex-col gap-1.5">
               <div class="flex items-center gap-3">
                 <h1 class="text-3xl font-black text-white tracking-tight">Data Transformation</h1>
-                <span class="px-2.5 py-0.5 rounded-lg bg-[#05CD99]/20 border border-[#05CD99]/30 text-[#05CD99] text-[10px] font-black uppercase tracking-widest">v2.0 Configured</span>
+                <span class="px-2.5 py-0.5 rounded-lg bg-[#05CD99]/20 border border-[#05CD99]/30 text-[#05CD99] text-[10px] font-black uppercase tracking-widest">{{ isEditMode() ? 'Edit Mode' : 'View Mode' }}</span>
               </div>
               <div class="flex items-center gap-4 text-white/50 text-xs font-bold uppercase tracking-wider">
                 <span class="flex items-center gap-1.5 uppercase">
                   <lucide-icon [img]="Layout" class="w-3.5 h-3.5 text-indigo-400"></lucide-icon>
-                  {{ selectedLob() || 'Select LOB' }} / {{ selectedProcessFlow() || 'Select Flow' }}
+                  {{ selectedLob() }} / {{ selectedProcessFlow() }}
                 </span>
-                <div class="w-1 h-1 rounded-full bg-white/20"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-indigo-500/30"></div>
                 <span class="flex items-center gap-1.5 text-white/80 lowercase">
-                  {{ selectedEndpoint() || 'Waiting for input...' }}
+                  <lucide-icon [img]="Globe" class="w-3.5 h-3.5 text-indigo-400 opacity-50"></lucide-icon>
+                  {{ selectedEndpoint() }}
+                </span>
+                <div class="w-1.5 h-1.5 rounded-full bg-indigo-500/30"></div>
+                <span class="flex items-center gap-1.5 text-emerald-400">
+                  <lucide-icon [img]="CheckCircle2" class="w-3.5 h-3.5"></lucide-icon>
+                  {{ docVersion() }}
                 </span>
               </div>
             </div>
@@ -103,7 +109,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
               [ngModel]="selectedLob()" 
               (ngModelChange)="onLobChange($event)"
               class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
-              [disabled]="!isEditMode()"
+              [disabled]="!isEditMode() || !!recordId()"
             >
               <option value="" disabled selected>Select LOB</option>
               <option value="HOME">HOME</option>
@@ -122,7 +128,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
               [ngModel]="selectedProcessFlow()" 
               (ngModelChange)="onProcessFlowChange($event)"
               class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
-              [disabled]="!selectedLob() || !isEditMode()"
+              [disabled]="!selectedLob() || !isEditMode() || !!recordId()"
             >
               <option value="" disabled selected>Select Process Flow</option>
               <option value="Insurance Data Sharing">Insurance Data Sharing</option>
@@ -139,7 +145,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
               [ngModel]="docVersion()" 
               (ngModelChange)="docVersion.set($event)"
               class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
-              [disabled]="!selectedProcessFlow() || !isEditMode()"
+              [disabled]="!selectedProcessFlow() || !isEditMode() || !!recordId()"
             >
               <option value="" disabled selected>Documentation Version</option>
               <option value="v8">v8 (Current)</option>
@@ -157,7 +163,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
               [ngModel]="selectedEndpoint()" 
               (ngModelChange)="selectedEndpoint.set($event)"
               class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
-              [disabled]="!selectedProcessFlow() || !isEditMode()"
+              [disabled]="!selectedProcessFlow() || !!recordId()"
             >
               <option value="" disabled selected>Select Endpoint</option>
               <option *ngFor="let ep of availableEndpoints()" [value]="ep">{{ ep }}</option>
@@ -254,6 +260,7 @@ export class DataTransformationComponent implements OnDestroy, OnInit {
   docVersion = signal('v8');
   apiVersion = signal('v1.0');
   selectedEndpoint = signal('');
+  recordId = signal<string | null>(null);
   isEditMode = signal(false);
   toastMessage = signal('');
 
@@ -394,8 +401,27 @@ export class DataTransformationComponent implements OnDestroy, OnInit {
     { name: 'Paymenthistorydetails', expanded: false, fields: ['LOB', 'PAYMENTHISTORYKEY', 'POLICYKEY', 'PaymentDate', 'PREMIUMINAMOUNT', 'PREMIUMINCURRENCY', 'RECEIPTNUMBER', 'INSTALLMENTNUMBER', 'PAYMENTMODE', 'PaymentStatus', 'UniqueID', 'CREATED_ON', 'UPDATED_ON'] }
   ]);
 
+  private route = inject(ActivatedRoute);
+
   ngOnInit() {
     this.isEditMode.set(this.router.url.endsWith('/edit'));
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.recordId.set(id);
+      // Simulate fetching details for ep-0, ep-1, etc.
+      if (id === 'ep-0' || id === 'ep-1' || id === 'ep-2') {
+        this.selectedLob.set('HOME');
+        this.selectedProcessFlow.set('Insurance Data Sharing');
+        this.docVersion.set('v8');
+        this.selectedEndpoint.set('/home-insurance-policies/{InsurancePolicyId}');
+      } else if (id === 'ep-3' || id === 'ep-4') {
+        this.selectedLob.set('MOTOR');
+        this.selectedProcessFlow.set('Insurance Data Sharing');
+        this.docVersion.set('v8');
+        this.selectedEndpoint.set('/motor-insurance-policies/{InsurancePolicyId}');
+      }
+    }
+
     if (this.isEditMode()) {
       this.activeTab.set('field');
     }
@@ -417,4 +443,5 @@ export class DataTransformationComponent implements OnDestroy, OnInit {
   readonly ChevronDown = ChevronDown;
   readonly Plus = Plus;
   readonly CheckCircle2 = CheckCircle2;
+  readonly Globe = Globe;
 }
