@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, OnDestroy, Renderer2, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, ChevronDown, CheckCircle2, Search, Filter, Download, Plus, Settings2, Globe, FileJson, Maximize2, Eye, PlusCircle, StopCircle, Edit3, Trash2, Zap, LayoutGrid, ChevronRight, Database, Layers, Clock, Info, Printer, Save, ExternalLink, PlayCircle, EyeOff, XCircle } from 'lucide-angular';
@@ -11,109 +11,7 @@ import { Router } from '@angular/router';
   template: `
     <div class="flex flex-col gap-0 animate-page-in relative pb-8">
       
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- TOAST NOTIFICATION                                             -->
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div *ngIf="toastMessage()" class="fixed top-4 right-4 z-[200] animate-in slide-in-from-right-8 fade-in duration-300">
-        <div class="flex items-center gap-3 px-6 py-4 bg-[#0d1b3e] text-white rounded-2xl shadow-2xl border border-white/10">
-          <lucide-icon [img]="CheckCircle2" class="w-5 h-5 text-emerald-400"></lucide-icon>
-          <span class="text-xs font-bold">{{ toastMessage() }}</span>
-          <button (click)="toastMessage.set('')" class="ml-4 text-white/40 hover:text-white transition-colors">
-            <lucide-icon [img]="Plus" class="w-4 h-4 rotate-45"></lucide-icon>
-          </button>
-        </div>
-      </div>
-
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- CREATE NEW VERSION MODAL                                       -->
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div *ngIf="isCreateVersionModalOpen()" class="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-        <div class="absolute inset-0 bg-[#0C0F2E]/40 backdrop-blur-[2px]" (click)="isCreateVersionModalOpen.set(false)"></div>
-        <div class="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-          <div class="px-6 py-4 bg-[#f8faff] border-b border-gray-100 flex items-center justify-between">
-            <h2 class="text-lg font-black text-[#2B3674]">Create New Version</h2>
-          </div>
-          <div class="p-6">
-            <p class="text-sm font-medium text-gray-500 leading-relaxed">
-              A new version will be created for API. <br/> Click OK to proceed.
-            </p>
-          </div>
-          <div class="px-6 py-4 bg-gray-50/50 flex justify-end gap-2 border-t border-gray-100">
-            <button (click)="isCreateVersionModalOpen.set(false)" class="px-4 py-2 rounded-lg border border-gray-200 text-xs font-bold text-[#2B3674] hover:bg-white transition-all">Cancel</button>
-            <button (click)="confirmCreateVersion()" class="px-6 py-2 rounded-lg bg-[#2B3674] text-white text-xs font-bold hover:bg-[#4318FF] transition-all shadow-lg shadow-[#2B3674]/20">OK</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- CONFIRM DELETION MODAL                                         -->
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div *ngIf="isDeleteModalOpen()" class="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-        <div class="absolute inset-0 bg-[#0C0F2E]/40 backdrop-blur-[2px]" (click)="isDeleteModalOpen.set(false)"></div>
-        <div class="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-          <div class="px-6 py-4 bg-red-50/50 border-b border-red-100 flex items-center justify-between">
-            <h2 class="text-lg font-black text-red-600">Confirm Deletion</h2>
-          </div>
-          <div class="p-6">
-            <p class="text-sm font-medium text-gray-500 leading-relaxed mb-1">
-              Are you sure you want to delete version of API ?
-            </p>
-            <p class="text-xs font-bold text-red-500">This action cannot be undone.</p>
-          </div>
-          <div class="px-6 py-4 bg-gray-50/50 flex justify-end gap-2 border-t border-gray-100">
-            <button (click)="isDeleteModalOpen.set(false)" class="px-4 py-2 rounded-lg border border-gray-200 text-xs font-bold text-[#2B3674] hover:bg-white transition-all">Cancel</button>
-            <button (click)="confirmDelete()" class="px-6 py-2 rounded-lg bg-[#FF5B5B] text-white text-xs font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/20">Delete</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- CREATE ENDPOINT MODAL                                          -->
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div *ngIf="isModalOpen()" class="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-        <div class="absolute inset-0 bg-[#0C0F2E]/60 backdrop-blur-sm" (click)="closeModal()"></div>
-        
-        <div class="relative w-full max-w-lg bg-white rounded-[32px] shadow-2xl shadow-black/20 overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-          <div class="px-8 py-6 bg-[#f8faff] border-b border-gray-100/50 flex items-center justify-between">
-            <h2 class="text-xl font-black text-[#2B3674] tracking-tight">Create API Endpoint</h2>
-            <button (click)="closeModal()" class="w-8 h-8 rounded-full hover:bg-gray-200/50 flex items-center justify-center text-[#A3AED0] transition-colors">
-              <lucide-icon [img]="Plus" class="w-5 h-5 rotate-45"></lucide-icon>
-            </button>
-          </div>
-
-          <div class="p-8 flex flex-col gap-6">
-            <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Process Flow</label>
-              <div class="relative">
-                <select class="premium-select">
-                  <option>Insurance Data Sharing</option>
-                  <option>Insurance Quotation</option>
-                </select>
-                <lucide-icon [img]="ChevronDown" class="select-chevron"></lucide-icon>
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">API Endpoint Name</label>
-              <input type="text" placeholder="e.g. /home-insurance-policies" class="premium-input-field">
-            </div>
-
-            <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Documentation Version</label>
-              <input type="text" placeholder="e.g. v8" class="premium-input-field">
-            </div>
-          </div>
-
-          <div class="px-8 py-6 bg-gray-50/50 flex justify-end gap-3 border-t border-gray-100/50">
-            <button (click)="closeModal()" class="px-6 py-2.5 rounded-xl border border-gray-200 text-[#2B3674] text-xs font-black uppercase tracking-widest hover:bg-white hover:border-[#2B3674]/20 transition-all">
-              Cancel
-            </button>
-            <button (click)="createEndpoint()" class="px-8 py-2.5 rounded-xl bg-[#2B3674] text-white text-xs font-black uppercase tracking-widest hover:bg-[#4318FF] transition-all shadow-lg shadow-[#2B3674]/20">
-              OK
-            </button>
-          </div>
-        </div>
-      </div>
+      <!-- Modals are now handled via Body-portal (mountModalOnBody) to ensure full-screen coverage -->
 
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- PREMIUM HERO BANNER                                            -->
@@ -586,14 +484,17 @@ import { Router } from '@angular/router';
     }
   `]
 })
-export class ApiVersioningComponent {
+export class ApiVersioningComponent implements OnDestroy {
   private router = inject(Router);
+  private renderer = inject(Renderer2);
 
   activeTab = signal('endpoints');
   showResults = signal(false);
-  isModalOpen = signal(false);
-  isCreateVersionModalOpen = signal(false);
-  isDeleteModalOpen = signal(false);
+
+  // Modal tracking
+  private modalEl: HTMLElement | null = null;
+  private backdropListener: (() => void) | null = null;
+
   toastMessage = signal('');
   selectedApi: any = null;
 
@@ -659,50 +560,202 @@ export class ApiVersioningComponent {
   }
 
   openModal(): void {
-    this.isModalOpen.set(true);
+    this.mountConfirmationModal({
+      title: 'Create API Endpoint',
+      message: 'This will navigate you to the designer to create a new endpoint definition.',
+      confirmLabel: 'Proceed',
+      accent: '#4318FF',
+      callback: () => this.createEndpoint()
+    });
   }
 
   closeModal(): void {
-    this.isModalOpen.set(false);
+    this.unmountModal();
   }
 
   createEndpoint(): void {
-    this.isModalOpen.set(false);
+    this.unmountModal();
     this.showResults.set(true);
-    this.showToast('API Endpoint created successfully');
+    this.showToast('Designer initialized');
   }
 
   createVersion(api: any): void {
     this.selectedApi = api;
-    this.isCreateVersionModalOpen.set(true);
+    this.mountConfirmationModal({
+      title: 'Create New Version',
+      message: `A new version will be created for <strong>${api.name}</strong>.`,
+      confirmLabel: 'Create Version',
+      accent: '#05CD99',
+      callback: () => this.confirmCreateVersion()
+    });
   }
 
   confirmCreateVersion(): void {
-    this.isCreateVersionModalOpen.set(false);
+    this.unmountModal();
     this.showToast('Version v3.0 created successfully');
   }
 
   deleteVersion(api: any): void {
     this.selectedApi = api;
-    this.isDeleteModalOpen.set(true);
+    this.mountConfirmationModal({
+      title: 'Confirm Deletion',
+      message: `Are you sure you want to delete the version of <strong>${api.name}</strong>?`,
+      confirmLabel: 'Delete',
+      accent: '#FF5252',
+      isDelete: true,
+      callback: () => this.confirmDelete()
+    });
   }
 
   confirmDelete(): void {
-    this.isDeleteModalOpen.set(false);
+    this.unmountModal();
     this.apiEndpoints = this.apiEndpoints.filter(a => a.id !== this.selectedApi.id);
     this.showToast('Version deleted successfully');
   }
 
   showToast(message: string): void {
+    this.unmountToast();
     this.toastMessage.set(message);
-    setTimeout(() => this.toastMessage.set(''), 3000);
+    this.mountToastOnBody(message);
+    setTimeout(() => this.unmountToast(), 3000);
   }
 
-  toggleFilter(): void {
-    console.log('Filter toggled');
+  // ─── Body-portal Modals ───────────────────────────────────────────────────
+
+  private mountConfirmationModal(config: {
+    title: string,
+    message: string,
+    confirmLabel: string,
+    accent: string,
+    isDelete?: boolean,
+    callback: () => void
+  }): void {
+    this.unmountModal();
+
+    const overlay = document.createElement('div');
+    overlay.setAttribute('id', 'api-portal-overlay');
+
+    const accentLight = config.accent + '20';
+    const accentShadow = config.accent + '40';
+
+    overlay.innerHTML = `
+      <style>
+        #api-portal-overlay {
+          position: fixed; inset: 0; z-index: 99999;
+          display: flex; align-items: center; justify-content: center; padding: 1rem;
+          background: rgba(11, 14, 40, 0.4);
+          backdrop-filter: blur(8px) saturate(180%);
+          -webkit-backdrop-filter: blur(8px) saturate(180%);
+          animation: apiFade .2s ease-out;
+        }
+        #api-portal-box {
+          background: #fff; border-radius: 24px;
+          box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+          width: 100%; max-width: 420px; overflow: hidden;
+          animation: apiSlide .3s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes apiFade  { from{opacity:0} to{opacity:1} }
+        @keyframes apiSlide { from{opacity:0;transform:translateY(18px) scale(.96)} to{opacity:1;transform:none} }
+
+        #api-ph { padding:20px 24px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; }
+        #api-ph h3 { margin:0; font-size:15px; font-weight:900; color:#2B3674; }
+        #api-xbtn { background:none; border:none; cursor:pointer; padding:6px; border-radius:50%; color:#94a3b8; line-height:0; }
+
+        #api-pb { padding:32px 24px; display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; }
+        #api-icon { width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:${accentLight}; color:${config.accent}; }
+        #api-pb p { margin:0; font-size:14px; font-weight:500; color:#2B3674; line-height:1.6; }
+        #api-pb strong { color:#2B3674; font-weight: 800; }
+
+        #api-pf { padding:20px 24px; background:#f8fafc; display:flex; justify-content:center; gap:12px; }
+        .api-btn { padding:10px 28px; border-radius:16px; font-weight:700; font-size:13px; cursor:pointer; transition:all .15s; }
+        #api-cbtn { border:1.5px solid #e2e8f0; background:#fff; color:#2B3674; }
+        #api-okbtn { border:none; background:${config.accent}; color:#fff; box-shadow:0 4px 14px ${accentShadow}; }
+        #api-okbtn:hover { transform:translateY(-1px); filter: brightness(1.1); }
+      </style>
+
+      <div id="api-portal-box">
+        <div id="api-ph">
+          <h3>${config.title}</h3>
+          <button id="api-xbtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div id="api-pb">
+          <div id="api-icon">
+            ${config.isDelete ?
+        '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6"/></svg>' :
+        '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>'
+      }
+          </div>
+          <p>${config.message}</p>
+        </div>
+        <div id="api-pf">
+          <button class="api-btn" id="api-cbtn">Cancel</button>
+          <button class="api-btn" id="api-okbtn">${config.confirmLabel}</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    this.modalEl = overlay;
+
+    overlay.querySelector('#api-xbtn')!.addEventListener('click', () => this.unmountModal());
+    overlay.querySelector('#api-cbtn')!.addEventListener('click', () => this.unmountModal());
+    overlay.querySelector('#api-okbtn')!.addEventListener('click', () => config.callback());
+
+    this.backdropListener = this.renderer.listen(overlay, 'click', (e: MouseEvent) => {
+      if (e.target === overlay) this.unmountModal();
+    });
   }
 
-  exportData(): void {
-    console.log('Exporting data...');
+  private unmountModal(): void {
+    this.modalEl?.remove();
+    this.modalEl = null;
+    this.backdropListener?.();
+    this.backdropListener = null;
+  }
+
+  // ─── Toast Portal ─────────────────────────────────────────────────────────
+
+  private toastEl: HTMLElement | null = null;
+
+  private mountToastOnBody(message: string): void {
+    const toast = document.createElement('div');
+    toast.setAttribute('id', 'api-toast-portal');
+    toast.innerHTML = `
+      <style>
+        #api-toast-portal {
+          position: fixed; top: 24px; right: 24px; z-index: 100000;
+          animation: toastSlide .4s cubic-bezier(0.16,1,0.3,1);
+        }
+        #api-toast-box {
+          background: #0d1b3e; border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 16px; padding: 14px 20px; color: #fff;
+          display: flex; align-items: center; gap: 12px;
+          box-shadow: 0 20px 48px rgba(0,0,0,0.3);
+        }
+        @keyframes toastSlide { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:none} }
+      </style>
+      <div id="api-toast-box">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#05CD99" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span style="font-size:12px; font-weight:700;">${message}</span>
+      </div>
+    `;
+    document.body.appendChild(toast);
+    this.toastEl = toast;
+  }
+
+  private unmountToast(): void {
+    this.toastEl?.remove();
+    this.toastEl = null;
+    this.toastMessage.set('');
+  }
+
+  toggleFilter(): void { console.log('Filter toggled'); }
+  exportData(): void { console.log('Exporting data...'); }
+
+  ngOnDestroy(): void {
+    this.unmountModal();
+    this.unmountToast();
   }
 }
