@@ -27,7 +27,7 @@ import {
                   class="px-8 py-2 rounded-lg border border-gray-100 text-[11px] font-bold text-[#2B3674] focus:border-[#4318FF] transition-all w-60"
                 >
               </div>
-              <button (click)="clearAllMappings()" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-red-400 hover:bg-red-50 text-[10px] font-black uppercase tracking-widest transition-all">
+              <button *ngIf="isEditMode" (click)="clearAllMappings()" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-red-400 hover:bg-red-50 text-[10px] font-black uppercase tracking-widest transition-all">
                 <lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon>
                 <span>Clear All</span>
               </button>
@@ -41,7 +41,7 @@ import {
                   <th class="px-4 pb-2">Open Finance Fields</th>
                   <th class="px-4 pb-2 text-center w-20"></th>
                   <th class="px-4 pb-2">LFI Fields</th>
-                  <th class="px-4 pb-2 text-right">Actions</th>
+                  <th *ngIf="isEditMode" class="px-4 pb-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -54,22 +54,22 @@ import {
                   </td>
                   <td 
                     class="px-4 py-4 bg-[#F8FAFF] border-y border-indigo-50/50 drop-zone transition-all"
-                    [class.drop-zone--active]="activeDragOver === field.name"
-                    (dragover)="onDragOver($event, field.name)"
-                    (dragleave)="onDragLeave($event)"
-                    (drop)="onDrop($event, field.name)"
+                    [class.drop-zone--active]="isEditMode && activeDragOver === field.name"
+                    (dragover)="isEditMode ? onDragOver($event, field.name) : null"
+                    (dragleave)="isEditMode ? onDragLeave($event) : null"
+                    (drop)="isEditMode ? onDrop($event, field.name) : null"
                   >
                     <div *ngIf="field.mappedTo" class="flex items-center justify-between bg-white border border-indigo-100/50 px-4 py-2 rounded-xl text-xs font-black text-[#4318FF] shadow-sm animate-in zoom-in-95 duration-200">
                       {{ field.mappedTo }}
-                      <button (click)="removeMapping(field)" class="text-[#A3AED0] hover:text-red-400 transition-colors">
+                      <button *ngIf="isEditMode" (click)="removeMapping(field)" class="text-[#A3AED0] hover:text-red-400 transition-colors">
                         <lucide-icon [img]="X" class="w-3 h-3"></lucide-icon>
                       </button>
                     </div>
                     <div *ngIf="!field.mappedTo" class="text-center py-2 px-4 rounded-xl border border-dashed border-indigo-200/50 text-[10px] font-bold text-[#A3AED0] uppercase tracking-widest bg-indigo-50/30">
-                      Drop LFI
+                      {{ isEditMode ? 'Drop LFI' : 'No Mapping' }}
                     </div>
                   </td>
-                  <td class="px-4 py-4 bg-[#F8FAFF] border-y border-r border-indigo-50/50 rounded-r-2xl text-right">
+                  <td *ngIf="isEditMode" class="px-4 py-4 bg-[#F8FAFF] border-y border-r border-indigo-50/50 rounded-r-2xl text-right">
                     <div class="flex items-center justify-end gap-3">
                       <button class="text-[9px] font-black uppercase text-indigo-400 tracking-widest hover:text-[#4318FF]">Direct</button>
                       <button (click)="openRuleModal(field)" class="px-3 py-1.5 rounded-lg bg-[#05CD99] text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-[#05CD99]/20 hover:scale-105 transition-all">Add Rule</button>
@@ -77,6 +77,9 @@ import {
                         <lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon>
                       </button>
                     </div>
+                  </td>
+                  <td *ngIf="!isEditMode" class="px-4 py-4 bg-[#F8FAFF] border-y border-r border-indigo-50/50 rounded-r-2xl text-right">
+                    <span class="text-[9px] font-black uppercase text-indigo-400 tracking-widest">Static Mapping</span>
                   </td>
                 </tr>
               </tbody>
@@ -88,9 +91,12 @@ import {
               <lucide-icon [img]="Play" class="w-3.5 h-3.5"></lucide-icon>
               Test
             </button>
-            <button (click)="saveMappings()" class="px-8 py-2.5 rounded-xl bg-[#2B3674] text-white text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-[#2B3674]/20 hover:bg-[#1B2559] transition-all flex items-center gap-2">
+            <button *ngIf="isEditMode" (click)="saveMappings()" class="px-8 py-2.5 rounded-xl bg-[#2B3674] text-white text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-[#2B3674]/20 hover:bg-[#1B2559] transition-all flex items-center gap-2">
               <lucide-icon [img]="SaveIcon" class="w-3.5 h-3.5"></lucide-icon>
-              Save
+              <span>Save</span>
+            </button>
+            <button *ngIf="!isEditMode" class="px-8 py-2.5 rounded-xl border border-indigo-100 text-[#2B3674] text-[11px] font-black uppercase tracking-[0.2em] opacity-50 cursor-not-allowed">
+              Read Only
             </button>
           </div>
         </div>
@@ -130,9 +136,12 @@ import {
               <div *ngIf="group.expanded" class="flex flex-col gap-1 p-2 animate-in slide-in-from-top-2 duration-300 max-h-[220px] overflow-y-auto custom-scrollbar">
                 <div 
                   *ngFor="let field of group.fields" 
-                  draggable="true"
-                  (dragstart)="onDragStart($event, field)"
-                  class="px-4 py-2.5 rounded-lg text-xs font-bold text-[#4318FF] hover:bg-white hover:shadow-md transition-all cursor-grab active:cursor-grabbing border border-transparent hover:border-indigo-100"
+                  [attr.draggable]="isEditMode"
+                  (dragstart)="isEditMode ? onDragStart($event, field) : null"
+                  class="px-4 py-2.5 rounded-lg text-xs font-bold text-[#4318FF] hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-indigo-100"
+                  [class.cursor-grab]="isEditMode"
+                  [class.active:cursor-grabbing]="isEditMode"
+                  [class.opacity-70]="!isEditMode"
                 >
                   {{ field }}
                 </div>
@@ -171,6 +180,7 @@ export class FieldMappingComponent {
     @Input() mappingSearchQuery: string = '';
     @Input() sidebarSearchQuery: string = '';
     @Input() activeDragOver: string | null = null;
+    @Input() isEditMode: boolean = false;
 
     private renderer = inject(Renderer2);
 

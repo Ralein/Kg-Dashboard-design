@@ -158,7 +158,7 @@ import { Router } from '@angular/router';
 
                   <!-- Version -->
                   <div class="flex flex-col gap-2 group">
-                    <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">API Version</label>
+                    <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Doc Version</label>
                     <div class="relative">
                       <select 
                         [ngModel]="apiVersionSelected()" 
@@ -272,10 +272,10 @@ import { Router } from '@angular/router';
                            <td class="px-6 py-5">
                               <div class="flex items-center gap-2">
                                  <ng-container *ngIf="api.configStatus === 'Configured'">
-                                   <button (click)="viewTransformation(api.id)" class="action-btn action-btn--view" title="View Transformation">
-                                     <lucide-icon [img]="Eye" class="w-3.5 h-3.5"></lucide-icon>
-                                     <span>View</span>
-                                   </button>
+                                    <button (click)="navigateTransformation(api.id, 'view')" class="action-btn action-btn--view" title="View Transformation">
+                                      <lucide-icon [img]="Eye" class="w-3.5 h-3.5"></lucide-icon>
+                                      <span>View</span>
+                                    </button>
                                    <button (click)="createVersion(api)" class="action-btn action-btn--secondary" title="Create Version">
                                      <lucide-icon [img]="PlusCircle" class="w-3.5 h-3.5"></lucide-icon>
                                      <span>Create Version</span>
@@ -287,10 +287,10 @@ import { Router } from '@angular/router';
                                  </ng-container>
                                  
                                  <ng-container *ngIf="api.configStatus !== 'Configured'">
-                                   <button (click)="viewTransformation(api.id)" class="action-btn action-btn--secondary" title="Edit">
-                                     <lucide-icon [img]="Edit3" class="w-3.5 h-3.5"></lucide-icon>
-                                     <span>Edit</span>
-                                   </button>
+                                    <button (click)="navigateTransformation(api.id, 'edit')" class="action-btn action-btn--secondary" title="Edit">
+                                      <lucide-icon [img]="Edit3" class="w-3.5 h-3.5"></lucide-icon>
+                                      <span>Edit</span>
+                                    </button>
                                    <button (click)="deleteVersion(api)" class="px-3 py-2 rounded-lg border border-red-100 text-red-500 hover:bg-red-50 transition-all flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" title="Delete">
                                      <lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon>
                                      <span>Delete</span>
@@ -482,7 +482,7 @@ export class ApiVersioningComponent implements OnDestroy {
   // Dynamic Configuration Signals
   selectedLob = signal('');
   selectedProcessFlow = signal('');
-  apiVersionSelected = signal('');
+  apiVersionSelected = signal('v8');
   selectedEndpoint = signal('');
 
   onLobChange(val: string) {
@@ -561,7 +561,7 @@ export class ApiVersioningComponent implements OnDestroy {
   readonly EyeOff = EyeOff;
   readonly XCircle = XCircle;
 
-  allEndpoints = [
+  allEndpoints = signal([
     {
       id: 'ep-0', name: '/home-insurance-policies/{InsurancePolicyId}',
       lob: 'HOME', process: 'Insurance Data Sharing',
@@ -603,17 +603,35 @@ export class ApiVersioningComponent implements OnDestroy {
       docVersion: 'v8', apiVersion: 'v1.0', releaseDate: '22/02/2026', deprecationDate: '-',
       configStatus: 'In Progress', configStatusClass: 'bg-amber-100 text-amber-600',
       status: 'In Migration', statusClass: 'bg-blue-50 border-blue-100',
+    },
+    {
+      id: 'ep-6', name: '/motor-insurance-policies/{InsurancePolicyId}',
+      lob: 'MOTOR', process: 'Insurance Data Sharing',
+      docVersion: 'v7', apiVersion: 'v4.2', releaseDate: '15/01/2025', deprecationDate: '15/01/2026',
+      configStatus: 'Configured', configStatusClass: 'bg-[#05CD99]/10 text-[#05CD99]',
+      status: 'Live', statusClass: 'bg-emerald-50 border-emerald-100',
+    },
+    {
+      id: 'ep-7', name: '/home-insurance-policies/{InsurancePolicyId}',
+      lob: 'HOME', process: 'Insurance Data Sharing',
+      docVersion: 'v7', apiVersion: 'v3.5', releaseDate: '10/11/2024', deprecationDate: '10/11/2025',
+      configStatus: 'Configured', configStatusClass: 'bg-[#05CD99]/10 text-[#05CD99]',
+      status: 'Live', statusClass: 'bg-emerald-50 border-emerald-100',
     }
-  ];
+  ]);
 
   filteredEndpoints = computed(() => {
     const lob = this.selectedLob();
     const flow = this.selectedProcessFlow();
+    const version = this.apiVersionSelected();
+    const endpoints = this.allEndpoints();
 
     if (!lob || !flow) return [];
 
-    return this.allEndpoints.filter(ep =>
-      ep.lob === lob && ep.process === flow
+    return endpoints.filter(ep =>
+      ep.lob === lob &&
+      ep.process === flow &&
+      (!version || ep.docVersion === version)
     );
   });
 
@@ -621,8 +639,12 @@ export class ApiVersioningComponent implements OnDestroy {
     this.showResults.set(true);
   }
 
-  viewTransformation(id: string): void {
-    this.router.navigate(['/api-versioning', id, 'transformation']);
+  navigateTransformation(id: string, mode: 'view' | 'edit'): void {
+    if (mode === 'edit') {
+      this.router.navigate(['/api-versioning', id, 'transformation', 'edit']);
+    } else {
+      this.router.navigate(['/api-versioning', id, 'transformation']); // Default to view
+    }
   }
 
   openModal(): void {
@@ -641,8 +663,23 @@ export class ApiVersioningComponent implements OnDestroy {
 
   createEndpoint(): void {
     this.unmountModal();
+    const newEp = {
+      id: `ep-${Date.now()}`,
+      name: this.selectedEndpoint() || 'New Endpoint',
+      lob: this.selectedLob(),
+      process: this.selectedProcessFlow(),
+      docVersion: this.apiVersionSelected() || 'v8',
+      apiVersion: 'v1.0',
+      releaseDate: new Date().toLocaleDateString('en-GB'),
+      deprecationDate: '-',
+      configStatus: 'Yet to Configure',
+      configStatusClass: 'bg-gray-100 text-gray-600',
+      status: 'In Migration',
+      statusClass: 'bg-blue-50 border-blue-100',
+    };
+    this.allEndpoints.update(list => [newEp, ...list]);
     this.showResults.set(true);
-    this.showToast('Designer initialized');
+    this.showToast('New endpoint created');
   }
 
   createVersion(api: any): void {
@@ -658,6 +695,17 @@ export class ApiVersioningComponent implements OnDestroy {
 
   confirmCreateVersion(): void {
     this.unmountModal();
+    const newVersion = {
+      ...this.selectedApi,
+      id: `ep-${Date.now()}`,
+      apiVersion: 'v3.0',
+      configStatus: 'Yet to Configure',
+      configStatusClass: 'bg-gray-100 text-gray-600',
+      status: 'In Migration',
+      statusClass: 'bg-blue-50 border-blue-100',
+      releaseDate: new Date().toLocaleDateString('en-GB')
+    };
+    this.allEndpoints.update(list => [newVersion, ...list]);
     this.showToast('Version v3.0 created successfully');
   }
 
@@ -675,7 +723,7 @@ export class ApiVersioningComponent implements OnDestroy {
 
   confirmDelete(): void {
     this.unmountModal();
-    this.allEndpoints = this.allEndpoints.filter(a => a.id !== this.selectedApi.id);
+    this.allEndpoints.update(list => list.filter(a => a.id !== this.selectedApi.id));
     this.showToast('Version deleted successfully');
   }
 

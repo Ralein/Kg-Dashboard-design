@@ -102,7 +102,8 @@ import { FieldMappingComponent } from './components/field-mapping.component';
             <select 
               [ngModel]="selectedLob()" 
               (ngModelChange)="onLobChange($event)"
-              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
+              [disabled]="!isEditMode()"
             >
               <option value="" disabled selected>Select LOB</option>
               <option value="HOME">HOME</option>
@@ -120,8 +121,8 @@ import { FieldMappingComponent } from './components/field-mapping.component';
             <select 
               [ngModel]="selectedProcessFlow()" 
               (ngModelChange)="onProcessFlowChange($event)"
-              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
-              [disabled]="!selectedLob()"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
+              [disabled]="!selectedLob() || !isEditMode()"
             >
               <option value="" disabled selected>Select Process Flow</option>
               <option value="Insurance Data Sharing">Insurance Data Sharing</option>
@@ -132,13 +133,13 @@ import { FieldMappingComponent } from './components/field-mapping.component';
         </div>
 
         <div class="flex flex-col gap-2">
-          <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">API Version</label>
+          <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Doc Version</label>
           <div class="relative">
             <select 
               [ngModel]="docVersion()" 
               (ngModelChange)="docVersion.set($event)"
-              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
-              [disabled]="!selectedProcessFlow()"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
+              [disabled]="!selectedProcessFlow() || !isEditMode()"
             >
               <option value="" disabled selected>Documentation Version</option>
               <option value="v8">v8 (Current)</option>
@@ -155,8 +156,8 @@ import { FieldMappingComponent } from './components/field-mapping.component';
             <select 
               [ngModel]="selectedEndpoint()" 
               (ngModelChange)="selectedEndpoint.set($event)"
-              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
-              [disabled]="!selectedProcessFlow()"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
+              [disabled]="!selectedProcessFlow() || !isEditMode()"
             >
               <option value="" disabled selected>Select Endpoint</option>
               <option *ngFor="let ep of availableEndpoints()" [value]="ep">{{ ep }}</option>
@@ -168,13 +169,17 @@ import { FieldMappingComponent } from './components/field-mapping.component';
 
         <!-- Action Buttons -->
         <div class="flex justify-end gap-3 mt-4 md:col-span-4">
-          <button class="bg-[#05CD99] hover:bg-[#04b88a] text-white px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#05CD99]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
+          <button *ngIf="isEditMode()" (click)="createEndpoint()" class="bg-[#05CD99] hover:bg-[#04b88a] text-white px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#05CD99]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
              <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
              <span>CREATE API ENDPOINT</span>
           </button>
-          <button class="bg-[#2B3674] hover:bg-[#1B2559] text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
+          <button *ngIf="isEditMode()" (click)="submitMappings()" class="bg-[#2B3674] hover:bg-[#1B2559] text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
              <lucide-icon [img]="CheckCircle2" class="w-4 h-4 text-emerald-400"></lucide-icon>
              <span>Submit</span>
+          </button>
+          <button *ngIf="!isEditMode()" (click)="toggleEdit()" class="bg-[#4318FF] hover:bg-[#3311CC] text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#4318FF]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
+             <lucide-icon [img]="Settings2" class="w-4 h-4"></lucide-icon>
+             <span>Switch to Edit Mode</span>
           </button>
         </div>
       </div>
@@ -202,6 +207,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
         *ngIf="activeTab() === 'field'"
         [mappingRules]="mappingRules"
         [lfiFieldGroups]="lfiFieldGroups"
+        [isEditMode]="isEditMode()"
       ></app-field-mapping>
     </div>
   </div>
@@ -245,9 +251,43 @@ export class DataTransformationComponent implements OnDestroy, OnInit {
   // Dynamic Configuration Signals
   selectedLob = signal('');
   selectedProcessFlow = signal('');
-  docVersion = signal('');
+  docVersion = signal('v8');
   apiVersion = signal('v1.0');
   selectedEndpoint = signal('');
+  isEditMode = signal(false);
+  toastMessage = signal('');
+
+  showToast(message: string): void {
+    this.toastMessage.set(message);
+    const toast = document.createElement('div');
+    toast.setAttribute('id', 'transformation-toast');
+    toast.innerHTML = `
+      <div style="position:fixed; top:24px; right:24px; z-index:100000; background:#0d1b3e; padding:14px 20px; border-radius:16px; color:#fff; display:flex; align-items:center; gap:12px; box-shadow:0 20px 48px rgba(0,0,0,0.3); animation: toastSlide .4s ease-out;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#05CD99" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span style="font-size:12px; font-weight:700;">${message}</span>
+      </div>
+      <style>
+        @keyframes toastSlide { from{opacity:0; transform:translateX(30px)} to{opacity:1; transform:none} }
+      </style>
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  submitMappings(): void {
+    this.showToast('Mappings submitted successfully');
+  }
+
+  createEndpoint(): void {
+    this.showToast('Designer initialized for new endpoint');
+  }
+
+  toggleEdit(): void {
+    const currentUrl = this.router.url;
+    if (!currentUrl.endsWith('/edit')) {
+      this.router.navigate([currentUrl, 'edit']);
+    }
+  }
 
   availableEndpoints = computed(() => {
     const lob = this.selectedLob().toLowerCase();
@@ -355,7 +395,8 @@ export class DataTransformationComponent implements OnDestroy, OnInit {
   ]);
 
   ngOnInit() {
-    if (this.router.url.endsWith('/edit')) {
+    this.isEditMode.set(this.router.url.endsWith('/edit'));
+    if (this.isEditMode()) {
       this.activeTab.set('field');
     }
   }
