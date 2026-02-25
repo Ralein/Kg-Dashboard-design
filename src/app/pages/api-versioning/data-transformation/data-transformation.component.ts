@@ -5,7 +5,8 @@ import { FormsModule } from '@angular/forms';
 import {
   LucideAngularModule, ChevronLeft, ChevronDown, CheckCircle2,
   Settings2, Database, Layout, Share2, UploadCloud, FileJson,
-  Search, Filter, ArrowRight, X, Trash2, Plus, Play, Save as SaveIcon, Info, ChevronUp, ChevronRight
+  Search, Filter, ArrowRight, X, Trash2, Plus, Play, Save as SaveIcon, Info, ChevronUp, ChevronRight,
+  LucideIconData
 } from 'lucide-angular';
 
 import { ObjectConfigComponent } from './components/object-config.component';
@@ -58,10 +59,13 @@ import { FieldMappingComponent } from './components/field-mapping.component';
                   <span class="px-2.5 py-0.5 rounded-lg bg-[#05CD99]/20 border border-[#05CD99]/30 text-[#05CD99] text-[10px] font-black uppercase tracking-widest">v2.0 Configured</span>
                 </div>
                 <div class="flex items-center gap-4 text-white/50 text-xs font-bold uppercase tracking-wider">
-                  <span class="flex items-center gap-1.5"><lucide-icon [img]="Layout" class="w-3.5 h-3.5 text-indigo-400"></lucide-icon> HOME / INSURANCE DATA SHARING</span>
+                  <span class="flex items-center gap-1.5 uppercase">
+                    <lucide-icon [img]="Layout" class="w-3.5 h-3.5 text-indigo-400"></lucide-icon> 
+                    {{ selectedLob() }} / {{ selectedProcessFlow() }}
+                  </span>
                   <div class="w-1 h-1 rounded-full bg-white/20"></div>
-                  <span class="flex items-center gap-1.5 text-white/80">
-                    /home-insurance-policies/{{ '{' }}InsurancePolicyId{{ '}' }}
+                  <span class="flex items-center gap-1.5 text-white/80 lowercase">
+                    {{ apiEndpoint }}
                   </span>
                 </div>
               </div>
@@ -87,6 +91,89 @@ import { FieldMappingComponent } from './components/field-mapping.component';
               ></div>
             </button>
           </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <!-- CONFIGURATION BAR                                              -->
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <div class="px-8 mb-6">
+        <div class="premium-glass p-5 grid grid-cols-1 md:grid-cols-4 gap-6 bg-white/60">
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Line of Business</label>
+            <div class="relative">
+              <select 
+                [ngModel]="selectedLob()" 
+                (ngModelChange)="onLobChange($event)"
+                class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none"
+              >
+                <option value="" disabled selected>Select LOB</option>
+                <option value="HOME">HOME</option>
+                <option value="MOTOR">MOTOR</option>
+                <option value="TRAVEL">TRAVEL</option>
+                <option value="MEDICAL">MEDICAL</option>
+              </select>
+              <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Process Flow</label>
+            <div class="relative">
+              <select 
+                [ngModel]="selectedProcessFlow()" 
+                (ngModelChange)="onProcessFlowChange($event)"
+                class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
+                [disabled]="!selectedLob()"
+              >
+                <option value="" disabled selected>Select Process Flow</option>
+                <option value="Insurance Data Sharing">Insurance Data Sharing</option>
+                <option value="Insurance Quotation">Insurance Quotation</option>
+              </select>
+              <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">API Version</label>
+            <div class="relative">
+              <select 
+                [ngModel]="docVersion()" 
+                (ngModelChange)="docVersion.set($event)"
+                class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
+                [disabled]="!selectedProcessFlow()"
+              >
+                <option value="" disabled selected>Documentation Versi...</option>
+                <option value="v8">v8 (Current)</option>
+                <option value="v7">v7</option>
+                <option value="v6">v6</option>
+              </select>
+              <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none"></lucide-icon>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Target Endpoint</label>
+            <div class="relative">
+              <div class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] flex items-center overflow-hidden whitespace-nowrap lowercase pr-10 min-h-[46px]"
+                   [class.text-[#A3AED0]]="apiEndpoint === 'Waiting for input...'">
+                {{ apiEndpoint }}
+              </div>
+              <lucide-icon [img]="ChevronDown" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0] pointer-events-none opacity-50"></lucide-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end gap-3 mt-4">
+          <button class="bg-[#05CD99] hover:bg-[#04b88a] text-white px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#05CD99]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
+             <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
+             <span>CREATE API ENDPOINT</span>
+          </button>
+          <button class="bg-[#2B3674] hover:bg-[#1B2559] text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
+             <lucide-icon [img]="CheckCircle2" class="w-4 h-4 text-emerald-400"></lucide-icon>
+             <span>Submit</span>
+          </button>
         </div>
       </div>
 
@@ -143,6 +230,38 @@ export class DataTransformationComponent implements OnInit {
 
   activeTab = signal('object');
   activeEntity = signal('ItemType');
+
+  // Dynamic Configuration Signals
+  selectedLob = signal('');
+  selectedProcessFlow = signal('');
+  docVersion = signal('');
+  apiVersion = signal('v1.0');
+
+  onLobChange(val: string) {
+    this.selectedLob.set(val);
+    this.selectedProcessFlow.set('');
+    this.docVersion.set('');
+  }
+
+  onProcessFlowChange(val: string) {
+    this.selectedProcessFlow.set(val);
+    this.docVersion.set('');
+  }
+
+  get apiEndpoint(): string {
+    const lob = this.selectedLob().toLowerCase();
+    const flow = this.selectedProcessFlow();
+
+    if (!lob || !flow) return 'Waiting for input...';
+
+    if (flow === 'Insurance Quotation') {
+      if (lob === 'medical') return '/health-insurance-quotes';
+      return `/${lob}-insurance-quotes`;
+    }
+
+    // Default or Data Sharing flow
+    return `/${lob}-insurance-policies/{InsurancePolicyId}`;
+  }
 
   tabs = [
     { id: 'object', label: 'Object Configuration', icon: Database },
@@ -230,4 +349,7 @@ export class DataTransformationComponent implements OnInit {
   readonly Share2 = Share2;
   readonly Layout = Layout;
   readonly ArrowRight = ArrowRight;
+  readonly ChevronDown = ChevronDown;
+  readonly Plus = Plus;
+  readonly CheckCircle2 = CheckCircle2;
 }

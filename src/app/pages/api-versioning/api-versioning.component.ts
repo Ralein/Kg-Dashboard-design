@@ -77,41 +77,6 @@ import { Router } from '@angular/router';
         </div>
       </div>
 
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- METADATA CARDS ROW                                             -->
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        <div class="meta-card">
-          <lucide-icon [img]="Globe" class="w-4 h-4 text-[#4318FF] mb-3"></lucide-icon>
-          <span class="meta-label">Domain</span>
-          <span class="meta-value">Insurance</span>
-        </div>
-        <div class="meta-card">
-          <lucide-icon [img]="Zap" class="w-4 h-4 text-[#05CD99] mb-3"></lucide-icon>
-          <span class="meta-label">Environment</span>
-          <span class="meta-value uppercase">Production</span>
-        </div>
-        <div class="meta-card">
-          <lucide-icon [img]="Clock" class="w-4 h-4 text-[#FF8F0C] mb-3"></lucide-icon>
-          <span class="meta-label">Uptime</span>
-          <span class="meta-value">99.9%</span>
-        </div>
-        <div class="meta-card">
-          <lucide-icon [img]="Database" class="w-4 h-4 text-emerald-400 mb-3"></lucide-icon>
-          <span class="meta-label">DB Sync</span>
-          <span class="meta-value">Stable</span>
-        </div>
-        <div class="meta-card">
-          <lucide-icon [img]="Layers" class="w-4 h-4 text-indigo-400 mb-3"></lucide-icon>
-          <span class="meta-label">Total APIs</span>
-          <span class="meta-value">128</span>
-        </div>
-        <div class="meta-card border-[#4318FF]/20 shadow-lg shadow-[#4318FF]/5">
-          <lucide-icon [img]="Info" class="w-4 h-4 text-[#4318FF] mb-3"></lucide-icon>
-          <span class="meta-label">Region</span>
-          <span class="meta-value text-[#4318FF]">UAE-NORTH</span>
-        </div>
-      </div>
 
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- MAIN LAYOUT GRID                                               -->
