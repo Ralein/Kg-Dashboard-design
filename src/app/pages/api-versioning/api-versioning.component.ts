@@ -84,7 +84,7 @@ import { Router } from '@angular/router';
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Main Panel: Content Area -->
-        <div class="lg:col-span-9">
+        <div class="lg:col-span-12">
           <div *ngIf="activeTab() === 'endpoints'" class="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <!-- Configuration Panel -->
             <div class="premium-glass p-0 overflow-hidden">
