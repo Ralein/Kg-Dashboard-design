@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Database, Trash2, Save } from 'lucide-angular';
+import { LucideAngularModule, Database, Trash2, Save, ChevronDown, ChevronRight, Code2, Braces } from 'lucide-angular';
 
 @Component({
   selector: 'app-object-config',
@@ -8,93 +8,277 @@ import { LucideAngularModule, Database, Trash2, Save } from 'lucide-angular';
   imports: [CommonModule, LucideAngularModule],
   template: `
     <div class="animate-in slide-in-from-bottom-4 fade-in duration-500">
-      <!-- Initial View -->
-      <div *ngIf="!showTable()" class="premium-glass p-12 flex items-center justify-between overflow-hidden relative">
-        <div class="relative z-10 max-w-lg">
-          <h3 class="text-2xl font-black text-[#2B3674] tracking-tight mb-4">Click the button below to view configured objects</h3>
-          <p class="text-[#A3AED0] font-medium leading-relaxed mb-8">
-            Review and manage the domain objects linked to this API transformation process. 
-            Ensure all schema definitions align with the latest Finance Standards.
-          </p>
-          <button (click)="showTable.set(true)" class="bg-[#2B3674] hover:bg-[#1B2559] text-white px-8 py-4 rounded-2xl font-black text-sm tracking-tight transition-all shadow-xl shadow-[#2B3674]/20 flex items-center gap-3 group">
-             <lucide-icon [img]="Database" class="w-5 h-5 group-hover:scale-110 transition-transform"></lucide-icon>
-             <span>View Configured Objects</span>
-          </button>
-        </div>
-        <div class="relative scale-110 translate-x-12">
-          <div class="w-[400px] h-[300px] flex items-center justify-center">
-             <div class="relative">
-                <div class="absolute inset-0 bg-blue-500/10 blur-[100px] rounded-full"></div>
-                <img src="https://img.freepik.com/free-vector/robotic-arm-concept-illustration_114360-8451.jpg" alt="3D Process" class="w-full h-full object-contain relative z-10 opacity-90 drop-shadow-2xl">
-             </div>
+
+      <!-- ── Initial State ── -->
+      <div *ngIf="!showTable()" class="empty-shell flex flex-col items-center justify-center py-20 gap-6">
+        <div class="icon-stack">
+          <div class="icon-ring ring-1"></div>
+          <div class="icon-ring ring-2"></div>
+          <div class="icon-core">
+            <lucide-icon [img]="Database" class="w-7 h-7 text-[#4318FF]"></lucide-icon>
           </div>
         </div>
+        <div class="text-center">
+          <h3 class="text-lg font-black text-[#2B3674] tracking-tight mb-1">No objects loaded</h3>
+          <p class="text-sm text-[#A3AED0] font-medium max-w-xs leading-relaxed">
+            Load the configured domain objects for this API transformation process.
+          </p>
+        </div>
+        <button (click)="showTable.set(true)"
+          class="load-btn flex items-center gap-2.5 px-6 py-2.5 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all">
+          <lucide-icon [img]="Database" class="w-4 h-4"></lucide-icon>
+          View Configured Objects
+        </button>
       </div>
 
-      <!-- Table View -->
-      <div *ngIf="showTable()" class="premium-glass p-0 overflow-hidden bg-white shadow-xl border border-gray-100/50">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-[#F8FAFF] border-b border-indigo-50">
-                <th class="px-8 py-5 text-[11px] font-black text-[#2B3674] uppercase tracking-[0.2em]">
-                  <div class="flex items-center gap-2">
-                    <lucide-icon [img]="Database" class="w-3.5 h-3.5 text-indigo-400"></lucide-icon>
-                    Object Name
-                  </div>
-                </th>
-                <th class="px-8 py-5 text-[11px] font-black text-[#2B3674] uppercase tracking-[0.2em]">JSON Content</th>
-                <th class="px-8 py-5 text-[11px] font-black text-[#2B3674] uppercase tracking-[0.2em] text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-50">
-              <tr *ngFor="let obj of configuredObjects()" class="hover:bg-indigo-50/30 transition-all group">
-                <td class="px-8 py-6 align-top">
-                  <span class="text-xs font-black text-[#4318FF] tracking-tight group-hover:scale-105 transition-transform inline-block">{{ obj.name }}</span>
-                </td>
-                <td class="px-8 py-6">
-                  <div class="bg-gray-50/50 rounded-xl p-4 border border-gray-100 max-h-[300px] overflow-auto custom-scrollbar shadow-inner">
-                    <pre class="font-mono text-[11px] text-[#A3AED0] leading-relaxed whitespace-pre-wrap">{{ obj.json }}</pre>
-                  </div>
-                </td>
-                <td class="px-8 py-6 text-right align-top">
-                  <button (click)="deleteObject(obj.name)" class="px-4 py-2 rounded-lg border border-red-100 text-red-500 hover:bg-red-50 transition-all flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest ml-auto">
-                    <lucide-icon [img]="Trash2" class="w-3.5 h-3.5"></lucide-icon>
-                    <span>Delete</span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        
-        <div class="p-6 bg-gray-50/30 flex justify-end border-t border-gray-100">
-          <button (click)="saveObjects()" class="px-8 py-3 rounded-2xl bg-[#05CD99] text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-[#05CD99]/20 hover:bg-[#04B484] transition-all flex items-center gap-2 transform hover:scale-105 active:scale-95">
-            <lucide-icon [img]="Save" class="w-4 h-4"></lucide-icon>
-            <span>Save Objects</span>
+      <!-- ── Table View ── -->
+      <div *ngIf="showTable()" class="obj-panel">
+
+        <!-- Header bar -->
+        <div class="obj-header px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <lucide-icon [img]="Braces" class="w-4 h-4 text-[#4318FF]"></lucide-icon>
+            <span class="text-xs font-black text-[#2B3674] uppercase tracking-widest">Schema Objects</span>
+            <span class="count-badge">{{ configuredObjects().length }}</span>
+          </div>
+          <button (click)="saveObjects()"
+            class="save-btn flex items-center gap-2 px-5 py-2 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all">
+            <lucide-icon [img]="Save" class="w-3.5 h-3.5"></lucide-icon>
+            Save
           </button>
         </div>
+
+        <!-- Object rows -->
+        <div class="divide-y divide-gray-100/60">
+          <div *ngFor="let obj of configuredObjects(); let i = index"
+            class="obj-row"
+            [class.obj-row--expanded]="expandedRow() === obj.name">
+
+            <!-- Row header — click to expand -->
+            <div class="obj-row-header px-6 py-4 flex items-center justify-between cursor-pointer group"
+              (click)="toggleRow(obj.name)">
+              <div class="flex items-center gap-4">
+                <span class="row-index">{{ (i + 1).toString().padStart(2, '0') }}</span>
+                <div class="flex items-center gap-2.5">
+                  <lucide-icon [img]="Code2" class="w-3.5 h-3.5 text-[#4318FF] opacity-60 group-hover:opacity-100 transition-opacity"></lucide-icon>
+                  <span class="text-sm font-black text-[#2B3674] tracking-tight">{{ obj.name }}</span>
+                </div>
+                <span class="type-chip">{{ getType(obj.json) }}</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <button (click)="deleteObject(obj.name); $event.stopPropagation()"
+                  class="del-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">
+                  <lucide-icon [img]="Trash2" class="w-3 h-3"></lucide-icon>
+                  Delete
+                </button>
+                <div class="chevron-wrap" [class.rotated]="expandedRow() === obj.name">
+                  <lucide-icon [img]="ChevronRight" class="w-4 h-4 text-[#A3AED0]"></lucide-icon>
+                </div>
+              </div>
+            </div>
+
+            <!-- JSON panel — expands inline -->
+            <div class="json-panel" [class.json-panel--open]="expandedRow() === obj.name">
+              <div class="json-inner px-6 pb-5">
+                <div class="json-viewer">
+                  <div class="json-viewer-header">
+                    <span class="text-[9px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">JSON Schema</span>
+                    <div class="dot-group">
+                      <span class="dot dot--red"></span>
+                      <span class="dot dot--amber"></span>
+                      <span class="dot dot--green"></span>
+                    </div>
+                  </div>
+                  <pre class="json-code">{{ obj.json }}</pre>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Empty state inside table -->
+        <div *ngIf="configuredObjects().length === 0" class="py-16 flex flex-col items-center gap-3">
+          <lucide-icon [img]="Database" class="w-8 h-8 text-[#E2E8F0]"></lucide-icon>
+          <p class="text-xs font-bold text-[#A3AED0] uppercase tracking-widest">All objects removed</p>
+        </div>
+
       </div>
     </div>
   `,
   styles: [`
-    .premium-glass {
-      background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(163,174,208,0.2);
-      border-radius: 32px; box-shadow: 0 10px 40px rgba(112,144,176,0.1);
-      backdrop-filter: blur(10px);
+    /* ── Empty state ── */
+    .empty-shell {
+      background: white;
+      border: 1px solid rgba(163,174,208,0.2);
+      border-radius: 24px;
+      box-shadow: 0 4px 24px rgba(112,144,176,0.07);
     }
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #CBD5E0; }
+
+    .icon-stack { position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; }
+    .icon-core {
+      position: relative; z-index: 2;
+      width: 48px; height: 48px; border-radius: 14px;
+      background: #F0EEFF;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(67,24,255,0.12);
+    }
+    .icon-ring {
+      position: absolute; border-radius: 50%;
+      border: 1.5px dashed rgba(67,24,255,0.12);
+      animation: spinRing 18s linear infinite;
+    }
+    .ring-1 { inset: -8px; animation-duration: 14s; }
+    .ring-2 { inset: -18px; animation-direction: reverse; animation-duration: 22s; }
+    @keyframes spinRing { to { transform: rotate(360deg); } }
+
+    .load-btn {
+      background: #2B3674; color: white;
+      box-shadow: 0 8px 20px rgba(43,54,116,0.18);
+    }
+    .load-btn:hover { background: #1B2559; transform: translateY(-1px); }
+
+    /* ── Main panel ── */
+    .obj-panel {
+      background: white;
+      border: 1px solid rgba(163,174,208,0.18);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(112,144,176,0.08);
+    }
+
+    .obj-header {
+      background: #FAFBFF;
+      border-bottom: 1px solid rgba(163,174,208,0.12);
+    }
+
+    .count-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 20px; height: 20px; padding: 0 6px;
+      background: rgba(67,24,255,0.08);
+      color: #4318FF;
+      font-size: 10px; font-weight: 900;
+      border-radius: 6px;
+    }
+
+    .save-btn {
+      background: #05CD99; color: white;
+      box-shadow: 0 4px 12px rgba(5,205,153,0.2);
+    }
+    .save-btn:hover { background: #04B484; transform: translateY(-1px); }
+
+    /* ── Row ── */
+    .obj-row {
+      border-left: 3px solid transparent;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .obj-row:hover { background: #FAFBFF; border-left-color: rgba(67,24,255,0.15); }
+    .obj-row--expanded { border-left-color: #4318FF; background: #FAFBFF; }
+
+    .obj-row-header { user-select: none; }
+
+    .row-index {
+      font-family: 'Courier New', monospace;
+      font-size: 11px; font-weight: 700;
+      color: #D0D5E8;
+      min-width: 24px;
+    }
+
+    .type-chip {
+      font-size: 9px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 2px 8px; border-radius: 6px;
+      background: rgba(67,24,255,0.06);
+      color: #7C5CFC;
+      border: 1px solid rgba(67,24,255,0.1);
+    }
+
+    .del-btn {
+      color: #F87171;
+      border: 1px solid rgba(248,113,113,0.2);
+      background: rgba(248,113,113,0.04);
+    }
+    .del-btn:hover { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.4); }
+
+    .chevron-wrap {
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .chevron-wrap.rotated { transform: rotate(90deg); }
+
+    /* ── JSON expand panel ── */
+    .json-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .json-panel--open { grid-template-rows: 1fr; }
+    .json-inner { overflow: hidden; }
+
+    .json-viewer {
+      background: #0D1117;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    .json-viewer-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .dot-group { display: flex; align-items: center; gap: 5px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .dot--red   { background: #FF5F57; }
+    .dot--amber { background: #FFBD2E; }
+    .dot--green { background: #28C840; }
+
+    .json-code {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11.5px;
+      line-height: 1.75;
+      color: #A9B1D6;
+      padding: 16px;
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      /* Subtle scan-line texture */
+      background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 23px,
+        rgba(255,255,255,0.015) 23px,
+        rgba(255,255,255,0.015) 24px
+      );
+    }
   `]
 })
 export class ObjectConfigComponent {
   readonly Database = Database;
   readonly Trash2 = Trash2;
   readonly Save = Save;
+  readonly ChevronDown = ChevronDown;
+  readonly ChevronRight = ChevronRight;
+  readonly Code2 = Code2;
+  readonly Braces = Braces;
 
   showTable = signal(false);
+  expandedRow = signal<string | null>(null);
+
+  toggleRow(name: string) {
+    this.expandedRow.set(this.expandedRow() === name ? null : name);
+  }
+
+  getType(json: string): string {
+    try {
+      const parsed = JSON.parse(json);
+      if (parsed.type) return parsed.type;
+      if (parsed.oneOf) return 'oneOf';
+      return 'schema';
+    } catch { return 'schema'; }
+  }
 
   configuredObjects = signal([
     {
@@ -192,6 +376,7 @@ export class ObjectConfigComponent {
 
   deleteObject(name: string) {
     this.configuredObjects.update(obs => obs.filter(o => o.name !== name));
+    if (this.expandedRow() === name) this.expandedRow.set(null);
   }
 
   saveObjects() {

@@ -20,15 +20,15 @@ import {
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!--  PREMIUM HERO BANNER                                            -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="hero-banner relative overflow-hidden mb-6">
+      <div class="hero-banner relative overflow-hidden mb-3">
         <div class="hero-bg absolute inset-0"></div>
         <div class="hero-grid absolute inset-0 opacity-10"></div>
         <div class="hero-orb hero-orb--blue absolute top-[-100px] right-[-50px]"></div>
         <div class="hero-orb hero-orb--indigo absolute bottom-[-50px] left-[10%]"></div>
 
-        <div class="relative z-10 px-8 py-8">
+        <div class="relative z-10 px-8 pt-5 pb-5">
           <!-- Breadcrumb & Actions -->
-          <div class="flex items-center justify-between mb-8">
+          <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-3">
               <button routerLink="/audit-logs" class="p-2 bg-white/10 rounded-xl border border-white/20 text-white hover:bg-white/20 transition-all group">
                 <lucide-icon [img]="ChevronLeft" class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"></lucide-icon>
@@ -44,7 +44,7 @@ import {
             </div>
             
             <div class="flex items-center gap-3">
-              <button (click)="exportLog()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all backdrop-blur-sm">
+              <button (click)="exportLog()" class="flex items-center gap-2 px-5 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all backdrop-blur-sm">
                 <lucide-icon [img]="Download" class="w-3.5 h-3.5"></lucide-icon>
                 Export Log
               </button>
@@ -52,24 +52,24 @@ import {
           </div>
 
           <!-- Hero Identity Section -->
-          <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <div class="flex items-start gap-5">
-              <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#B299FF] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#B299FF] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
                 <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-                <lucide-icon [img]="Activity" class="w-8 h-8 text-white relative z-10"></lucide-icon>
+                <lucide-icon [img]="Activity" class="w-6 h-6 text-white relative z-10"></lucide-icon>
               </div>
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-1">
                 <div class="flex items-center gap-3">
-                  <span class="text-2xl font-black text-white leading-none">Audit Log Record</span>
+                  <span class="text-xl font-black text-white leading-none">Audit Log Record</span>
                   <span class="px-2.5 py-0.5 rounded-lg bg-[#05CD99] text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-[#05CD99]/20">Success</span>
                 </div>
                 <div class="flex items-center gap-4">
-                  <div class="flex items-center gap-2 text-white/60">
+                  <div class="flex items-center gap-2 text-white/50">
                     <lucide-icon [img]="Clock" class="w-3.5 h-3.5"></lucide-icon>
                     <span class="text-xs font-bold uppercase tracking-wider">Feb 19, 2026, 10:26 AM</span>
                   </div>
                   <div class="w-1 h-1 rounded-full bg-white/20"></div>
-                  <div class="flex items-center gap-2 text-white/60">
+                  <div class="flex items-center gap-2 text-white/50">
                     <lucide-icon [img]="Terminal" class="w-3.5 h-3.5"></lucide-icon>
                     <span class="text-xs font-bold uppercase tracking-wider">POST v2.0</span>
                   </div>
@@ -77,7 +77,7 @@ import {
               </div>
             </div>
 
-            <!-- ID Quick Display -->
+            <!-- Trace ID pill -->
             <div class="glass-pill p-3 px-5 flex items-center gap-4 relative">
                <div class="flex flex-col">
                   <span class="text-[9px] font-bold text-white/40 uppercase tracking-[0.2em]">Trace Identifier</span>
@@ -87,8 +87,6 @@ import {
                   <lucide-icon [img]="traceCopied() ? Check : Copy" class="w-3.5 h-3.5"></lucide-icon>
                   <div *ngIf="traceCopied()" class="absolute inset-0 bg-emerald-500/20 animate-pulse"></div>
                </button>
-               
-               <!-- Floating "Copied" Toast -->
                <div *ngIf="traceCopied()" class="absolute -top-10 right-0 py-1.5 px-3 bg-white text-[#4318FF] text-[10px] font-black rounded-lg shadow-2xl border border-indigo-50 animate-bounce-in">
                   COPIED!
                </div>
@@ -100,7 +98,7 @@ import {
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- METADATA CARDS ROW                                             -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
         <div class="meta-card">
           <lucide-icon [img]="Layers" class="w-4 h-4 text-[#4318FF] mb-3"></lucide-icon>
           <span class="meta-label">Service Name</span>
@@ -134,13 +132,9 @@ import {
       </div>
 
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- MAIN LAYOUT GRID                                               -->
+      <!-- 3-PANEL DATA EXPLORER                                          -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-   <div *ngIf="activeTab() === 'detail'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- 3-PANEL DATA EXPLORER                                          -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
+      <div *ngIf="activeTab() === 'detail'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
           
           <!-- Panel 1: Query Params -->
@@ -201,11 +195,9 @@ import {
           </div>
           <h3 class="text-2xl font-black text-[#2B3674] tracking-tight mb-4">Deep Log Analysis</h3>
           <p class="text-[#A3AED0] font-medium max-w-md mx-auto leading-relaxed mb-10">
-            Query across historical traces and correlate events using our advanced log explorer. Advanced filtering and pattern matching coming soon.
+            Query across historical traces and correlate events using our advanced log explorer.
           </p>
-          <div class="flex items-center gap-4">
-            <button class="bg-[#4318FF] text-white px-8 py-4 rounded-2xl font-black text-sm tracking-tight hover:bg-[#3311CC] transition-all shadow-xl shadow-[#4318FF]/20">Launch Analyzer</button>
-          </div>
+          <button class="bg-[#4318FF] text-white px-8 py-4 rounded-2xl font-black text-sm tracking-tight hover:bg-[#3311CC] transition-all shadow-xl shadow-[#4318FF]/20">Launch Analyzer</button>
         </div>
       </div>
 
@@ -214,6 +206,7 @@ import {
   styles: [`
     :host { display: block; --brand-primary: #4318FF; }
 
+    /* ── Hero ── */
     .hero-banner {
       border-radius: 24px;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
@@ -221,8 +214,7 @@ import {
     .hero-bg { background: linear-gradient(135deg, #0C0F2E 0%, #141836 100%); }
     .hero-grid {
       background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 24px 24px;
-      opacity: 0.4;
+      background-size: 24px 24px; opacity: 0.4;
     }
     .hero-orb {
       position: absolute; width: 300px; height: 300px;
@@ -230,187 +222,89 @@ import {
       pointer-events: none;
     }
     .hero-orb--blue   { background: #4318FF; top: -100px; right: -50px; }
-    .hero-orb--teal   { background: #05CD99; bottom: -100px; left: 10%; }
-    .hero-orb--violet { background: #8B5CF6; top: 20%; left: 40%; }
-    
-    .hero-scanline {
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.02) 50%, transparent 100%);
-      background-size: 100% 4px;
-      pointer-events: none;
-    }
+    .hero-orb--indigo { background: #8B5CF6; bottom: -50px; left: 10%; }
 
-    .hero-avatar {
-      position: relative; width: 64px; height: 64px;
-    }
-    .hero-avatar-inner {
-      position: relative; z-index: 2;
-      width: 100%; height: 100%;
-      background: linear-gradient(135deg, #4318FF, #8B5CF6);
-      border-radius: 20px;
-      display: flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(255,255,255,0.2);
-      box-shadow: 0 8px 20px rgba(67, 24, 255, 0.3);
-    }
-    .hero-avatar-ring {
-      position: absolute; inset: -4px;
-      border-radius: 24px;
-      border: 1.5px solid rgba(255,255,255,0.1);
-      animation: orbit 10s linear infinite;
-    }
-    @keyframes orbit { from { rotate: 0deg; } to { rotate: 360deg; } }
-
-    .hero-title {
-      font-size: 24px; font-weight: 900; color: white;
-      letter-spacing: -0.02em;
-    }
-    .hero-status-badge {
-      display: flex; align-items: center; gap: 6px;
-      padding: 4px 10px; border-radius: 8px;
-      background: rgba(5, 205, 153, 0.15);
-      border: 1px solid rgba(5, 205, 153, 0.3);
-      color: #05CD99; font-size: 10px; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.05em;
-    }
-
-    .hero-id-chip {
-      display: flex; align-items: center; gap: 8px;
-      padding: 6px 12px; border-radius: 10px;
+    /* Trace ID pill */
+    .glass-pill {
       background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.9);
-      font-family: monospace; font-size: 11px; font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
     }
-    .copy-btn-hero {
-      position: relative;
-      width: 32px; height: 32px;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px; color: white;
-      transition: all 0.2s;
-    }
-    .copy-btn-hero:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
-    .copy-toast-hero {
-      position: absolute; bottom: calc(100% + 8px); left: 50%;
-      translate: -50% 0; padding: 4px 8px; border-radius: 6px;
-      background: #4318FF; color: white; font-size: 9px;
-      font-weight: 800; text-transform: uppercase;
-      animation: toastIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
-    }
-    @keyframes toastIn { from { opacity: 0; scale: 0.5; translate: -50% 10px; } to { opacity: 1; scale: 1; translate: -50% 0; } }
 
-    .hero-stats-strip {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; backdrop-filter: blur(8px);
-    }
-    .hero-stat-item { display: flex; flex-direction: column; gap: 2px; }
-    .hero-stat-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.1em; }
-    .hero-stat-value { font-size: 13px; font-weight: 800; color: white; }
-    .hero-stat-divider { width: 1px; background: rgba(255,255,255,0.08); margin: 8px 0; }
-
-    /* Meta Cards */
+    /* ── Meta Cards ── */
     .meta-card {
       background: white;
       border: 1px solid rgba(163, 174, 208, 0.15);
       border-radius: 16px;
       padding: 1rem;
+      display: flex; flex-direction: column;
       transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
     }
-    .meta-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(112, 144, 176, 0.1); border-color: #4318FF40; }
+    .meta-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(112, 144, 176, 0.1); border-color: rgba(67,24,255,0.25); }
     .meta-label { font-size: 10px; font-weight: 800; color: #A3AED0; text-transform: uppercase; letter-spacing: 0.08em; }
     .meta-value { font-size: 13px; font-weight: 800; color: #2B3674; }
 
-    /* Explorer Panels */
+    /* ── Explorer Panels ── */
     .explorer-panel {
       background: white;
       border: 1px solid rgba(163, 174, 208, 0.15);
       border-radius: 20px;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
       box-shadow: 0 10px 30px rgba(112, 144, 176, 0.05);
     }
     .panel-header {
       padding: 1.25rem 1.5rem;
       border-bottom: 1px solid rgba(163, 174, 208, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       background: #fafbff;
     }
-    .panel-title {
-      font-size: 13px;
-      font-weight: 800;
-      color: #1a2660;
-      letter-spacing: -0.01em;
-    }
-    .panel-content {
-      padding: 1.5rem;
-      flex: 1;
-    }
+    .panel-title { font-size: 13px; font-weight: 800; color: #1a2660; letter-spacing: -0.01em; }
+    .panel-content { padding: 1.5rem; flex: 1; }
     .panel-action-btn {
-      display: flex;
-      align-items: center;
-      gap: 1.5;
-      padding: 4px 10px;
-      border-radius: 8px;
-      background: white;
-      border: 1px solid #e2e8f0;
-      font-size: 10px;
-      font-weight: 700;
-      color: #4318FF;
+      display: flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 8px;
+      background: white; border: 1px solid #e2e8f0;
+      font-size: 10px; font-weight: 700; color: #4318FF;
       transition: all 0.2s;
     }
-    .panel-action-btn:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
-      transform: translateY(-1px);
-    }
-    .panel-action-btn lucide-icon {
-      width: 12px;
-      height: 12px;
-      margin-right: 4px;
-    }
+    .panel-action-btn:hover { background: #f8fafc; border-color: #cbd5e1; transform: translateY(-1px); }
 
     .empty-state { text-align: center; }
 
     .code-viewer {
-      background: #0C0E1A;
-      color: #E2E8F0;
-      padding: 1.25rem;
-      border-radius: 16px;
+      background: #0C0E1A; color: #E2E8F0;
+      padding: 1.25rem; border-radius: 16px;
       border-left: 3px solid #4318FF;
-      height: 400px;
-      overflow: auto;
+      height: 400px; overflow: auto;
       box-shadow: inset 0 4px 12px rgba(0,0,0,0.2);
     }
     .code-viewer pre {
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
-      margin: 0;
-      white-space: pre-wrap;
-      word-break: break-all;
+      margin: 0; white-space: pre-wrap; word-break: break-all;
     }
 
-    .animate-fade-in-up {
-      animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
+    .premium-glass {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(163,174,208,0.15);
+      border-radius: 24px;
+      box-shadow: 0 12px 40px rgba(112,144,176,0.08);
     }
 
-    /* Custom scrollbar */
+    /* ── Animations ── */
+    .animate-page-in { animation: pageIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    @keyframes pageIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+    .animate-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Scrollbar ── */
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(67,24,255,0.12);
-      border-radius: 2px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: rgba(67,24,255,0.25);
-    }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(67,24,255,0.12); border-radius: 2px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(67,24,255,0.25); }
   `]
 })
 export class AuditLogDetailsComponent implements OnInit {
@@ -489,9 +383,7 @@ export class AuditLogDetailsComponent implements OnInit {
     }
   }, null, 2);
 
-  ngOnInit() {
-    // In real app, load data by route.snapshot.params['id']
-  }
+  ngOnInit() {}
 
   copyTraceId() {
     navigator.clipboard.writeText('a615d49f-12be-43d2-84ea-6defaae999c1');
