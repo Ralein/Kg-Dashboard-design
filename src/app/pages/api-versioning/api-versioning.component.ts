@@ -10,21 +10,19 @@ import { Router } from '@angular/router';
   imports: [CommonModule, FormsModule, LucideAngularModule],
   template: `
     <div class="flex flex-col gap-0 animate-page-in relative pb-8">
-      
-      <!-- Modals are now handled via Body-portal (mountModalOnBody) to ensure full-screen coverage -->
 
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- PREMIUM HERO BANNER                                            -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="hero-banner relative overflow-hidden mb-6">
+      <div class="hero-banner relative overflow-hidden mb-3">
         <div class="hero-bg absolute inset-0"></div>
         <div class="hero-grid absolute inset-0 opacity-10"></div>
         <div class="hero-orb hero-orb--blue absolute top-[-100px] right-[-50px]"></div>
         <div class="hero-orb hero-orb--indigo absolute bottom-[-50px] left-[10%]"></div>
         
-        <div class="relative z-10 px-8 py-8">
+        <div class="relative z-10 px-8 pt-5 pb-5">
           <!-- Breadcrumb & Actions -->
-          <div class="flex items-center justify-between mb-8">
+          <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-3">
               <div class="flex flex-col">
                 <div class="flex items-center gap-2 text-white/40 text-[10px] uppercase font-bold tracking-widest">
@@ -37,7 +35,7 @@ import { Router } from '@angular/router';
             </div>
             
             <div class="flex items-center gap-3">
-              <button (click)="openModal()" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all border border-white/20 backdrop-blur-sm">
+              <button (click)="openModal()" class="flex items-center gap-2 px-5 py-2 rounded-xl bg-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all border border-white/20 backdrop-blur-sm">
                 <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
                 <span>Create Endpoint</span>
               </button>
@@ -45,34 +43,26 @@ import { Router } from '@angular/router';
           </div>
 
           <!-- Hero Identity Section -->
-          <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <div class="flex items-start gap-5">
-              <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#B299FF] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#B299FF] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
                 <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
                 <div class="premium-shine absolute inset-0 pointer-events-none"></div>
-                <lucide-icon [img]="Settings2" class="w-8 h-8 text-white relative z-10"></lucide-icon>
+                <lucide-icon [img]="Settings2" class="w-6 h-6 text-white relative z-10"></lucide-icon>
               </div>
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-1">
                 <div class="flex items-center gap-3">
-                  <span class="text-2xl font-black text-white leading-none">System Versioning</span>
+                  <span class="text-xl font-black text-white leading-none">System Versioning</span>
                   <span class="px-2.5 py-0.5 rounded-lg bg-[#05CD99] text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-[#05CD99]/20">Configuration</span>
                 </div>
-                <p class="text-white/40 text-xs font-medium mt-0.5">Manage and map API endpoints across system versions</p>
+                <p class="text-white/40 text-xs font-medium">Manage and map API endpoints across system versions</p>
               </div>
             </div>
 
-            <!-- ID Quick Display -->
-            <div class="hero-stats-strip flex items-stretch gap-0">
-              <div class="hero-stat-item px-6 py-3">
-                <span class="hero-stat-label">Active Mappings</span>
-                <span class="hero-stat-value">24</span>
-              </div>
-              <div class="hero-stat-divider"></div>
-              <div class="hero-stat-item px-6 py-3">
-                <span class="hero-stat-label">Base Version</span>
-                <span class="hero-stat-value">v8.2.0</span>
-              </div>
-            </div>
+            <!-- Stats Strip -->
+            
+
+
           </div>
         </div>
       </div>
@@ -81,17 +71,17 @@ import { Router } from '@angular/router';
       <!-- ═══════════════════════════════════════════════════════════════ -->
       <!-- MAIN LAYOUT GRID                                               -->
       <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         
-        <!-- Main Panel: Content Area -->
         <div class="lg:col-span-12">
-          <div *ngIf="activeTab() === 'endpoints'" class="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div *ngIf="activeTab() === 'endpoints'" class="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
             <!-- Configuration Panel -->
             <div class="premium-glass p-0 overflow-hidden">
-              <div class="p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div class="px-6 py-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <!-- LOB Selector -->
-                  <div class="flex flex-col gap-2 group">
+                  <div class="flex flex-col gap-1.5 group">
                     <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Line of Business</label>
                     <div class="relative">
                       <select 
@@ -110,7 +100,7 @@ import { Router } from '@angular/router';
                   </div>
 
                   <!-- Process Flow -->
-                  <div class="flex flex-col gap-2 group">
+                  <div class="flex flex-col gap-1.5 group">
                     <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Process Flow</label>
                     <div class="relative">
                       <select 
@@ -128,12 +118,12 @@ import { Router } from '@angular/router';
                   </div>
 
                   <!-- Version -->
-                  <div class="flex flex-col gap-2 group">
+                  <div class="flex flex-col gap-1.5 group">
                     <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Doc Version</label>
                     <div class="relative">
                       <select 
                         [ngModel]="apiVersionSelected()" 
-                        (ngModelChange)="apiVersionSelected.set($event)"
+                        (ngModelChange)="onVersionChange($event)"
                         class="premium-select disabled:opacity-50 disabled:cursor-not-allowed"
                         [disabled]="!selectedProcessFlow()"
                       >
@@ -146,7 +136,7 @@ import { Router } from '@angular/router';
                   </div>
 
                   <!-- Target Endpoint -->
-                  <div class="flex flex-col gap-2 group">
+                  <div class="flex flex-col gap-1.5 group">
                     <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Target Endpoint</label>
                     <div class="relative">
                       <select 
@@ -163,23 +153,12 @@ import { Router } from '@angular/router';
                     </div>
                   </div>
                 </div>
-
-                <div class="flex justify-end mt-8 gap-4">
-                  <button (click)="openModal()" class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#05CD99] text-white text-xs font-black uppercase tracking-widest hover:bg-[#04B484] transition-all shadow-lg shadow-[#05CD99]/20">
-                    <lucide-icon [img]="Save" class="w-4 h-4"></lucide-icon>
-                    <span>Create API Endpoint</span>
-                  </button>
-                  <button (click)="submitMappings()" class="premium-submit-btn">
-                    <lucide-icon [img]="CheckCircle2" class="w-4 h-4"></lucide-icon>
-                    <span>Submit</span>
-                  </button>
-                </div>
               </div>
             </div>
 
             <!-- Results Explorer -->
             <div class="premium-glass p-0 overflow-hidden min-h-[400px] flex flex-col">
-              <div class="p-6 border-b border-gray-100/50 flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/30">
+              <div class="p-5 border-b border-gray-100/50 flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/30">
                  <div class="flex items-center gap-4">
                     <div class="relative w-full md:w-80">
                       <lucide-icon [img]="Search" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3AED0]"></lucide-icon>
@@ -333,20 +312,6 @@ import { Router } from '@angular/router';
     .hero-stat-value { font-size: 13px; font-weight: 800; color: white; }
     .hero-stat-divider { width: 1px; background: rgba(255,255,255,0.08); margin: 8px 0; }
 
-    /* Meta Cards */
-    .meta-card {
-      background: white;
-      border: 1px solid rgba(163, 174, 208, 0.15);
-      border-radius: 16px;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
-    }
-    .meta-card:hover { transform: translateY(-5px); box-shadow: 0 25px 50px rgba(112, 144, 176, 0.12); border-color: var(--brand-primary); }
-    .meta-label { font-size: 10px; font-weight: 800; color: #A3AED0; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem; }
-    .meta-value { font-size: 13px; font-weight: 900; color: #2B3674; }
-
     .premium-glass {
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
@@ -357,16 +322,16 @@ import { Router } from '@angular/router';
 
     /* Form Controls */
     .premium-select {
-      width: 100%; padding: 12px 16px; border-radius: 14px;
+      width: 100%; padding: 9px 16px; border-radius: 14px;
       border: 1px solid #E2E8F0; background: #F8FAFF;
       font-size: 13px; font-weight: 800; color: #2B3674;
       appearance: none; cursor: pointer; transition: all 0.2s;
     }
     .premium-select:focus { border-color: #4318FF; background: white; outline: none; box-shadow: 0 0 0 4px rgba(67,24,255,0.08); }
-    .select-chevron { position: absolute; right: 14px; top: 12px; width: 14px; height: 14px; color: #A3AED0; pointer-events: none; }
+    .select-chevron { position: absolute; right: 14px; top: 10px; width: 14px; height: 14px; color: #A3AED0; pointer-events: none; }
 
     .premium-submit-btn {
-      padding: 12px 32px; border-radius: 14px;
+      padding: 9px 28px; border-radius: 14px;
       background: #2B3674; color: white;
       font-size: 13px; font-weight: 900;
       display: flex; align-items: center; gap: 8px;
@@ -376,7 +341,7 @@ import { Router } from '@angular/router';
     .premium-submit-btn:hover { background: #1B2559; transform: translateY(-2px); }
 
     .search-input {
-      width: 100%; padding: 10px 16px 10px 42px; border-radius: 12px;
+      width: 100%; padding: 9px 16px 9px 42px; border-radius: 12px;
       border: 1.5px solid #E2E8F0; background: white;
       font-size: 13px; font-weight: 700; color: #2B3674;
       transition: all 0.2s;
@@ -384,20 +349,12 @@ import { Router } from '@angular/router';
     .search-input:focus { border-color: #4318FF; outline: none; box-shadow: 0 4px 12px rgba(67,24,255,0.06); }
 
     .toolbar-btn {
-      width: 38px; height: 38px; border-radius: 12px;
+      width: 36px; height: 36px; border-radius: 12px;
       border: 1px solid #E2E8F0; background: white;
       color: #A3AED0; display: flex; align-items: center; justify-content: center;
       transition: all 0.2s;
     }
     .toolbar-btn:hover { background: #F8FAFF; color: #4318FF; border-color: rgba(67,24,255,0.2); }
-
-    .premium-input-field {
-      width: 100%; padding: 12px 16px; border-radius: 14px;
-      border: 1px solid #E2E8F0; background: #F8FAFF;
-      font-size: 13px; font-weight: 700; color: #2B3674;
-      transition: all 0.2s;
-    }
-    .premium-input-field:focus { border-color: #4318FF; background: white; outline: none; }
 
     /* Action Buttons */
     .action-btn {
@@ -465,8 +422,16 @@ export class ApiVersioningComponent implements OnDestroy {
 
   onProcessFlowChange(val: string) {
     this.selectedProcessFlow.set(val);
-    this.apiVersionSelected.set('');
+    this.apiVersionSelected.set('v8');
     this.selectedEndpoint.set('');
+    // Auto-submit: show results immediately when process flow is selected
+    this.showResults.set(true);
+  }
+
+  onVersionChange(val: string) {
+    this.apiVersionSelected.set(val);
+    // Auto-submit: refresh results on version change
+    this.showResults.set(true);
   }
 
   availableEndpoints = computed(() => {
@@ -663,7 +628,7 @@ export class ApiVersioningComponent implements OnDestroy {
     if (mode === 'edit') {
       this.router.navigate(['/api-versioning', id, 'transformation', 'edit']);
     } else {
-      this.router.navigate(['/api-versioning', id, 'transformation']); // Default to view
+      this.router.navigate(['/api-versioning', id, 'transformation']);
     }
   }
 
@@ -753,8 +718,6 @@ export class ApiVersioningComponent implements OnDestroy {
     this.mountToastOnBody(message);
     setTimeout(() => this.unmountToast(), 3000);
   }
-
-  // ─── Body-portal Modals ───────────────────────────────────────────────────
 
   private mountConfirmationModal(config: {
     title: string,
@@ -848,8 +811,6 @@ export class ApiVersioningComponent implements OnDestroy {
     this.backdropListener?.();
     this.backdropListener = null;
   }
-
-  // ─── Toast Portal ─────────────────────────────────────────────────────────
 
   private toastEl: HTMLElement | null = null;
 

@@ -33,29 +33,29 @@ import { FieldMappingComponent } from './components/field-mapping.component';
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- PREMIUM HERO BANNER                                            -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <div class="hero-banner relative overflow-hidden mb-6">
+    <div class="hero-banner relative overflow-hidden mb-3">
       <div class="hero-bg absolute inset-0"></div>
       <div class="hero-grid absolute inset-0"></div>
       <div class="hero-orb hero-orb--blue"></div>
       <div class="hero-orb hero-orb--indigo"></div>
 
-      <div class="relative z-10 px-8 pt-8 pb-0">
-        <div class="flex items-center gap-2 text-white/40 text-[11px] font-bold uppercase tracking-widest mb-6">
+      <div class="relative z-10 px-8 pt-5 pb-0">
+        <div class="flex items-center gap-2 text-white/40 text-[11px] font-bold uppercase tracking-widest mb-3">
           <button routerLink="/api-versioning" class="hover:text-white transition-colors">API Versioning</button>
           <span class="opacity-30">/</span>
           <span class="text-white/80">Data Transformation</span>
         </div>
 
-        <div class="flex items-end justify-between pb-8">
-          <div class="flex items-center gap-5">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#8B5CF6] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
+        <div class="flex items-end justify-between pb-4">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#4318FF] to-[#8B5CF6] flex items-center justify-center border border-white/20 shadow-2xl shadow-[#4318FF]/40 group overflow-hidden relative">
               <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
               <div class="premium-shine absolute inset-0 pointer-events-none"></div>
-              <lucide-icon [img]="Share2" class="w-8 h-8 text-white relative z-10"></lucide-icon>
+              <lucide-icon [img]="Share2" class="w-6 h-6 text-white relative z-10"></lucide-icon>
             </div>
-            <div class="flex flex-col gap-1.5">
+            <div class="flex flex-col gap-1">
               <div class="flex items-center gap-3">
-                <h1 class="text-3xl font-black text-white tracking-tight">Data Transformation</h1>
+                <h1 class="text-2xl font-black text-white tracking-tight">Data Transformation</h1>
                 <span class="px-2.5 py-0.5 rounded-lg bg-[#05CD99]/20 border border-[#05CD99]/30 text-[#05CD99] text-[10px] font-black uppercase tracking-widest">{{ isEditMode() ? 'Edit Mode' : 'View Mode' }}</span>
               </div>
               <div class="flex items-center gap-4 text-white/50 text-xs font-bold uppercase tracking-wider">
@@ -76,22 +76,27 @@ import { FieldMappingComponent } from './components/field-mapping.component';
               </div>
             </div>
           </div>
+          <button (click)="createEndpoint()" class="flex items-center gap-2 px-5 py-2 rounded-xl bg-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all border border-white/20 backdrop-blur-sm">
+            <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
+            <span>Create Endpoint</span>
+          </button>
         </div>
 
         <!-- Tabs Navigation -->
-        <div class="flex items-center gap-8 mt-4 border-b border-white/10">
+        <div class="flex items-center mt-2 border-b border-white/10">
           <button *ngFor="let tab of tabs" 
             (click)="onTabClick(tab.id)"
-            class="relative py-4 text-xs font-black uppercase tracking-widest transition-all duration-300"
-            [class.text-white]="activeTab() === tab.id"
-            [class.text-white/40]="activeTab() !== tab.id">
-            <span class="flex items-center gap-2">
-              <lucide-icon [img]="tab.icon" class="w-4 h-4"></lucide-icon>
+            class="tab-btn relative flex-1 py-3 text-xs font-black uppercase tracking-widest transition-all duration-300 group rounded-t-xl"
+            [class.tab-active]="activeTab() === tab.id"
+            [class.tab-inactive]="activeTab() !== tab.id">
+            <span class="flex items-center justify-center gap-2 relative z-10">
+              <lucide-icon [img]="tab.icon" class="w-4 h-4 transition-all duration-300"></lucide-icon>
               {{ tab.label }}
             </span>
-            <div *ngIf="activeTab() === tab.id" 
-              class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4318FF] to-[#8B5CF6] rounded-t-full">
-            </div>
+            <!-- Active glow underline -->
+            <div *ngIf="activeTab() === tab.id" class="tab-active-bar"></div>
+            <!-- Hover underline for inactive -->
+            <div *ngIf="activeTab() !== tab.id" class="tab-hover-bar"></div>
           </button>
         </div>
       </div>
@@ -100,15 +105,17 @@ import { FieldMappingComponent } from './components/field-mapping.component';
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- CONFIGURATION BAR                                              -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <div class="mb-6">
-      <div class="premium-glass p-5 grid grid-cols-1 md:grid-cols-4 gap-6 bg-white/60">
+    <div class="mb-3">
+      <div class="premium-glass px-5 py-3 grid grid-cols-1 gap-4 bg-white/60 items-end"
+           [class.md:grid-cols-4]="isEditMode()"
+           [class.md:grid-cols-5]="!isEditMode()">
         <div class="flex flex-col gap-2">
           <label class="text-[10px] font-black text-[#A3AED0] uppercase tracking-widest ml-1">Line of Business</label>
           <div class="relative">
             <select 
               [ngModel]="selectedLob()" 
               (ngModelChange)="onLobChange($event)"
-              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
               [disabled]="!isEditMode() || !!recordId()"
             >
               <option value="" disabled selected>Select LOB</option>
@@ -127,7 +134,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
             <select 
               [ngModel]="selectedProcessFlow()" 
               (ngModelChange)="onProcessFlowChange($event)"
-              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
               [disabled]="!selectedLob() || !isEditMode() || !!recordId()"
             >
               <option value="" disabled selected>Select Process Flow</option>
@@ -144,7 +151,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
             <select 
               [ngModel]="docVersion()" 
               (ngModelChange)="docVersion.set($event)"
-              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
               [disabled]="!selectedProcessFlow() || !isEditMode() || !!recordId()"
             >
               <option value="" disabled selected>Documentation Version</option>
@@ -161,7 +168,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
             <select 
               [ngModel]="selectedEndpoint()" 
               (ngModelChange)="selectedEndpoint.set($event)"
-              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
+              class="w-full bg-white border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold text-[#2B3674] outline-none focus:border-[#4318FF] transition-all appearance-none disabled:bg-gray-50/50 disabled:cursor-not-allowed"
               [disabled]="!selectedProcessFlow() || !!recordId()"
             >
               <option value="" disabled selected>Select Endpoint</option>
@@ -172,19 +179,11 @@ import { FieldMappingComponent } from './components/field-mapping.component';
           </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="flex justify-end gap-3 mt-4 md:col-span-4">
-          <button *ngIf="isEditMode()" (click)="createEndpoint()" class="bg-[#05CD99] hover:bg-[#04b88a] text-white px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#05CD99]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
-             <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
-             <span>CREATE API ENDPOINT</span>
-          </button>
-          <button *ngIf="isEditMode()" (click)="submitMappings()" class="bg-[#2B3674] hover:bg-[#1B2559] text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#2B3674]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
-             <lucide-icon [img]="CheckCircle2" class="w-4 h-4 text-emerald-400"></lucide-icon>
-             <span>Submit</span>
-          </button>
-          <button *ngIf="!isEditMode()" (click)="toggleEdit()" class="bg-[#4318FF] hover:bg-[#3311CC] text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#4318FF]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95">
+        <!-- Switch to Edit Mode — inline, only in view mode -->
+        <div *ngIf="!isEditMode()" class="flex flex-col justify-end">
+          <button (click)="toggleEdit()" class="bg-[#4318FF] hover:bg-[#3311CC] text-white px-5 py-2 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-[#4318FF]/20 flex items-center gap-2 transform hover:scale-105 active:scale-95 w-full justify-center">
              <lucide-icon [img]="Settings2" class="w-4 h-4"></lucide-icon>
-             <span>Switch to Edit Mode</span>
+             <span>Edit Mode</span>
           </button>
         </div>
       </div>
@@ -193,7 +192,7 @@ import { FieldMappingComponent } from './components/field-mapping.component';
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- TAB CONTENT AREA (ORCHESTRATED)                                -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <div class= "pb-12">
+    <div class="pb-12">
       <app-object-config *ngIf="activeTab() === 'object'"></app-object-config>
       
       <app-api-config 
@@ -220,6 +219,8 @@ import { FieldMappingComponent } from './components/field-mapping.component';
   `,
   styles: [`
     :host { display: block; }
+
+    /* ── Hero Banner ── */
     .hero-banner { border-radius: 0 0 32px 32px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); }
     .hero-bg { background: linear-gradient(135deg, #0C0F2E 0%, #171C40 100%); }
     .hero-grid { 
@@ -233,17 +234,98 @@ import { FieldMappingComponent } from './components/field-mapping.component';
     }
     .hero-orb--blue { background: #4318FF; top: -150px; right: -50px; }
     .hero-orb--indigo { background: #8B5CF6; bottom: -150px; left: 10%; }
+
+    /* ── Page animation ── */
     .animate-page-in { animation: pageIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     @keyframes pageIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* ── Glass card ── */
     .premium-glass {
       background: rgba(255, 255, 255, 0.6);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 24px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ══════════════════════════════════════════
+       TAB STYLES — bold highlight
+    ══════════════════════════════════════════ */
+
+    /* Base tab button */
+    .tab-btn {
+      outline: none;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+    }
+
+    /* Inactive tab */
+    .tab-inactive {
+      color: rgba(255, 255, 255, 0.48);
+      letter-spacing: 0.1em;
+    }
+    .tab-inactive:hover {
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    /* Active tab — vivid pill */
+    .tab-active {
+      color: #ffffff;
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, rgba(67, 24, 255, 0.6) 0%, rgba(139, 92, 246, 0.45) 100%);
+      border: 1px solid rgba(167, 139, 250, 0.5);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      box-shadow:
+        0 0 0 1px rgba(139, 92, 246, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 -6px 24px rgba(67, 24, 255, 0.4);
+      text-shadow:
+        0 0 10px rgba(196, 167, 255, 1),
+        0 0 24px rgba(139, 92, 246, 0.8),
+        0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Lucide icon inside active tab — brighter */
+    .tab-active lucide-icon {
+      filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.9));
+    }
+
+    /* Active bottom bar — thick glowing stripe */
+    .tab-active-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 0;
+      background: linear-gradient(90deg, #4318FF 0%, #7C3AED 50%, #C4B5FD 100%);
+      box-shadow:
+        0 0 8px 3px rgba(139, 92, 246, 1),
+        0 0 20px 8px rgba(67, 24, 255, 0.6),
+        0 0 40px 14px rgba(67, 24, 255, 0.25);
+    }
+
+    /* Hover bar for inactive tabs */
+    .tab-hover-bar {
+      position: absolute;
+      bottom: 0;
+      left: 8px;
+      right: 8px;
+      height: 2px;
+      border-radius: 2px 2px 0 0;
+      background: rgba(255, 255, 255, 0);
+      transition: background 0.3s ease;
+    }
+    .tab-btn.tab-inactive:hover .tab-hover-bar {
+      background: rgba(255, 255, 255, 0.22);
     }
   `]
 })
@@ -409,7 +491,6 @@ export class DataTransformationComponent implements OnDestroy, OnInit {
     if (id) {
       this.recordId.set(id);
 
-      // Expanded logic to handle new mockup IDs
       if (id.includes('ep-med')) {
         this.selectedLob.set('MEDICAL');
         this.selectedProcessFlow.set(id === 'ep-med-1' ? 'Insurance Quotation' : 'Insurance Data Sharing');
@@ -431,7 +512,6 @@ export class DataTransformationComponent implements OnDestroy, OnInit {
         this.docVersion.set(id === 'ep-7' ? 'v7' : 'v8');
         this.selectedEndpoint.set('/home-insurance-policies/{InsurancePolicyId}');
       } else {
-        // Fallback for new ad-hoc creations
         this.selectedLob.set('MOTOR');
         this.selectedProcessFlow.set('Insurance Data Sharing');
         this.selectedEndpoint.set('/motor-insurance-policies/{InsurancePolicyId}');
