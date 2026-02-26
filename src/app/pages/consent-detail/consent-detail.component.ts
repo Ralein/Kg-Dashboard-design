@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import {
@@ -17,10 +17,33 @@ interface NestedItem {
   open: boolean;
 }
 
+interface PolicyCard {
+  planType: string;
+  planName: string;
+  policyNumber: string;
+  coverEnd: string;
+  status: 'ACTIVE' | 'EXPIRED';
+  subtitle?: string;
+}
+
+interface PolicyData {
+  type: string;
+  label: string;
+  color: string;
+  cards: PolicyCard[];
+}
+
+interface PolicyTab {
+  id: string;
+  label: string;
+  type: string;
+  cardCount: number;
+}
+
 @Component({
   selector: 'app-consent-detail',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterLink],
+  imports: [CommonModule, LucideAngularModule],
   template: `
     <div class="cd-root flex flex-col gap-0 animate-page-in">
 
@@ -46,16 +69,22 @@ interface NestedItem {
         <!-- Content -->
         <div class="relative z-10 px-8 pt-8 pb-0">
 
-          <!-- Breadcrumb + back -->
+          <!-- Policy Tab Switcher + History button row -->
           <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-2 text-white/40 text-[11px] font-semibold tracking-wider">
-              <button routerLink="/consent-management"
-                class="flex items-center gap-1.5 hover:text-white/80 transition-colors duration-200 group">
-                <lucide-icon [img]="ChevronLeft" class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"></lucide-icon>
-                Consent Management
+
+            <!-- Policy type tabs -->
+            <div class="policy-tab-bar">
+              <button *ngFor="let tab of policyTabs"
+                (click)="switchPolicy(tab.id)"
+                class="policy-tab-btn"
+                [class.policy-tab-btn--active]="activeTabId() === tab.id">
+                <lucide-icon [img]="getIconForType(tab.type)" class="w-3.5 h-3.5"></lucide-icon>
+                <span>{{ tab.label }}</span>
+                <span *ngIf="tab.cardCount > 1" class="tab-count-badge"
+                  [class.tab-count-badge--active]="activeTabId() === tab.id">
+                  {{ tab.cardCount }}
+                </span>
               </button>
-              <span class="text-white/20">/</span>
-              <span class="text-white/60">Detail View</span>
             </div>
 
             <div class="flex items-center gap-3">
@@ -116,7 +145,7 @@ interface NestedItem {
                   </span>
                   <span class="hero-tag">
                     <lucide-icon [img]="getPolicyIcon()" class="w-3 h-3" [ngClass]="getPolicyColorClass()"></lucide-icon>
-                    {{selectedPolicy()}} Policy
+                    {{ selectedPolicy() }} Policy
                   </span>
                 </div>
               </div>
@@ -197,175 +226,227 @@ interface NestedItem {
         </div>
       </div>
 
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <!-- MAIN CONTENT GRID                                              -->
+      <!-- ═══════════════════════════════════════════════════════════════ -->
       <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
 
-        <!-- ── LEFT: Policy Card ── -->
-        <div class="lg:col-span-5 flex flex-col gap-6">
-          <div class="policy-card relative overflow-hidden flex flex-col h-full">
+          <!-- ── LEFT: Policy Card ── -->
+          <div class="lg:col-span-5 flex flex-col gap-6">
+            <div class="policy-card relative overflow-hidden flex flex-col h-full">
 
-            <div class="policy-bg"></div>
-            <div class="policy-grid absolute inset-0 opacity-[0.04]"
-              style="background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px); background-size: 28px 28px;"></div>
-            <div class="policy-orb policy-orb--blue absolute top-0 right-0"></div>
-            <div class="policy-orb policy-orb--teal absolute bottom-0 left-0"></div>
+              <div class="policy-bg"></div>
+              <div class="policy-grid absolute inset-0 opacity-[0.04]"
+                style="background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px); background-size: 28px 28px;"></div>
+              <div class="policy-orb policy-orb--blue absolute top-0 right-0"></div>
+              <div class="policy-orb policy-orb--teal absolute bottom-0 left-0"></div>
 
-            <div class="relative z-10 flex flex-col h-full p-6">
-              <div class="flex items-center justify-between mb-6">
-                <div>
-                  <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.15em] mb-1">Shared Policies</p>
-                  <h3 class="text-sm font-bold text-white/90 tracking-wide">Policy Explorer</h3>
+              <div class="relative z-10 flex flex-col h-full p-6">
+
+                <!-- Card header -->
+                <div class="flex items-center justify-between mb-6">
+                  <div>
+                    <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.15em] mb-1">Shared Policies</p>
+                    <h3 class="text-sm font-bold text-white/90 tracking-wide">Policy Explorer</h3>
+                  </div>
+                  <div class="policy-type-badge" [ngClass]="getPolicyBadgeClass()">
+                    <lucide-icon [img]="getPolicyIcon()" class="w-3.5 h-3.5"></lucide-icon>
+                    <span>{{ selectedPolicy() }}</span>
+                  </div>
                 </div>
-                <div class="policy-type-badge" [ngClass]="getPolicyBadgeClass()">
-                  <lucide-icon [img]="getPolicyIcon()" class="w-3.5 h-3.5"></lucide-icon>
-                  <span>{{selectedPolicy()}}</span>
-                </div>
-              </div>
 
-              <div class="flex-1 flex flex-col justify-center">
-                <div class="policy-inner-card group/pc relative overflow-hidden">
-                  <div class="inner-shine absolute inset-0 opacity-0 group-hover/pc:opacity-100 transition-opacity duration-600"></div>
-
-                  <div class="inner-card-header">
-                    <div class="inner-icon-wrap" [ngClass]="getPolicyIconWrapClass()">
-                      <lucide-icon [img]="getPolicyIcon()" class="w-5 h-5"></lucide-icon>
-                    </div>
-                    <div class="ml-4">
-                      <p class="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">Plan Type</p>
-                      <p class="text-base font-bold text-white leading-tight">{{currentPolicy.planType}}</p>
-                    </div>
-                    <div class="ml-auto">
-                      <span class="status-badge" [ngClass]="currentPolicy.status === 'ACTIVE' ? 'active-badge' : 'expired-badge'">
-                        <lucide-icon [img]="currentPolicy.status === 'ACTIVE' ? CheckCircle2 : AlertCircle" class="w-3 h-3"></lucide-icon>
-                        {{currentPolicy.status}}
+                <!-- ── MULTI-VEHICLE SELECTOR (only for Motor with 2 cards) ── -->
+                <div *ngIf="currentPolicyData.cards.length > 1" class="mb-4 flex flex-col gap-2">
+                  <p class="text-[9px] font-bold text-white/30 uppercase tracking-[0.14em] mb-1">Select Vehicle</p>
+                  <button
+                    *ngFor="let card of currentPolicyData.cards; let i = index"
+                    (click)="selectedCardIdx.set(i)"
+                    class="vehicle-card"
+                    [class.vehicle-card--selected]="selectedCardIdx() === i">
+                    <div class="absolute top-0 left-0 right-0 h-0.5 rounded-t-[14px] transition-opacity duration-300"
+                      [class.opacity-100]="selectedCardIdx() === i"
+                      [class.opacity-0]="selectedCardIdx() !== i"
+                      style="background: linear-gradient(90deg, rgba(255,255,255,0.5), rgba(255,255,255,0.1))"></div>
+                    <div class="flex items-start justify-between gap-2">
+                      <div>
+                        <p class="text-[9px] font-bold text-white/35 uppercase tracking-[0.14em] mb-0.5">{{ card.planType }}</p>
+                        <p class="text-[12px] font-bold tracking-[0.02em] mb-0.5 transition-colors duration-200"
+                          [class.text-white]="selectedCardIdx() === i"
+                          [class.text-white/65]="selectedCardIdx() !== i">{{ card.planName }}</p>
+                        <p *ngIf="card.subtitle" class="text-[10px] text-white/35 font-medium">{{ card.subtitle }}</p>
+                      </div>
+                      <span class="status-badge flex-shrink-0"
+                        [class.active-badge]="card.status === 'ACTIVE'"
+                        [class.expired-badge]="card.status === 'EXPIRED'">
+                        {{ card.status }}
                       </span>
                     </div>
-                  </div>
-
-                  <div class="inner-divider"></div>
-
-                  <div class="p-5 space-y-4">
-                    <div>
-                      <p class="detail-label">Plan Name</p>
-                      <p class="detail-value">{{currentPolicy.planName}}</p>
+                    <div class="flex items-center justify-between mt-2.5">
+                      <span class="font-mono text-[10px] text-white/40 tracking-[0.1em]">{{ card.policyNumber }}</span>
+                      <span class="text-[9px] text-white/30 font-semibold">Ends {{ card.coverEnd }}</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                      <div>
-                        <p class="detail-label">Policy Number</p>
-                        <p class="detail-value font-mono text-[11px] tracking-widest">{{currentPolicy.policyNumber}}</p>
+                  </button>
+                </div>
+
+                <!-- ── SINGLE CARD inner detail ── -->
+                <div class="flex-1 flex flex-col justify-center"
+                  [class.flex-1]="currentPolicyData.cards.length === 1">
+
+                  <div class="policy-inner-card group/pc relative overflow-hidden">
+                    <div class="inner-shine absolute inset-0 opacity-0 group-hover/pc:opacity-100 transition-opacity duration-600"></div>
+
+                    <div class="inner-card-header">
+                      <div class="inner-icon-wrap" [ngClass]="getPolicyIconWrapClass()">
+                        <lucide-icon [img]="getPolicyIcon()" class="w-5 h-5"></lucide-icon>
                       </div>
+                      <div class="ml-4">
+                        <p class="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">Plan Type</p>
+                        <p class="text-base font-bold text-white leading-tight">{{ currentCard.planType }}</p>
+                      </div>
+                      <div class="ml-auto">
+                        <span class="status-badge" [class.active-badge]="currentCard.status === 'ACTIVE'" [class.expired-badge]="currentCard.status === 'EXPIRED'">
+                          <lucide-icon [img]="currentCard.status === 'ACTIVE' ? CheckCircle2 : AlertCircle" class="w-3 h-3"></lucide-icon>
+                          {{ currentCard.status }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="inner-divider"></div>
+
+                    <div class="p-5 space-y-4">
                       <div>
-                        <p class="detail-label">Cover End</p>
-                        <p class="detail-value" [ngClass]="currentPolicy.status === 'EXPIRED' ? 'text-red-300' : 'text-emerald-300'">{{currentPolicy.coverEnd}}</p>
+                        <p class="detail-label">Plan Name</p>
+                        <p class="detail-value">{{ currentCard.planName }}</p>
+                      </div>
+                      <div class="grid grid-cols-2 gap-4">
+                        <div>
+                          <p class="detail-label">Policy Number</p>
+                          <p class="detail-value font-mono text-[11px] tracking-widest">{{ currentCard.policyNumber }}</p>
+                        </div>
+                        <div>
+                          <p class="detail-label">Cover End</p>
+                          <p class="detail-value" [class.text-red-300]="currentCard.status === 'EXPIRED'" [class.text-emerald-300]="currentCard.status === 'ACTIVE'">{{ currentCard.coverEnd }}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div class="w-4 h-4 rounded-full bg-teal-400/20 border border-teal-400/30 flex items-center justify-center">
-                    <lucide-icon [img]="Lock" class="w-2.5 h-2.5 text-teal-400"></lucide-icon>
+                <!-- Mini detail strip for multi-vehicle (shows selected card info below selector) -->
+                <div *ngIf="currentPolicyData.cards.length > 1" class="mt-3 p-3 rounded-xl bg-white/4 border border-white/8 grid grid-cols-2 gap-3">
+                  <div>
+                    <p class="detail-label">Policy No.</p>
+                    <p class="font-mono text-[11px] font-bold text-white/78 tracking-[0.1em]">{{ currentCard.policyNumber }}</p>
                   </div>
-                  <p class="text-[10px] text-white/30 font-medium tracking-wide">End-to-End Encrypted</p>
+                  <div>
+                    <p class="detail-label">Cover End</p>
+                    <p class="text-[12px] font-bold" [class.text-emerald-300]="currentCard.status === 'ACTIVE'" [class.text-red-300]="currentCard.status === 'EXPIRED'">{{ currentCard.coverEnd }}</p>
+                  </div>
                 </div>
-                <button class="text-[10px] text-white/40 hover:text-white/70 flex items-center gap-1 transition-colors font-bold tracking-wide">
-                  View Full Policy
-                  <lucide-icon [img]="ArrowUpRight" class="w-3 h-3"></lucide-icon>
-                </button>
+
+                <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded-full bg-teal-400/20 border border-teal-400/30 flex items-center justify-center">
+                      <lucide-icon [img]="Lock" class="w-2.5 h-2.5 text-teal-400"></lucide-icon>
+                    </div>
+                    <p class="text-[10px] text-white/30 font-medium tracking-wide">End-to-End Encrypted</p>
+                  </div>
+                  <button class="text-[10px] text-white/40 hover:text-white/70 flex items-center gap-1 transition-colors font-bold tracking-wide">
+                    View Full Policy
+                    <lucide-icon [img]="ArrowUpRight" class="w-3 h-3"></lucide-icon>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- ── RIGHT: Accordion ── -->
-        <div class="lg:col-span-7">
-          <div class="accordion-panel flex flex-col h-full min-h-[500px]">
+          <!-- ── RIGHT: Accordion ── -->
+          <div class="lg:col-span-7">
+            <div class="accordion-panel flex flex-col h-full min-h-[500px]">
 
-            <div class="accordion-panel-header">
-              <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#4318FF] via-indigo-400 to-transparent"></div>
-              <div class="flex items-start justify-between">
-                <div>
-                  <h3 class="text-sm font-bold text-[#1a2660] tracking-wide">Shared Information Details</h3>
-                  <p class="text-[11px] text-[#A3AED0] mt-0.5 leading-relaxed">Review the specific data points authorized for this consent record</p>
-                </div>
-                <div class="panel-badge">
-                  <lucide-icon [img]="BadgeCheck" class="w-3 h-3 text-indigo-500"></lucide-icon>
-                  <span>{{getOpenCount()}} active</span>
+              <div class="accordion-panel-header">
+                <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#4318FF] via-indigo-400 to-transparent"></div>
+                <div class="flex items-start justify-between">
+                  <div>
+                    <h3 class="text-sm font-bold text-[#1a2660] tracking-wide">Shared Information Details</h3>
+                    <p class="text-[11px] text-[#A3AED0] mt-0.5 leading-relaxed">Review the specific data points authorized for this consent record</p>
+                  </div>
+                  <div class="panel-badge">
+                    <lucide-icon [img]="BadgeCheck" class="w-3 h-3 text-indigo-500"></lucide-icon>
+                    <span>{{ getOpenCount() }} active</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="flex-1 p-5 space-y-2.5 overflow-y-auto max-h-[600px] custom-scrollbar">
+              <div class="flex-1 p-5 space-y-2.5 overflow-y-auto max-h-[600px] custom-scrollbar">
 
-              <div class="top-accordion" [class.top-accordion--open]="policyOpen()">
-                <button (click)="policyOpen.set(!policyOpen())" class="top-accordion-trigger">
-                  <div class="flex items-center gap-3">
-                    <div class="trigger-icon-wrap" [class.trigger-icon-wrap--active]="policyOpen()" [ngClass]="getPolicyIconWrapStaticClass()">
-                      <lucide-icon [img]="getPolicyIcon()" class="w-4 h-4"></lucide-icon>
-                    </div>
-                    <div>
-                      <p class="text-xs font-bold text-[#1a2660] uppercase tracking-widest">{{selectedPolicy()}} Policy</p>
-                      <p class="text-[10px] text-[#A3AED0] mt-0.5">{{sections().length}} data categories</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" [ngClass]="getPolicyCountBadgeClass()">{{sections().length}} sections</span>
-                    <div class="chevron-wrap" [class.chevron-wrap--open]="policyOpen()">
-                      <lucide-icon [img]="ChevronDown" class="w-4 h-4 text-[#A3AED0]"></lucide-icon>
-                    </div>
-                  </div>
-                </button>
-
-                <div *ngIf="policyOpen()" class="top-accordion-body animate-accordion-in">
-                  <div *ngFor="let sub of sections(); let i = index"
-                    class="sub-item"
-                    [class.sub-item--open]="sub.open"
-                    [style.animation-delay]="(i * 35) + 'ms'">
-
-                    <button (click)="toggleSection(i)" class="sub-trigger group/sub">
-                      <div class="flex items-center gap-3">
-                        <div class="sub-dot" [class.sub-dot--open]="sub.open" [ngClass]="getPolicyDotClass(sub.open)"></div>
-                        <span class="text-[11px] font-bold text-[#2B3674] transition-colors duration-150 tracking-wide"
-                          [ngClass]="sub.open ? getPolicyTextClass() : 'group-hover/sub:text-[#4318FF]'">
-                          {{sub.title}}
-                        </span>
+                <div class="top-accordion" [class.top-accordion--open]="policyOpen()">
+                  <button (click)="policyOpen.set(!policyOpen())" class="top-accordion-trigger">
+                    <div class="flex items-center gap-3">
+                      <div class="trigger-icon-wrap" [class.trigger-icon-wrap--active]="policyOpen()" [ngClass]="getPolicyIconWrapStaticClass()">
+                        <lucide-icon [img]="getPolicyIcon()" class="w-4 h-4"></lucide-icon>
                       </div>
-                      <div class="flex items-center gap-2">
-                        <span *ngIf="sub.items" class="item-count-badge">{{sub.items.length}}</span>
-                        <lucide-icon [img]="sub.open ? ChevronUp : ChevronDown"
-                          class="w-3.5 h-3.5 text-[#A3AED0] transition-transform duration-200"></lucide-icon>
+                      <div>
+                        <p class="text-xs font-bold text-[#1a2660] uppercase tracking-widest">{{ selectedPolicy() }} Policy</p>
+                        <p class="text-[10px] text-[#A3AED0] mt-0.5">{{ sections().length }} data categories</p>
                       </div>
-                    </button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" [ngClass]="getPolicyCountBadgeClass()">{{ sections().length }} sections</span>
+                      <div class="chevron-wrap" [class.chevron-wrap--open]="policyOpen()">
+                        <lucide-icon [img]="ChevronDown" class="w-4 h-4 text-[#A3AED0]"></lucide-icon>
+                      </div>
+                    </div>
+                  </button>
 
-                    <div *ngIf="sub.open" class="sub-content animate-fade-in">
-                      <div class="sub-accent-bar" [ngClass]="getPolicyAccentClass()"></div>
+                  <div *ngIf="policyOpen()" class="top-accordion-body animate-accordion-in">
+                    <div *ngFor="let sub of sections(); let i = index"
+                      class="sub-item"
+                      [class.sub-item--open]="sub.open"
+                      [style.animation-delay]="(i * 35) + 'ms'">
 
-                      <!-- Items List -->
-                      <ng-container *ngIf="sub.items">
-                        <div *ngFor="let item of sub.items; let j = index"
-                          class="data-row"
-                          [style.animation-delay]="(j * 25) + 'ms'">
-                          <div class="data-check" [ngClass]="getPolicyDataCheckClass()">
-                            <lucide-icon [img]="CheckCircle2" class="w-3 h-3" [ngClass]="getPolicyCheckIconClass()"></lucide-icon>
+                      <button (click)="toggleSection(i)" class="sub-trigger group/sub">
+                        <div class="flex items-center gap-3">
+                          <div class="sub-dot" [class.sub-dot--open]="sub.open" [ngClass]="getPolicyDotClass(sub.open)"></div>
+                          <span class="text-[11px] font-bold text-[#2B3674] transition-colors duration-150 tracking-wide"
+                            [ngClass]="sub.open ? getPolicyTextClass() : 'group-hover/sub:text-[#4318FF]'">
+                            {{ sub.title }}
+                          </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <span *ngIf="sub.items" class="item-count-badge">{{ sub.items.length }}</span>
+                          <lucide-icon [img]="sub.open ? ChevronUp : ChevronDown"
+                            class="w-3.5 h-3.5 text-[#A3AED0] transition-transform duration-200"></lucide-icon>
+                        </div>
+                      </button>
+
+                      <div *ngIf="sub.open" class="sub-content animate-fade-in">
+                        <div class="sub-accent-bar" [ngClass]="getPolicyAccentClass()"></div>
+
+                        <ng-container *ngIf="sub.items">
+                          <div *ngFor="let item of sub.items; let j = index"
+                            class="data-row"
+                            [style.animation-delay]="(j * 25) + 'ms'">
+                            <div class="data-check" [ngClass]="getPolicyDataCheckClass()">
+                              <lucide-icon [img]="CheckCircle2" class="w-3 h-3" [ngClass]="getPolicyCheckIconClass()"></lucide-icon>
+                            </div>
+                            <span class="text-[11px] font-medium text-[#2B3674] leading-relaxed">{{ item }}</span>
                           </div>
-                          <span class="text-[11px] font-medium text-[#2B3674] leading-relaxed">{{item}}</span>
-                        </div>
-                      </ng-container>
+                        </ng-container>
 
-                      <!-- Description Block (e.g. for Premium Details) -->
-                      <div *ngIf="sub.description" class="p-1 px-2">
-                        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-amber-50/50 border border-amber-100/50">
-                          <lucide-icon [img]="AlertCircle" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></lucide-icon>
-                          <p class="text-[11px] text-[#4F5B7D] font-medium leading-[1.6]">{{sub.description}}</p>
+                        <div *ngIf="sub.description" class="p-1 px-2">
+                          <div class="flex items-start gap-3 p-3.5 rounded-xl bg-amber-50/50 border border-amber-100/50">
+                            <lucide-icon [img]="AlertCircle" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></lucide-icon>
+                            <p class="text-[11px] text-[#4F5B7D] font-medium leading-[1.6]">{{ sub.description }}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
+              </div>
             </div>
           </div>
         </div>
@@ -408,11 +489,83 @@ interface NestedItem {
     }
 
     /* ═══════════════════════════════════════
+       POLICY TAB BAR (new)
+    ═══════════════════════════════════════ */
+    .policy-tab-bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 4px;
+    }
+    .policy-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+      background: transparent;
+      color: rgba(255,255,255,0.42);
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.03em;
+    }
+    .policy-tab-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.75);
+    }
+    .policy-tab-btn--active {
+      background: rgba(255,255,255,0.13) !important;
+      color: white !important;
+      font-weight: 800;
+    }
+    .tab-count-badge {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.4);
+    }
+    .tab-count-badge--active {
+      background: rgba(255,255,255,0.22);
+      color: white;
+    }
+
+    /* ═══════════════════════════════════════
+       VEHICLE SELECTOR CARDS (new)
+    ═══════════════════════════════════════ */
+    .vehicle-card {
+      position: relative;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 14px 16px;
+      transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+      overflow: hidden;
+    }
+    .vehicle-card:hover {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(255,255,255,0.18);
+    }
+    .vehicle-card--selected {
+      background: rgba(255,255,255,0.1) !important;
+      border-color: rgba(255,255,255,0.22) !important;
+    }
+
+    /* ═══════════════════════════════════════
        HERO BANNER
     ═══════════════════════════════════════ */
     .hero-banner {
       border-radius: 20px;
-      box-shadow: 0 32px 80px rgba(12, 15, 46, 0.4), 0 0 0 1px rgba(255,255,255,0.1) inset;
     }
     .hero-bg {
       background: linear-gradient(145deg, #0C0F2E 0%, #141836 60%, #0E1428 100%);
@@ -456,7 +609,6 @@ interface NestedItem {
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(99,102,241,0.8), rgba(5,205,153,0.6), transparent);
     }
-
     .hero-title {
       font-size: 1.65rem;
       font-weight: 900;
@@ -465,7 +617,6 @@ interface NestedItem {
       line-height: 1.1;
       text-shadow: 0 2px 20px rgba(67,24,255,0.3);
     }
-
     .hero-status-badge {
       display: inline-flex;
       align-items: center;
@@ -479,20 +630,6 @@ interface NestedItem {
       color: #34d399;
       letter-spacing: 0.04em;
     }
-    .pulse-ring {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      position: relative;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .pulse-ring::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: #34d399;
-    }
-
     .hero-id-chip {
       display: inline-flex;
       align-items: center;
@@ -507,7 +644,6 @@ interface NestedItem {
       color: rgba(255,255,255,0.7);
       letter-spacing: 0.08em;
     }
-
     .copy-btn-hero {
       position: relative;
       color: rgba(255,255,255,0.4);
@@ -515,6 +651,9 @@ interface NestedItem {
       border-radius: 6px;
       transition: all 0.15s;
       display: flex; align-items: center; justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
     }
     .copy-btn-hero:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); }
     .copy-btn-hero:active { transform: scale(0.88); }
@@ -537,7 +676,6 @@ interface NestedItem {
       from { opacity:0; transform: translateX(-50%) translateY(4px); }
       to   { opacity:1; transform: translateX(-50%) translateY(0); }
     }
-
     .hero-tag {
       display: inline-flex;
       align-items: center;
@@ -558,7 +696,6 @@ interface NestedItem {
       color: rgba(255,255,255,0.8);
       border-color: rgba(255,255,255,0.2);
     }
-
     .hero-avatar {
       width: 68px; height: 68px;
       position: relative;
@@ -583,7 +720,15 @@ interface NestedItem {
       0%,100% { opacity: 0.4; transform: scale(1); }
       50%      { opacity: 0.8; transform: scale(1.03); }
     }
-
+    .premium-shine {
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 50%, transparent 70%);
+      background-size: 200% 200%;
+      animation: shineSweep 2.5s ease-in-out infinite;
+    }
+    @keyframes shineSweep {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
     .hero-stats-strip {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
@@ -618,21 +763,6 @@ interface NestedItem {
       margin: 10px 0;
     }
 
-    .suspend-hero-btn {
-      background: linear-gradient(135deg, #f59e0b, #f97316);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(249,115,22,0.35);
-      transition: all 0.25s;
-    }
-    .suspend-hero-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 25px rgba(249,115,22,0.45);
-    }
-    .suspend-hero-btn:active { transform: translateY(0); box-shadow: none; }
-
-
     /* ═══════════════════════════════════════
        META CARDS
     ═══════════════════════════════════════ */
@@ -641,14 +771,10 @@ interface NestedItem {
       border: 1px solid rgba(226,232,240,0.8);
       border-radius: 20px;
       padding: 14px 16px;
-      box-shadow: 0 1px 3px rgba(27,37,89,0.05), 0 4px 12px rgba(27,37,89,0.03);
       transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
     }
     .meta-card:hover {
       border-color: rgba(67,24,255,0.2);
-      box-shadow: 
-        0 20px 40px -12px rgba(112, 144, 176, 0.15),
-        0 4px 6px -4px rgba(112, 144, 176, 0.05);
       transform: translateY(-4px);
     }
     .meta-label {
@@ -680,7 +806,6 @@ interface NestedItem {
       width: 7px; height: 7px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 0 0 rgba(16,185,129,0.5);
     }
 
     /* ═══════════════════════════════════════
@@ -688,7 +813,6 @@ interface NestedItem {
     ═══════════════════════════════════════ */
     .policy-card {
       border-radius: 20px;
-      box-shadow: 0 24px 60px rgba(12, 15, 46, 0.35), 0 0 0 1px rgba(255,255,255,0.1) inset;
     }
     .policy-bg {
       position: absolute; inset: 0;
@@ -709,7 +833,6 @@ interface NestedItem {
       transform: translate(-30%, 30%);
       border-radius: 50%;
     }
-
     .policy-type-badge {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 6px 12px;
@@ -720,7 +843,6 @@ interface NestedItem {
       color: rgba(255,255,255,0.7);
       letter-spacing: 0.1em;
     }
-
     .policy-inner-card {
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.08);
@@ -738,10 +860,6 @@ interface NestedItem {
       animation: shineSweep 2.5s ease-in-out infinite;
       pointer-events: none;
     }
-    @keyframes shineSweep {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
     .inner-card-header {
       display: flex; align-items: center;
       padding: 16px 20px;
@@ -753,7 +871,6 @@ interface NestedItem {
       background: rgba(5,205,153,0.15);
       border: 1px solid rgba(5,205,153,0.3);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 20px rgba(5,205,153,0.2);
       flex-shrink: 0;
     }
     .inner-divider {
@@ -774,27 +891,22 @@ interface NestedItem {
       color: rgba(255,255,255,0.85);
       letter-spacing: 0.03em;
     }
-    .active-badge {
-      background: rgba(16,185,129,0.12);
-      border: 1px solid rgba(16,185,129,0.25);
-      color: #6ee7b7;
-    }
-    .expired-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 4px 10px;
-      background: rgba(239,68,68,0.12);
-      border: 1px solid rgba(239,68,68,0.25);
-      border-radius: 6px;
-      font-size: 10px; font-weight: 800;
-      color: #fca5a5;
-      letter-spacing: 0.08em;
-    }
     .status-badge {
       display: inline-flex; align-items: center; gap: 4px;
       padding: 4px 10px;
       border-radius: 6px;
       font-size: 10px; font-weight: 800;
       letter-spacing: 0.08em;
+    }
+    .active-badge {
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
+      color: #6ee7b7;
+    }
+    .expired-badge {
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #fca5a5;
     }
 
     /* ═══════════════════════════════════════
@@ -805,7 +917,6 @@ interface NestedItem {
       border: 1px solid rgba(226,232,240,0.8);
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 4px 24px rgba(27,37,89,0.07), 0 1px 4px rgba(27,37,89,0.05);
     }
     .accordion-panel-header {
       padding: 20px 24px;
@@ -822,7 +933,6 @@ interface NestedItem {
       font-size: 10px; font-weight: 700;
       color: #4338ca;
     }
-
     .top-accordion {
       border: 1px solid rgba(226,232,240,0.8);
       border-radius: 20px;
@@ -831,7 +941,6 @@ interface NestedItem {
     }
     .top-accordion--open {
       border-color: rgba(99,102,241,0.25);
-      box-shadow: 0 4px 20px rgba(67,24,255,0.06);
     }
     .top-accordion-trigger {
       width: 100%;
@@ -841,13 +950,14 @@ interface NestedItem {
       align-items: center;
       background: rgba(248,250,252,0.8);
       transition: background 0.2s;
+      border: none;
+      cursor: pointer;
     }
     .top-accordion-trigger:hover { background: rgba(238,242,255,0.6); }
     .top-accordion-body {
       border-top: 1px solid rgba(226,232,240,0.6);
       background: rgba(249,250,251,0.5);
     }
-
     .trigger-icon-wrap {
       width: 36px; height: 36px;
       border-radius: 10px;
@@ -872,7 +982,6 @@ interface NestedItem {
       transition: all 0.25s;
     }
     .chevron-wrap--open { transform: rotate(180deg); background: rgba(238,242,255,1); }
-
     .sub-item {
       border-bottom: 1px solid rgba(226,232,240,0.5);
       animation: subSlideIn 0.22s cubic-bezier(0.22,1,0.36,1) both;
@@ -887,9 +996,11 @@ interface NestedItem {
       padding: 12px 16px 12px 24px;
       display: flex; justify-content: space-between; align-items: center;
       transition: background 0.15s;
+      border: none;
+      cursor: pointer;
+      background: transparent;
     }
     .sub-trigger:hover { background: rgba(238,242,255,0.5); }
-
     .sub-dot {
       width: 7px; height: 7px;
       border-radius: 50%;
@@ -901,7 +1012,6 @@ interface NestedItem {
       background: #4318FF;
       box-shadow: 0 0 0 3px rgba(67,24,255,0.15);
     }
-
     .sub-content {
       background: white;
       padding: 14px 18px 14px 36px;
@@ -915,7 +1025,6 @@ interface NestedItem {
       background: linear-gradient(to bottom, #4318FF, rgba(67,24,255,0.1));
       border-radius: 0 2px 2px 0;
     }
-
     .item-count-badge {
       display: inline-flex; align-items: center; justify-content: center;
       min-width: 20px; height: 18px;
@@ -926,12 +1035,6 @@ interface NestedItem {
       font-size: 9px; font-weight: 800;
       color: #64748b;
     }
-    .item-count-badge--amber {
-      background: rgba(254,243,199,1);
-      border-color: rgba(251,191,36,0.3);
-      color: #92400e;
-    }
-
     .data-row {
       display: flex; align-items: flex-start;
       gap: 10px; padding: 6px 0;
@@ -954,35 +1057,6 @@ interface NestedItem {
       background: rgba(16,185,129,0.15);
       border-color: rgba(16,185,129,0.4);
     }
-
-    .premium-note {
-      background: linear-gradient(135deg, rgba(255,251,235,1), rgba(255,243,199,0.6));
-      border: 1px solid rgba(251,191,36,0.3);
-      border-radius: 12px;
-      padding: 14px;
-      position: relative;
-      overflow: hidden;
-    }
-    .premium-note::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #f59e0b, #f97316);
-    }
-    .premium-note-header {
-      display: flex; align-items: center; gap: 8px;
-    }
-    .premium-note-icon {
-      width: 26px; height: 26px;
-      border-radius: 7px;
-      background: rgba(245,158,11,0.15);
-      border: 1px solid rgba(245,158,11,0.3);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* ── Custom scrollbar ── */
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -1014,7 +1088,6 @@ export class ConsentDetailComponent implements OnInit {
   readonly AlertCircle = AlertCircle;
   readonly FileText = FileText;
   readonly Infinity = Infinity;
-
   readonly Heart = Heart;
   readonly Car = Car;
   readonly Plane = Plane;
@@ -1022,7 +1095,81 @@ export class ConsentDetailComponent implements OnInit {
   selectedPolicy = signal('HOME');
   policyOpen = signal(true);
   idCopied = signal(false);
+  activeTabId = signal('home');
+  selectedCardIdx = signal(0);
 
+  // ── All policy data ──────────────────────────────────────────────
+  allPolicies: Record<string, PolicyData> = {
+    home: {
+      type: 'HOME', label: 'Home', color: 'emerald',
+      cards: [
+        {
+          planType: 'Villa',
+          planName: 'HOME SAFE PLATINUM',
+          policyNumber: 'A1317...R02',
+          coverEnd: '29 Jul 2021',
+          status: 'EXPIRED',
+          subtitle: 'Primary Residence'
+        }
+      ]
+    },
+    motor: {
+      type: 'MOTOR', label: 'Motor', color: 'indigo',
+      cards: [
+        {
+          planType: 'Comprehensive',
+          planName: 'MOTOR SECURE GOLD – KIA',
+          policyNumber: 'M9921...X05',
+          coverEnd: '15 Dec 2025',
+          status: 'ACTIVE',
+          subtitle: 'Kia Sportage · Plate: K-12345'
+        },
+        {
+          planType: 'Third Party',
+          planName: 'MOTOR BASIC – JEEP',
+          policyNumber: 'M4402...Z11',
+          coverEnd: '08 Mar 2026',
+          status: 'ACTIVE',
+          subtitle: 'Jeep Wrangler · Plate: J-67890'
+        }
+      ]
+    },
+    medical: {
+      type: 'MEDICAL', label: 'Medical', color: 'rose',
+      cards: [
+        {
+          planType: 'Individual',
+          planName: 'AFFINITY INDIVIDUAL',
+          policyNumber: '601003',
+          coverEnd: '06 Feb 2024',
+          status: 'EXPIRED',
+          subtitle: 'Single Member Plan'
+        }
+      ]
+    },
+    travel: {
+      type: 'TRAVEL', label: 'Travel', color: 'amber',
+      cards: [
+        {
+          planType: 'Multi-Trip',
+          planName: 'GLOBE TROTTER PLUS',
+          policyNumber: 'TRV-4421-B',
+          coverEnd: '12 Sep 2026',
+          status: 'ACTIVE',
+          subtitle: 'Annual Worldwide Coverage'
+        }
+      ]
+    }
+  };
+
+  policyTabs: PolicyTab[] = [
+    { id: 'home',    label: 'Home',    type: 'HOME',    cardCount: 1 },
+    { id: 'motor',   label: 'Motor',   type: 'MOTOR',   cardCount: 2 },
+    { id: 'medical', label: 'Medical', type: 'MEDICAL', cardCount: 1 },
+    { id: 'travel',  label: 'Travel',  type: 'TRAVEL',  cardCount: 1 },
+  ];
+
+  // Shared sections — same for all policy types, open state persists across tab switches
   sections = signal<NestedItem[]>([
     {
       title: 'Policy Details',
@@ -1084,174 +1231,137 @@ export class ConsentDetailComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
 
-  policyMockups: any = {
-    '1': {
-      type: 'HOME',
-      planType: 'Villa',
-      planName: 'HOME SAFE PLATINUM',
-      policyNumber: 'A1317...R02',
-      coverEnd: '29 Jul 2021',
-      status: 'EXPIRED',
-      icon: this.HomeIcon,
-      color: 'emerald',
-      sections: [
-        { title: 'Policy Details', open: true, items: ['Your Insurance Policy Number', 'The cover start date and end date'] },
-        { title: 'Customer Details', open: false, items: ['Your full name', 'Address information', 'Date of Birth'] },
-        { title: 'Premium Details', open: false, items: ['Premium amount', 'Payment history'] }
-      ]
-    },
-    '2': {
-      type: 'MEDICAL',
-      planType: 'Individual',
-      planName: 'AFFINITY INDIVIDUAL',
-      policyNumber: '601003',
-      coverEnd: '06 Feb 2024',
-      status: 'EXPIRED',
-      icon: this.Heart,
-      color: 'rose',
-      sections: [
-        { title: 'Member Details', open: true, items: ['Full Name of Member', 'Medical Card Number', 'Date of Birth'] },
-        { title: 'Plan Coverage', open: false, items: ['In-patient Limits', 'Out-patient Co-payment', 'Dental/Optical Benefits'] },
-        { title: 'Provider Network', open: false, items: ['List of Hospitals', 'Direct Billing Status'] }
-      ]
-    },
-    '3': {
-      type: 'TRAVEL',
-      planType: 'Multi-Trip',
-      planName: 'GLOBE TROTTER PLUS',
-      policyNumber: 'TRV-4421-B',
-      coverEnd: '12 Sep 2026',
-      status: 'ACTIVE',
-      icon: this.Plane,
-      color: 'amber',
-      sections: [
-        { title: 'Trip Details', open: true, items: ['Destination Scope', 'Travel Dates', 'Flight PNR linkage'] },
-        { title: 'Travelers', open: false, items: ['Primary Insured', 'Accompanying Family Members'] },
-        { title: 'Emergency Contact', open: false, items: ['24/7 Helpline Number', 'Local Assistance Partners'] }
-      ]
-    },
-    '4': {
-      type: 'MOTOR',
-      planType: 'Comprehensive',
-      planName: 'MOTOR SECURE GOLD',
-      policyNumber: 'M9921...X05',
-      coverEnd: '15 Dec 2024',
-      status: 'ACTIVE',
-      icon: this.Car,
-      color: 'indigo',
-      sections: [
-        { title: 'Vehicle Details', open: true, items: ['Plate Number', 'VIM / Chassis Number', 'Make/Model'] },
-        { title: 'Coverage Scope', open: false, items: ['Third Party Liability', 'Roadside Assistance', 'Own Damage Cover'] },
-        { title: 'Claims Profile', open: false, items: ['No-claims Bonus Level', 'Recent Claims History'] }
-      ]
-    }
-  };
+  get currentPolicyData(): PolicyData {
+    return this.allPolicies[this.activeTabId()];
+  }
 
-  get currentPolicy() {
-    const id = this.route.snapshot.paramMap.get('id') || '1';
-    return this.policyMockups[id] || this.policyMockups['1'];
+  get currentCard(): PolicyCard {
+    const cards = this.currentPolicyData.cards;
+    return cards[this.selectedCardIdx()] || cards[0];
   }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id') || '1';
-    const data = this.policyMockups[id] || this.policyMockups['1'];
-    this.selectedPolicy.set(data.type);
+    this._loadPolicy('home');
   }
 
-  getPolicyIcon() { return this.currentPolicy.icon; }
+  switchPolicy(tabId: string) {
+    this.activeTabId.set(tabId);
+    this.selectedCardIdx.set(0);
+    this.policyOpen.set(true);
+    this._loadPolicy(tabId);
+  }
+
+  private _loadPolicy(tabId: string) {
+    const data = this.allPolicies[tabId];
+    this.selectedPolicy.set(data.type);
+    // Sections are shared and stay untouched — open state is preserved across tab switches
+  }
+
+  getIconForType(type: string) {
+    switch (type) {
+      case 'MEDICAL': return this.Heart;
+      case 'MOTOR':   return this.Car;
+      case 'TRAVEL':  return this.Plane;
+      default:        return this.HomeIcon;
+    }
+  }
+
+  getPolicyIcon() {
+    return this.getIconForType(this.currentPolicyData.type);
+  }
 
   getPolicyColorClass() {
-    switch (this.currentPolicy.color) {
-      case 'rose': return 'text-rose-400';
-      case 'amber': return 'text-amber-400';
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return 'text-rose-400';
+      case 'amber':  return 'text-amber-400';
       case 'indigo': return 'text-indigo-400';
-      default: return 'text-emerald-400';
+      default:       return 'text-emerald-400';
     }
   }
 
   getPolicyBadgeClass() {
     const base = 'policy-type-badge ';
-    switch (this.currentPolicy.color) {
-      case 'rose': return base + 'border-rose-200 bg-rose-50 text-rose-600';
-      case 'amber': return base + 'border-amber-200 bg-amber-50 text-amber-600';
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return base + 'border-rose-200 bg-rose-50 text-rose-600';
+      case 'amber':  return base + 'border-amber-200 bg-amber-50 text-amber-600';
       case 'indigo': return base + 'border-indigo-200 bg-indigo-50 text-indigo-600';
-      default: return base + 'border-emerald-200 bg-emerald-50 text-emerald-600';
+      default:       return base + 'border-emerald-200 bg-emerald-50 text-emerald-600';
     }
   }
 
   getPolicyIconWrapClass() {
     const base = 'inner-icon-wrap ';
-    switch (this.currentPolicy.color) {
-      case 'rose': return base + 'bg-rose-500/10 border-rose-500/20 text-rose-400';
-      case 'amber': return base + 'bg-amber-500/10 border-amber-500/20 text-amber-400';
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return base + 'bg-rose-500/10 border-rose-500/20 text-rose-400';
+      case 'amber':  return base + 'bg-amber-500/10 border-amber-500/20 text-amber-400';
       case 'indigo': return base + 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400';
-      default: return base + 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400';
+      default:       return base + 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400';
     }
   }
 
   getPolicyIconWrapStaticClass() {
     const base = 'trigger-icon-wrap ';
     if (!this.policyOpen()) return base;
-    switch (this.currentPolicy.color) {
-      case 'rose': return base + '!bg-rose-500 !text-white !border-transparent shadow-rose-200';
-      case 'amber': return base + '!bg-amber-500 !text-white !border-transparent shadow-amber-200';
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return base + '!bg-rose-500 !text-white !border-transparent shadow-rose-200';
+      case 'amber':  return base + '!bg-amber-500 !text-white !border-transparent shadow-amber-200';
       case 'indigo': return base + '!bg-indigo-500 !text-white !border-transparent shadow-indigo-200';
-      default: return base + '!bg-emerald-500 !text-white !border-transparent shadow-emerald-200';
+      default:       return base + '!bg-emerald-500 !text-white !border-transparent shadow-emerald-200';
     }
   }
 
   getPolicyCountBadgeClass() {
-    switch (this.currentPolicy.color) {
-      case 'rose': return 'bg-rose-50 text-rose-600 border-rose-100';
-      case 'amber': return 'bg-amber-50 text-amber-600 border-amber-100';
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return 'bg-rose-50 text-rose-600 border-rose-100';
+      case 'amber':  return 'bg-amber-50 text-amber-600 border-amber-100';
       case 'indigo': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
-      default: return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+      default:       return 'bg-emerald-50 text-emerald-600 border-emerald-100';
     }
   }
 
   getPolicyDotClass(open: boolean) {
     if (!open) return '';
-    switch (this.currentPolicy.color) {
-      case 'rose': return '!bg-rose-500 shadow-[0_0_0_3px_rgba(244,63,94,0.15)]';
-      case 'amber': return '!bg-amber-500 shadow-[0_0_0_3px_rgba(245,158,11,0.15)]';
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return '!bg-rose-500 shadow-[0_0_0_3px_rgba(244,63,94,0.15)]';
+      case 'amber':  return '!bg-amber-500 shadow-[0_0_0_3px_rgba(245,158,11,0.15)]';
       case 'indigo': return '!bg-indigo-500 shadow-[0_0_0_3px_rgba(99,102,241,0.15)]';
-      default: return '!bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.15)]';
+      default:       return '!bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.15)]';
     }
   }
 
   getPolicyTextClass() {
-    switch (this.currentPolicy.color) {
-      case 'rose': return 'text-rose-600';
-      case 'amber': return 'text-amber-600';
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return 'text-rose-600';
+      case 'amber':  return 'text-amber-600';
       case 'indigo': return 'text-indigo-600';
-      default: return 'text-emerald-600';
+      default:       return 'text-emerald-600';
     }
   }
 
   getPolicyAccentClass() {
-    switch (this.currentPolicy.color) {
-      case 'rose': return 'bg-gradient-to-b from-rose-500 to-rose-50';
-      case 'amber': return 'bg-gradient-to-b from-amber-500 to-amber-50';
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return 'bg-gradient-to-b from-rose-500 to-rose-50';
+      case 'amber':  return 'bg-gradient-to-b from-amber-500 to-amber-50';
       case 'indigo': return 'bg-gradient-to-b from-indigo-500 to-indigo-50';
-      default: return 'bg-gradient-to-b from-emerald-500 to-emerald-50';
+      default:       return 'bg-gradient-to-b from-emerald-500 to-emerald-50';
     }
   }
 
   getPolicyDataCheckClass() {
-    switch (this.currentPolicy.color) {
-      case 'rose': return 'bg-rose-50 border-rose-100';
-      case 'amber': return 'bg-amber-50 border-amber-100';
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return 'bg-rose-50 border-rose-100';
+      case 'amber':  return 'bg-amber-50 border-amber-100';
       case 'indigo': return 'bg-indigo-50 border-indigo-100';
-      default: return 'bg-emerald-50 border-emerald-100';
+      default:       return 'bg-emerald-50 border-emerald-100';
     }
   }
 
   getPolicyCheckIconClass() {
-    switch (this.currentPolicy.color) {
-      case 'rose': return 'text-rose-500';
-      case 'amber': return 'text-amber-500';
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return 'text-rose-500';
+      case 'amber':  return 'text-amber-500';
       case 'indigo': return 'text-indigo-500';
-      default: return 'text-emerald-500';
+      default:       return 'text-emerald-500';
     }
   }
 
@@ -1261,9 +1371,9 @@ export class ConsentDetailComponent implements OnInit {
 
   toggleSection(index: number) {
     this.sections.update(sections => {
-      const newSections = [...sections];
-      newSections[index] = { ...newSections[index], open: !newSections[index].open };
-      return newSections;
+      const next = [...sections];
+      next[index] = { ...next[index], open: !next[index].open };
+      return next;
     });
   }
 

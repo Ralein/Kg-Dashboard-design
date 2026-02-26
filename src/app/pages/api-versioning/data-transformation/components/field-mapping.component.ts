@@ -160,7 +160,7 @@ import {
           </div>
 
           <div class="lfi-search-wrap">
-            <lucide-icon [img]="Search" class="lfi-search-icon"></lucide-icon>
+            <lucide-icon [img]="Search" class="lfi-search-icon h-[10px] w-[10px]"></lucide-icon>
             <input type="text" [(ngModel)]="sidebarSearchQuery" placeholder="Search LFI fields..." class="lfi-search">
           </div>
 
