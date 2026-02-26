@@ -43,7 +43,7 @@ interface PolicyTab {
 @Component({
   selector: 'app-consent-detail',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, RouterLink],
   template: `
     <div class="cd-root flex flex-col gap-0 animate-page-in">
 
@@ -69,24 +69,17 @@ interface PolicyTab {
         <!-- Content -->
         <div class="relative z-10 px-8 pt-8 pb-0">
 
-          <!-- Policy Tab Switcher + History button row -->
+          <!-- Breadcrumb + History -->
           <div class="flex items-center justify-between mb-6">
-
-            <!-- Policy type tabs -->
-            <div class="policy-tab-bar">
-              <button *ngFor="let tab of policyTabs"
-                (click)="switchPolicy(tab.id)"
-                class="policy-tab-btn"
-                [class.policy-tab-btn--active]="activeTabId() === tab.id">
-                <lucide-icon [img]="getIconForType(tab.type)" class="w-3.5 h-3.5"></lucide-icon>
-                <span>{{ tab.label }}</span>
-                <span *ngIf="tab.cardCount > 1" class="tab-count-badge"
-                  [class.tab-count-badge--active]="activeTabId() === tab.id">
-                  {{ tab.cardCount }}
-                </span>
+            <div class="flex items-center gap-2 text-white/40 text-[11px] font-semibold tracking-wider">
+              <button routerLink="/consent-management"
+                class="flex items-center gap-1.5 hover:text-white/80 transition-colors duration-200 group">
+                <lucide-icon [img]="ChevronLeft" class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"></lucide-icon>
+                Consent Management
               </button>
+              <span class="text-white/20">/</span>
+              <span class="text-white/60">Detail View</span>
             </div>
-
             <div class="flex items-center gap-3">
               <button class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/8 border border-white/15 text-white/70 text-[11px] font-bold tracking-wide hover:bg-white/15 hover:text-white hover:border-white/30 transition-all duration-200 backdrop-blur-sm">
                 <lucide-icon [img]="History" class="w-3.5 h-3.5"></lucide-icon>
@@ -244,15 +237,22 @@ interface PolicyTab {
 
               <div class="relative z-10 flex flex-col h-full p-6">
 
-                <!-- Card header -->
-                <div class="flex items-center justify-between mb-6">
-                  <div>
-                    <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.15em] mb-1">Shared Policies</p>
-                    <h3 class="text-sm font-bold text-white/90 tracking-wide">Policy Explorer</h3>
-                  </div>
-                  <div class="policy-type-badge" [ngClass]="getPolicyBadgeClass()">
-                    <lucide-icon [img]="getPolicyIcon()" class="w-3.5 h-3.5"></lucide-icon>
-                    <span>{{ selectedPolicy() }}</span>
+                <!-- Card header with inline policy tab switcher -->
+                <div class="mb-5">
+                  <p class="text-[10px] font-bold text-white/30 uppercase tracking-[0.15em] mb-3">Shared Policies</p>
+                  <div class="explorer-tab-bar">
+                    <button *ngFor="let tab of policyTabs"
+                      (click)="switchPolicy(tab.id)"
+                      class="explorer-tab-btn"
+                      [class.explorer-tab-btn--active]="activeTabId() === tab.id"
+                      [ngClass]="activeTabId() === tab.id ? getExplorerTabActiveClass() : ''">
+                      <lucide-icon [img]="getIconForType(tab.type)" class="w-3.5 h-3.5"></lucide-icon>
+                      <span>{{ tab.label }}</span>
+                      <span *ngIf="tab.cardCount > 1" class="explorer-tab-count"
+                        [class.explorer-tab-count--active]="activeTabId() === tab.id">
+                        {{ tab.cardCount }}
+                      </span>
+                    </button>
                   </div>
                 </div>
 
@@ -489,57 +489,60 @@ interface PolicyTab {
     }
 
     /* ═══════════════════════════════════════
-       POLICY TAB BAR (new)
+       EXPLORER TAB BAR (inside policy card)
     ═══════════════════════════════════════ */
-    .policy-tab-bar {
+    .explorer-tab-bar {
       display: flex;
       align-items: center;
-      gap: 4px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
+      gap: 3px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px;
       padding: 4px;
     }
-    .policy-tab-btn {
+    .explorer-tab-btn {
       display: flex;
       align-items: center;
-      gap: 7px;
-      padding: 8px 14px;
+      gap: 6px;
+      padding: 7px 12px;
       border-radius: 8px;
       border: none;
       cursor: pointer;
       transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
       background: transparent;
-      color: rgba(255,255,255,0.42);
+      color: rgba(255,255,255,0.38);
       font-weight: 600;
-      font-size: 12px;
+      font-size: 11px;
       letter-spacing: 0.03em;
+      flex: 1;
+      justify-content: center;
     }
-    .policy-tab-btn:hover {
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.75);
+    .explorer-tab-btn:hover {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
     }
-    .policy-tab-btn--active {
-      background: rgba(255,255,255,0.13) !important;
+    .explorer-tab-btn--active {
       color: white !important;
       font-weight: 800;
     }
-    .tab-count-badge {
+    .explorer-tab-count {
       font-size: 9px;
       font-weight: 800;
       padding: 1px 5px;
       border-radius: 4px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.1);
       color: rgba(255,255,255,0.4);
     }
-    .tab-count-badge--active {
-      background: rgba(255,255,255,0.22);
+    .explorer-tab-count--active {
       color: white;
     }
+    /* Active colour variants */
+    .explorer-tab-active--emerald { background: rgba(5,205,153,0.2) !important; border: 1px solid rgba(5,205,153,0.3); }
+    .explorer-tab-active--indigo  { background: rgba(99,102,241,0.22) !important; border: 1px solid rgba(99,102,241,0.3); }
+    .explorer-tab-active--rose    { background: rgba(244,63,94,0.2) !important; border: 1px solid rgba(244,63,94,0.3); }
+    .explorer-tab-active--amber   { background: rgba(245,158,11,0.2) !important; border: 1px solid rgba(245,158,11,0.3); }
 
-    /* ═══════════════════════════════════════
-       VEHICLE SELECTOR CARDS (new)
-    ═══════════════════════════════════════ */
+
     .vehicle-card {
       position: relative;
       width: 100%;
@@ -1255,6 +1258,15 @@ export class ConsentDetailComponent implements OnInit {
     const data = this.allPolicies[tabId];
     this.selectedPolicy.set(data.type);
     // Sections are shared and stay untouched — open state is preserved across tab switches
+  }
+
+  getExplorerTabActiveClass() {
+    switch (this.currentPolicyData.color) {
+      case 'rose':   return 'explorer-tab-active--rose';
+      case 'amber':  return 'explorer-tab-active--amber';
+      case 'indigo': return 'explorer-tab-active--indigo';
+      default:       return 'explorer-tab-active--emerald';
+    }
   }
 
   getIconForType(type: string) {
