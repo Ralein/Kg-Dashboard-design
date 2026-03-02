@@ -1,11 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Database, Trash2, Save, ChevronDown, ChevronRight, Code2, Braces } from 'lucide-angular';
+import { FormsModule } from '@angular/forms';
+import { LucideAngularModule, Database, Trash2, Save, ChevronDown, Code2, Braces, Pencil, Check, X } from 'lucide-angular';
 
 @Component({
   selector: 'app-object-config',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   template: `
     <div class="animate-in slide-in-from-bottom-4 fade-in duration-500">
 
@@ -31,7 +32,7 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, ChevronRight,
         </button>
       </div>
 
-      <!-- ── Table View ── -->
+      <!-- ── Accordion View ── -->
       <div *ngIf="showTable()" class="obj-panel">
 
         <!-- Header bar -->
@@ -48,48 +49,100 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, ChevronRight,
           </button>
         </div>
 
-        <!-- Object rows -->
-        <div class="divide-y divide-gray-100/60">
-          <div *ngFor="let obj of configuredObjects(); let i = index"
-            class="obj-row"
-            [class.obj-row--expanded]="expandedRow() === obj.name">
+        <!-- Accordion items -->
+        <div class="accordion-list">
+          <div *ngFor="let obj of configuredObjects(); let i = index; let last = last"
+            class="accordion-item"
+            [class.accordion-item--expanded]="expandedRow() === obj.name"
+            [class.accordion-item--last]="last">
 
-            <!-- Row header — click to expand -->
-            <div class="obj-row-header px-6 py-4 flex items-center justify-between cursor-pointer group"
+            <!-- Clickable header -->
+            <div class="accordion-header group"
               (click)="toggleRow(obj.name)">
-              <div class="flex items-center gap-4">
+
+              <div class="flex items-center gap-4 min-w-0">
                 <span class="row-index">{{ (i + 1).toString().padStart(2, '0') }}</span>
-                <div class="flex items-center gap-2.5">
-                  <lucide-icon [img]="Code2" class="w-3.5 h-3.5 text-[#4318FF] opacity-60 group-hover:opacity-100 transition-opacity"></lucide-icon>
-                  <span class="text-sm font-black text-[#2B3674] tracking-tight">{{ obj.name }}</span>
+
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <lucide-icon [img]="Code2" class="w-3.5 h-3.5 text-[#4318FF] shrink-0 opacity-50 group-hover:opacity-100 transition-opacity"></lucide-icon>
+                  <span class="text-sm font-black text-[#2B3674] tracking-tight truncate">{{ obj.name }}</span>
                 </div>
-                <span class="type-chip">{{ getType(obj.json) }}</span>
+
+                <span class="type-chip shrink-0">{{ getType(obj.json) }}</span>
               </div>
-              <div class="flex items-center gap-3">
+
+              <div class="flex items-center gap-3 shrink-0">
+                <!-- Delete — visible on hover -->
                 <button (click)="deleteObject(obj.name); $event.stopPropagation()"
                   class="del-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">
                   <lucide-icon [img]="Trash2" class="w-3 h-3"></lucide-icon>
                   Delete
                 </button>
-                <div class="chevron-wrap" [class.rotated]="expandedRow() === obj.name">
-                  <lucide-icon [img]="ChevronRight" class="w-4 h-4 text-[#A3AED0]"></lucide-icon>
+
+                <!-- Expand hint + Chevron -->
+                <div class="expand-cue" [class.expand-cue--open]="expandedRow() === obj.name">
+                  <span class="expand-label">
+                    {{ expandedRow() === obj.name ? 'Collapse' : 'View Schema' }}
+                  </span>
+                  <div class="chevron-wrap" [class.chevron-wrap--open]="expandedRow() === obj.name">
+                    <lucide-icon [img]="ChevronDown" class="w-4 h-4"></lucide-icon>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- JSON panel — expands inline -->
-            <div class="json-panel" [class.json-panel--open]="expandedRow() === obj.name">
-              <div class="json-inner px-6 pb-5">
-                <div class="json-viewer">
+            <!-- Collapsible JSON body -->
+            <div class="accordion-body" [class.accordion-body--open]="expandedRow() === obj.name">
+              <div class="accordion-body-inner px-6 pb-5">
+                <div class="json-viewer" [class.json-viewer--editing]="editingRow() === obj.name">
+
+                  <!-- JSON viewer header -->
                   <div class="json-viewer-header">
-                    <span class="text-[9px] font-black text-[#A3AED0] uppercase tracking-[0.2em]">JSON Schema</span>
                     <div class="dot-group">
                       <span class="dot dot--red"></span>
                       <span class="dot dot--amber"></span>
                       <span class="dot dot--green"></span>
                     </div>
+
+                    <!-- Edit / Apply / Cancel controls -->
+                    <div class="edit-controls" (click)="$event.stopPropagation()">
+                      <ng-container *ngIf="editingRow() !== obj.name">
+                        <button class="ctrl-btn ctrl-btn--edit"
+                          (click)="startEdit(obj.name, obj.json)">
+                          <lucide-icon [img]="Pencil" class="w-3 h-3"></lucide-icon>
+                          Edit
+                        </button>
+                      </ng-container>
+                      <ng-container *ngIf="editingRow() === obj.name">
+                        <span *ngIf="editError()" class="edit-error">Invalid JSON</span>
+                        <button class="ctrl-btn ctrl-btn--cancel" (click)="cancelEdit()">
+                          <lucide-icon [img]="X" class="w-3 h-3"></lucide-icon>
+                          Cancel
+                        </button>
+                        <button class="ctrl-btn ctrl-btn--apply" (click)="applyEdit(obj.name)">
+                          <lucide-icon [img]="Check" class="w-3 h-3"></lucide-icon>
+                          Apply
+                        </button>
+                      </ng-container>
+                    </div>
                   </div>
-                  <pre class="json-code">{{ obj.json }}</pre>
+
+                  <!-- Read mode -->
+                  <pre *ngIf="editingRow() !== obj.name"
+                    class="json-code"
+                    (click)="startEdit(obj.name, obj.json); $event.stopPropagation()">{{ obj.json }}</pre>
+
+                  <!-- Edit mode -->
+                  <textarea *ngIf="editingRow() === obj.name"
+                    class="json-textarea"
+                    [class.json-textarea--error]="editError()"
+                    [ngModel]="editDraft()"
+                    (ngModelChange)="editDraft.set($event); editError.set(false)"
+                    (click)="$event.stopPropagation()"
+                    spellcheck="false"
+                    rows="10">
+                  </textarea>
+
                 </div>
               </div>
             </div>
@@ -97,7 +150,7 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, ChevronRight,
           </div>
         </div>
 
-        <!-- Empty state inside table -->
+        <!-- Empty state -->
         <div *ngIf="configuredObjects().length === 0" class="py-16 flex flex-col items-center gap-3">
           <lucide-icon [img]="Database" class="w-8 h-8 text-[#E2E8F0]"></lucide-icon>
           <p class="text-xs font-bold text-[#A3AED0] uppercase tracking-widest">All objects removed</p>
@@ -114,7 +167,6 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, ChevronRight,
       border-radius: 24px;
       box-shadow: 0 4px 24px rgba(112,144,176,0.07);
     }
-
     .icon-stack { position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; }
     .icon-core {
       position: relative; z-index: 2;
@@ -138,7 +190,7 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, ChevronRight,
     }
     .load-btn:hover { background: #1B2559; transform: translateY(-1px); }
 
-    /* ── Main panel ── */
+    /* ── Panel ── */
     .obj-panel {
       background: white;
       border: 1px solid rgba(163,174,208,0.18);
@@ -146,12 +198,10 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, ChevronRight,
       overflow: hidden;
       box-shadow: 0 4px 24px rgba(112,144,176,0.08);
     }
-
     .obj-header {
       background: #FAFBFF;
       border-bottom: 1px solid rgba(163,174,208,0.12);
     }
-
     .count-badge {
       display: inline-flex; align-items: center; justify-content: center;
       min-width: 20px; height: 20px; padding: 0 6px;
@@ -160,22 +210,42 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, ChevronRight,
       font-size: 10px; font-weight: 900;
       border-radius: 6px;
     }
-
     .save-btn {
       background: #05CD99; color: white;
       box-shadow: 0 4px 12px rgba(5,205,153,0.2);
     }
     .save-btn:hover { background: #04B484; transform: translateY(-1px); }
 
-    /* ── Row ── */
-    .obj-row {
-      border-left: 3px solid transparent;
-      transition: border-color 0.2s ease, background 0.2s ease;
-    }
-    .obj-row:hover { background: #FAFBFF; border-left-color: rgba(67,24,255,0.15); }
-    .obj-row--expanded { border-left-color: #4318FF; background: #FAFBFF; }
+    /* ── Accordion ── */
+    .accordion-list { display: flex; flex-direction: column; }
 
-    .obj-row-header { user-select: none; }
+    .accordion-item {
+      border-bottom: 1px solid rgba(163,174,208,0.14);
+      border-left: 3px solid transparent;
+      transition: border-left-color 0.2s ease, background 0.15s ease;
+    }
+    .accordion-item--last { border-bottom: none; }
+    .accordion-item:hover { border-left-color: rgba(67,24,255,0.2); }
+    .accordion-item--expanded {
+      border-left-color: #4318FF;
+      background: #FAFBFF;
+    }
+
+    /* Header row */
+    .accordion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s ease;
+    }
+    .accordion-header:hover { background: rgba(67,24,255,0.02); }
+    .accordion-item--expanded .accordion-header {
+      background: transparent;
+      padding-bottom: 14px;
+    }
 
     .row-index {
       font-family: 'Courier New', monospace;
@@ -200,59 +270,144 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, ChevronRight,
     }
     .del-btn:hover { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.4); }
 
-    .chevron-wrap {
-      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    .expand-cue {
+      display: flex; align-items: center; gap: 5px;
+      color: #A3AED0;
+      transition: color 0.2s ease;
     }
-    .chevron-wrap.rotated { transform: rotate(90deg); }
+    .expand-cue--open { color: #4318FF; }
+    .accordion-header:hover .expand-cue { color: #7C5CFC; }
 
-    /* ── JSON expand panel ── */
-    .json-panel {
+    .expand-label {
+      font-size: 9px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      opacity: 0;
+      transform: translateX(4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+    }
+    .accordion-header:hover .expand-label,
+    .expand-cue--open .expand-label {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .chevron-wrap {
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .chevron-wrap--open { transform: rotate(180deg); }
+
+    /* ── Collapsible body ── */
+    .accordion-body {
       display: grid;
       grid-template-rows: 0fr;
-      transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+      visibility: hidden;
+      transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.25s ease,
+                  visibility 0s linear 0.32s;
     }
-    .json-panel--open { grid-template-rows: 1fr; }
-    .json-inner { overflow: hidden; }
+    .accordion-body--open {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      visibility: visible;
+      transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.25s ease 0.05s,
+                  visibility 0s linear 0s;
+    }
+    .accordion-body-inner { overflow: hidden; min-height: 0; }
 
+    /* ── JSON viewer ── */
     .json-viewer {
       background: #0D1117;
       border-radius: 14px;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.06);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 16px rgba(0,0,0,0.12);
+      transition: border-color 0.2s ease;
+    }
+    .json-viewer--editing {
+      border-color: rgba(67,24,255,0.35);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 3px rgba(67,24,255,0.08), 0 4px 16px rgba(0,0,0,0.12);
     }
 
     .json-viewer-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 16px;
+      padding: 8px 12px 8px 16px;
       background: rgba(255,255,255,0.03);
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-
     .dot-group { display: flex; align-items: center; gap: 5px; }
     .dot { width: 9px; height: 9px; border-radius: 50%; }
     .dot--red   { background: #FF5F57; }
     .dot--amber { background: #FFBD2E; }
     .dot--green { background: #28C840; }
 
+    /* Edit controls */
+    .edit-controls { display: flex; align-items: center; gap: 6px; }
+    .edit-error {
+      font-size: 9px; font-weight: 800; color: #F87171;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-right: 2px;
+    }
+    .ctrl-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 6px;
+      font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+      cursor: pointer; border: 1px solid; transition: all 0.15s;
+    }
+    .ctrl-btn--edit {
+      color: #A3AED0; background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.08);
+    }
+    .ctrl-btn--edit:hover { color: #C8CDE8; background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.14); }
+    .ctrl-btn--cancel {
+      color: #F87171; background: rgba(248,113,113,0.06);
+      border-color: rgba(248,113,113,0.2);
+    }
+    .ctrl-btn--cancel:hover { background: rgba(248,113,113,0.12); }
+    .ctrl-btn--apply {
+      color: #28C840; background: rgba(40,200,64,0.08);
+      border-color: rgba(40,200,64,0.25);
+    }
+    .ctrl-btn--apply:hover { background: rgba(40,200,64,0.15); }
+
+    /* Read-only pre */
     .json-code {
       font-family: 'Courier New', Courier, monospace;
-      font-size: 11.5px;
-      line-height: 1.75;
+      font-size: 11.5px; line-height: 1.75;
       color: #A9B1D6;
-      padding: 16px;
-      margin: 0;
-      white-space: pre-wrap;
-      word-break: break-word;
-      /* Subtle scan-line texture */
+      padding: 16px; margin: 0;
+      white-space: pre-wrap; word-break: break-word;
+      cursor: text;
       background-image: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 23px,
-        rgba(255,255,255,0.015) 23px,
-        rgba(255,255,255,0.015) 24px
+        0deg, transparent, transparent 23px,
+        rgba(255,255,255,0.015) 23px, rgba(255,255,255,0.015) 24px
       );
     }
+    .json-code:hover { color: #C2C9E8; }
+
+    /* Editable textarea */
+    .json-textarea {
+      display: block;
+      width: 100%; box-sizing: border-box;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11.5px; line-height: 1.75;
+      color: #C9D1F0;
+      background: #0D1117;
+      border: none; outline: none;
+      padding: 16px; margin: 0;
+      resize: vertical;
+      min-height: 160px;
+      white-space: pre;
+      overflow-x: auto;
+      background-image: repeating-linear-gradient(
+        0deg, transparent, transparent 23px,
+        rgba(255,255,255,0.015) 23px, rgba(255,255,255,0.015) 24px
+      );
+    }
+    .json-textarea--error { color: #F87171; }
+    .json-textarea:focus { outline: none; }
   `]
 })
 export class ObjectConfigComponent {
@@ -260,15 +415,47 @@ export class ObjectConfigComponent {
   readonly Trash2 = Trash2;
   readonly Save = Save;
   readonly ChevronDown = ChevronDown;
-  readonly ChevronRight = ChevronRight;
   readonly Code2 = Code2;
   readonly Braces = Braces;
+  readonly Pencil = Pencil;
+  readonly Check = Check;
+  readonly X = X;
 
   showTable = signal(false);
   expandedRow = signal<string | null>(null);
+  editingRow = signal<string | null>(null);
+  editDraft = signal<string>('');
+  editError = signal(false);
 
   toggleRow(name: string) {
+    // Don't collapse while editing this row
+    if (this.editingRow() === name) return;
     this.expandedRow.set(this.expandedRow() === name ? null : name);
+  }
+
+  startEdit(name: string, json: string) {
+    this.editDraft.set(json);
+    this.editError.set(false);
+    this.editingRow.set(name);
+  }
+
+  applyEdit(name: string) {
+    try {
+      JSON.parse(this.editDraft());
+      this.configuredObjects.update(obs =>
+        obs.map(o => o.name === name ? { ...o, json: this.editDraft() } : o)
+      );
+      this.editError.set(false);
+      this.editingRow.set(null);
+    } catch {
+      this.editError.set(true);
+    }
+  }
+
+  cancelEdit() {
+    this.editDraft.set('');
+    this.editError.set(false);
+    this.editingRow.set(null);
   }
 
   getType(json: string): string {
@@ -295,16 +482,11 @@ export class ObjectConfigComponent {
       name: 'PolicyHolder',
       json: `{
   "type": "object",
-  "required": [
-    "FirstName",
-    "LastName",
-    "Gender",
-    "DateOfBirth"
-  ],
+  "required": ["FirstName","LastName","Gender","DateOfBirth"],
   "properties": {
     "FirstName": { "type": "string" },
-    "LastName": { "type": "string" },
-    "Gender": { "type": "string", "enum": ["Male", "Female", "Other"] },
+    "LastName":  { "type": "string" },
+    "Gender":    { "type": "string", "enum": ["Male","Female","Other"] },
     "DateOfBirth": { "type": "string", "format": "date" }
   }
 }`
@@ -312,18 +494,11 @@ export class ObjectConfigComponent {
     {
       name: 'Identity',
       json: `{
-  "oneOf": [
-    {
-      "type": "object",
-      "required": [
-        "EmiratesId"
-      ]
-    }
-  ],
+  "oneOf": [{ "type": "object", "required": ["EmiratesId"] }],
   "properties": {
     "EmiratesId": { "type": "string" },
-    "VisaNumber": { "type": "string" },
-    "VisaType": { "type": "string", "enum": ["Employment", "Residence"] }
+    "VisaNumber":  { "type": "string" },
+    "VisaType":    { "type": "string", "enum": ["Employment","Residence"] }
   }
 }`
     },
@@ -331,15 +506,9 @@ export class ObjectConfigComponent {
       name: 'Product',
       json: `{
   "type": "object",
-  "required": [
-    "Policy",
-    "PropertyDetails"
-  ],
+  "required": ["Policy","PropertyDetails"],
   "properties": {
-    "CoverType": {
-      "type": "string",
-      "description": "Type of cover as defined in company systems."
-    },
+    "CoverType":   { "type": "string" },
     "Description": { "type": "string" }
   }
 }`
@@ -348,13 +517,10 @@ export class ObjectConfigComponent {
       name: 'Claims',
       json: `{
   "type": "object",
-  "required": [
-    "Summary",
-    "NoClaimsDiscountAvailable"
-  ],
+  "required": ["Summary","NoClaimsDiscountAvailable"],
   "properties": {
-    "Summary": { "type": "string" },
-    "NoClaimsDiscountAvailable": { "type": "boolean" }
+    "Summary":                    { "type": "string" },
+    "NoClaimsDiscountAvailable":  { "type": "boolean" }
   }
 }`
     },
@@ -362,19 +528,17 @@ export class ObjectConfigComponent {
       name: 'Premium',
       json: `{
   "type": "object",
-  "required": [
-    "TotalPremiumAmount",
-    "PaymentFrequency"
-  ],
+  "required": ["TotalPremiumAmount","PaymentFrequency"],
   "properties": {
     "TotalPremiumAmount": { "type": "number" },
-    "PaymentFrequency": { "type": "string" }
+    "PaymentFrequency":   { "type": "string" }
   }
 }`
     }
   ]);
 
   deleteObject(name: string) {
+    if (this.editingRow() === name) this.cancelEdit();
     this.configuredObjects.update(obs => obs.filter(o => o.name !== name));
     if (this.expandedRow() === name) this.expandedRow.set(null);
   }
