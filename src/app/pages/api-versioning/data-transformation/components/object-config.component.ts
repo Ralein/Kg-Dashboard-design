@@ -1,7 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Database, Trash2, Save, ChevronDown, Code2, Braces, Pencil, Check, X } from 'lucide-angular';
+import { LucideAngularModule, Database, Trash2, Save, ChevronDown, Code2, Braces, Pencil, Check, X, Plus } from 'lucide-angular';
 
 @Component({
   selector: 'app-object-config',
@@ -42,11 +42,56 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, Code2, Braces
             <span class="text-xs font-black text-[#2B3674] uppercase tracking-widest">Schema Objects</span>
             <span class="count-badge">{{ configuredObjects().length }}</span>
           </div>
-          <button (click)="saveObjects()"
-            class="save-btn flex items-center gap-2 px-5 py-2 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all">
-            <lucide-icon [img]="Save" class="w-3.5 h-3.5"></lucide-icon>
-            Save
-          </button>
+          <div class="flex items-center gap-2.5">
+            <button (click)="openAddForm()"
+              class="add-btn flex items-center gap-2 px-5 py-2 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all">
+              <lucide-icon [img]="Plus" class="w-3.5 h-3.5"></lucide-icon>
+              Add Object
+            </button>
+            <button (click)="saveObjects()"
+              class="save-btn flex items-center gap-2 px-5 py-2 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all">
+              <lucide-icon [img]="Save" class="w-3.5 h-3.5"></lucide-icon>
+              Save
+            </button>
+          </div>
+        </div>
+
+        <!-- Add Object Inline Form -->
+        <div *ngIf="showAddForm()" class="add-form-container">
+          <div class="add-form">
+            <div class="add-form-header">
+              <lucide-icon [img]="Plus" class="w-4 h-4 text-[#4318FF]"></lucide-icon>
+              <span class="text-xs font-black text-[#2B3674] uppercase tracking-widest">New Object</span>
+            </div>
+            <div class="add-form-body">
+              <div class="form-field">
+                <label class="field-label">Object Name</label>
+                <input type="text"
+                  class="field-input"
+                  placeholder="e.g. CustomerAddress"
+                  [ngModel]="newObjectName()"
+                  (ngModelChange)="newObjectName.set($event); addError.set('')" />
+              </div>
+              <div class="form-field">
+                <label class="field-label">JSON Schema</label>
+                <textarea
+                  class="field-textarea"
+                  placeholder='{&#10;  "type": "object",&#10;  "properties": { }&#10;}'
+                  [ngModel]="newObjectJson()"
+                  (ngModelChange)="newObjectJson.set($event); addError.set('')"
+                  spellcheck="false"
+                  rows="6"></textarea>
+              </div>
+              <span *ngIf="addError()" class="add-error-msg">{{ addError() }}</span>
+              <div class="add-form-actions">
+                <button class="cancel-add-btn" (click)="closeAddForm()">Cancel</button>
+                <button class="confirm-add-btn" (click)="confirmAdd()">
+                  <lucide-icon [img]="Check" class="w-3.5 h-3.5"></lucide-icon>
+                  Add Object
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Accordion items -->
@@ -82,7 +127,7 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, Code2, Braces
                 <!-- Expand hint + Chevron -->
                 <div class="expand-cue" [class.expand-cue--open]="expandedRow() === obj.name">
                   <span class="expand-label">
-                    {{ expandedRow() === obj.name ? 'Collapse' : 'View Schema' }}
+                    {{ expandedRow() === obj.name ? 'Collapse' : 'Edit Schema' }}
                   </span>
                   <div class="chevron-wrap" [class.chevron-wrap--open]="expandedRow() === obj.name">
                     <lucide-icon [img]="ChevronDown" class="w-4 h-4"></lucide-icon>
@@ -193,14 +238,14 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, Code2, Braces
     /* ── Panel ── */
     .obj-panel {
       background: white;
-      border: 1px solid rgba(163,174,208,0.18);
+      border: 1px solid rgba(163,174,208,0.22);
       border-radius: 24px;
       overflow: hidden;
       box-shadow: 0 4px 24px rgba(112,144,176,0.08);
     }
     .obj-header {
       background: #FAFBFF;
-      border-bottom: 1px solid rgba(163,174,208,0.12);
+      border-bottom: 1px solid rgba(163,174,208,0.18);
     }
     .count-badge {
       display: inline-flex; align-items: center; justify-content: center;
@@ -210,25 +255,125 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, Code2, Braces
       font-size: 10px; font-weight: 900;
       border-radius: 6px;
     }
+
+    /* ── Add Object Button ── */
+    .add-btn {
+      background: #4318FF; color: white;
+      box-shadow: 0 4px 14px rgba(67,24,255,0.25);
+    }
+    .add-btn:hover { background: #3311CC; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(67,24,255,0.32); }
+
     .save-btn {
       background: #05CD99; color: white;
       box-shadow: 0 4px 12px rgba(5,205,153,0.2);
     }
     .save-btn:hover { background: #04B484; transform: translateY(-1px); }
 
+    /* ── Add Object Form ── */
+    .add-form-container {
+      border-bottom: 1px solid rgba(163,174,208,0.18);
+      background: linear-gradient(135deg, rgba(67,24,255,0.02) 0%, rgba(67,24,255,0.05) 100%);
+      animation: slideFormIn 0.3s ease-out;
+    }
+    @keyframes slideFormIn {
+      from { opacity: 0; max-height: 0; }
+      to   { opacity: 1; max-height: 600px; }
+    }
+    .add-form {
+      margin: 16px 20px;
+      background: white;
+      border-radius: 16px;
+      border: 1.5px solid rgba(67,24,255,0.15);
+      box-shadow: 0 4px 20px rgba(67,24,255,0.06);
+      overflow: hidden;
+    }
+    .add-form-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 20px;
+      background: #FAFBFF;
+      border-bottom: 1px solid rgba(163,174,208,0.12);
+    }
+    .add-form-body {
+      padding: 20px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .form-field { display: flex; flex-direction: column; gap: 5px; }
+    .field-label {
+      font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: #8F9BBA;
+    }
+    .field-input {
+      padding: 10px 14px; border-radius: 10px;
+      border: 1.5px solid rgba(163,174,208,0.25);
+      font-size: 13px; font-weight: 600; color: #2B3674;
+      background: #FAFBFF;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field-input:focus {
+      border-color: rgba(67,24,255,0.4);
+      box-shadow: 0 0 0 3px rgba(67,24,255,0.06);
+    }
+    .field-input::placeholder { color: #C5CEE0; font-weight: 500; }
+    .field-textarea {
+      padding: 12px 14px; border-radius: 10px;
+      border: 1.5px solid rgba(163,174,208,0.25);
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px; line-height: 1.6; color: #2B3674;
+      background: #FAFBFF;
+      outline: none; resize: vertical;
+      min-height: 100px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field-textarea:focus {
+      border-color: rgba(67,24,255,0.4);
+      box-shadow: 0 0 0 3px rgba(67,24,255,0.06);
+    }
+    .field-textarea::placeholder { color: #C5CEE0; font-weight: 500; }
+    .add-error-msg {
+      font-size: 10px; font-weight: 800; color: #F87171;
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .add-form-actions {
+      display: flex; justify-content: flex-end; gap: 10px; padding-top: 4px;
+    }
+    .cancel-add-btn {
+      padding: 8px 18px; border-radius: 10px;
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #8F9BBA; background: transparent;
+      border: 1.5px solid rgba(163,174,208,0.25);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .cancel-add-btn:hover { background: rgba(163,174,208,0.06); border-color: rgba(163,174,208,0.4); }
+    .confirm-add-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 20px; border-radius: 10px;
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+      color: white; background: #4318FF;
+      border: none; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(67,24,255,0.22);
+      transition: all 0.15s;
+    }
+    .confirm-add-btn:hover { background: #3311CC; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(67,24,255,0.3); }
+
     /* ── Accordion ── */
     .accordion-list { display: flex; flex-direction: column; }
 
     .accordion-item {
-      border-bottom: 1px solid rgba(163,174,208,0.14);
+      border-bottom: 1px solid rgba(163,174,208,0.2);
       border-left: 3px solid transparent;
-      transition: border-left-color 0.2s ease, background 0.15s ease;
+      transition: border-left-color 0.25s ease, background 0.2s ease, box-shadow 0.25s ease;
     }
     .accordion-item--last { border-bottom: none; }
-    .accordion-item:hover { border-left-color: rgba(67,24,255,0.2); }
+    .accordion-item:hover {
+      border-left-color: rgba(67,24,255,0.3);
+      background: rgba(67,24,255,0.012);
+    }
     .accordion-item--expanded {
       border-left-color: #4318FF;
-      background: #FAFBFF;
+      background: linear-gradient(90deg, rgba(67,24,255,0.03) 0%, rgba(250,251,255,1) 30%);
+      box-shadow: inset 0 1px 0 rgba(67,24,255,0.06), inset 0 -1px 0 rgba(67,24,255,0.06);
     }
 
     /* Header row */
@@ -236,31 +381,39 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, Code2, Braces
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 24px;
+      padding: 16px 24px;
       cursor: pointer;
       user-select: none;
       transition: background 0.15s ease;
     }
-    .accordion-header:hover { background: rgba(67,24,255,0.02); }
+    .accordion-header:hover { background: rgba(67,24,255,0.025); }
     .accordion-item--expanded .accordion-header {
       background: transparent;
-      padding-bottom: 14px;
+      padding-bottom: 12px;
     }
 
     .row-index {
       font-family: 'Courier New', monospace;
-      font-size: 11px; font-weight: 700;
-      color: #D0D5E8;
-      min-width: 24px;
+      font-size: 10px; font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, #4318FF, #7C5CFC);
+      min-width: 26px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+    }
+    .accordion-item--expanded .row-index {
+      background: linear-gradient(135deg, #4318FF, #6B3DFF);
+      box-shadow: 0 2px 8px rgba(67,24,255,0.3);
     }
 
     .type-chip {
       font-size: 9px; font-weight: 800;
       text-transform: uppercase; letter-spacing: 0.1em;
-      padding: 2px 8px; border-radius: 6px;
-      background: rgba(67,24,255,0.06);
+      padding: 3px 10px; border-radius: 6px;
+      background: rgba(67,24,255,0.07);
       color: #7C5CFC;
-      border: 1px solid rgba(67,24,255,0.1);
+      border: 1px solid rgba(67,24,255,0.12);
     }
 
     .del-btn {
@@ -410,7 +563,7 @@ import { LucideAngularModule, Database, Trash2, Save, ChevronDown, Code2, Braces
     .json-textarea:focus { outline: none; }
   `]
 })
-export class ObjectConfigComponent {
+export class ObjectConfigComponent implements OnInit {
   readonly Database = Database;
   readonly Trash2 = Trash2;
   readonly Save = Save;
@@ -420,12 +573,27 @@ export class ObjectConfigComponent {
   readonly Pencil = Pencil;
   readonly Check = Check;
   readonly X = X;
+  readonly Plus = Plus;
 
   showTable = signal(false);
   expandedRow = signal<string | null>(null);
   editingRow = signal<string | null>(null);
   editDraft = signal<string>('');
   editError = signal(false);
+
+  // Add Object form state
+  showAddForm = signal(false);
+  newObjectName = signal('');
+  newObjectJson = signal('');
+  addError = signal('');
+
+  ngOnInit() {
+    // Auto-expand the first accordion item when the table is shown
+    const objects = this.configuredObjects();
+    if (objects.length > 0) {
+      this.expandedRow.set(objects[0].name);
+    }
+  }
 
   toggleRow(name: string) {
     // Don't collapse while editing this row
@@ -465,6 +633,53 @@ export class ObjectConfigComponent {
       if (parsed.oneOf) return 'oneOf';
       return 'schema';
     } catch { return 'schema'; }
+  }
+
+  // ── Add Object form logic ──
+  openAddForm() {
+    this.showAddForm.set(true);
+    this.newObjectName.set('');
+    this.newObjectJson.set(`{\n  "type": "object",\n  "properties": {\n\n  }\n}`);
+    this.addError.set('');
+  }
+
+  closeAddForm() {
+    this.showAddForm.set(false);
+    this.newObjectName.set('');
+    this.newObjectJson.set('');
+    this.addError.set('');
+  }
+
+  confirmAdd() {
+    const name = this.newObjectName().trim();
+    const json = this.newObjectJson().trim();
+
+    if (!name) {
+      this.addError.set('Object name is required');
+      return;
+    }
+
+    // Check for duplicate names
+    if (this.configuredObjects().some(o => o.name === name)) {
+      this.addError.set('An object with this name already exists');
+      return;
+    }
+
+    if (!json) {
+      this.addError.set('JSON schema is required');
+      return;
+    }
+
+    try {
+      JSON.parse(json);
+    } catch {
+      this.addError.set('Invalid JSON — please fix before adding');
+      return;
+    }
+
+    this.configuredObjects.update(obs => [...obs, { name, json }]);
+    this.expandedRow.set(name); // auto-expand the newly added item
+    this.closeAddForm();
   }
 
   configuredObjects = signal([
